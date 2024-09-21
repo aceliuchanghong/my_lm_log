@@ -6,7 +6,6 @@ my machine learning log
 conda create -n ml python=3.11
 conda activate ml
 pip install -r requirements.txt
-pip freeze > requirements.txt
 ```
 
 ### Type
