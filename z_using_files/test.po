@@ -1,0 +1,1965 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024, Qwen Team
+# This file is distributed under the same license as the Qwen package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Qwen \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-09-18 21:18+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_CN\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.15.0\n"
+
+#: ../../source/benchmark/speed_benchmark.rst:2
+#: 96f9c969f82049efbaf7b70525976649
+msgid "Speed Benchmark"
+msgstr "效率评估"
+
+#: ../../source/benchmark/speed_benchmark.rst:5
+#: 3e97857c19314350b1d6686ad9776d35
+msgid "To be updated for Qwen2.5."
+msgstr "Qwen2.5结果待更新，由于模型结构差异有限，Qwen2结果可供参考。"
+
+#: ../../source/benchmark/speed_benchmark.rst:7
+#: 4f0e196db456466997765e4b93b873be
+msgid "This section reports the speed performance of bf16 models, quantized models (including GPTQ-Int4, GPTQ-Int8 and AWQ) of the Qwen2 series. Specifically, we report the inference speed (tokens/s) as well as memory footprint (GB) under the conditions of different context lengths."
+msgstr "本部分介绍Qwen2模型（原始模型和量化模型）的效率测试结果，包括推理速度(tokens/s)与不同上下文长度时的显存占用(GB)。"
+
+#: ../../source/benchmark/speed_benchmark.rst:12
+#: d3a3a79f4010466f882bd52955780253
+msgid "The environment of the evaluation with huggingface transformers is:"
+msgstr "测试HuggingFace ``transformers`` 时的环境配置："
+
+#: ../../source/benchmark/speed_benchmark.rst:14
+#: ../../source/benchmark/speed_benchmark.rst:24
+#: 8e1e5f8b79c54381b4bf00c8637954c8
+msgid "NVIDIA A100 80GB"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:15
+#: ../../source/benchmark/speed_benchmark.rst:25
+#: 79bb2a6aea064df79c0819b9c966b867
+msgid "CUDA 11.8"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:16
+#: 6ed8b5fb474842c18b4e319eebbbb73f
+msgid "Pytorch 2.1.2+cu118"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:17
+#: e6429404fdc543e1a80c811b9ef32e2a
+msgid "Flash Attention 2.3.3"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:18
+#: a02f0bd8337949288a07caa4704aa55a
+msgid "Transformers 4.38.2"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:19
+#: 7072898a11164f7ca15acca7edaca4f9
+msgid "AutoGPTQ 0.7.1"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:20
+#: 76bdca0175824567908b4cbc83c02731
+msgid "AutoAWQ 0.2.4"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:22
+#: 568b1b0c821d4af199a3d6122f38d1ea
+msgid "The environment of the evaluation with vLLM is:"
+msgstr "测试vLLM时的环境配置："
+
+#: ../../source/benchmark/speed_benchmark.rst:26
+#: 73515f5745e148cc8ddf1e1ae1c9da3b
+msgid "Pytorch 2.3.0+cu118"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:27
+#: 3a291f04fa1f4c86b646c28625f36868
+msgid "Flash Attention 2.5.6"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:28
+#: 0c0ef00c714a43d3a34f3084b4198415
+msgid "Transformers 4.40.1"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:29
+#: 9f06eca79d96433e8aa3bc7ddc2bd2f0
+msgid "vLLM 0.4.2"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:31
+#: 7347c156175b4d91b0257d11781cbef3
+msgid "Note:"
+msgstr "注意："
+
+#: ../../source/benchmark/speed_benchmark.rst:33
+#: aa77ff662e564d6dbf92c329438dc9c8
+msgid "We use the batch size of 1 and the least number of GPUs as possible for the evalution."
+msgstr "batch size 设置为1，使用 GPU 数量尽可能少"
+
+#: ../../source/benchmark/speed_benchmark.rst:35
+#: 012d76e949c04800b07ec12b30179c15
+msgid "We test the speed and memory of generating 2048 tokens with the input lengths of 1, 6144, 14336, 30720, 63488, and 129024 tokens (\\>32k is only avaliable for Qwen2-72B-Instuct and Qwen2-7B-Instuct)."
+msgstr "我们测试生成2048 tokens时的速度与显存占用，输入长度分别为1、6144、14336、30720、63488、129024 tokens。(超过32K长度仅有 Qwen2-72B-Instuct 与 Qwen2-7B-Instuct 支持)"
+
+#: ../../source/benchmark/speed_benchmark.rst:38
+#: 9c656be43bf3416988786e8e97236550
+msgid "For vLLM, the memory usage is not reported because it pre-allocates all GPU memory. We use ``gpu_memory_utilization=0.9 max_model_len=32768 enforce_eager=False`` by default."
+msgstr "对于vLLM，由于GPU显存预分配，实际显存使用难以评估。默认情况下，统一设定为``gpu_memory_utilization=0.9 max_model_len=32768 enforce_eager=False``。"
+
+#: ../../source/benchmark/speed_benchmark.rst:43
+#: 17ae27b5cd9a48b99665eb630c771d80
+msgid "0.5B (Transformer)"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:46
+#: ../../source/benchmark/speed_benchmark.rst:84
+#: ../../source/benchmark/speed_benchmark.rst:123
+#: ../../source/benchmark/speed_benchmark.rst:161
+#: ../../source/benchmark/speed_benchmark.rst:200
+#: ../../source/benchmark/speed_benchmark.rst:239
+#: ../../source/benchmark/speed_benchmark.rst:294
+#: ../../source/benchmark/speed_benchmark.rst:316
+#: ../../source/benchmark/speed_benchmark.rst:330
+#: ../../source/benchmark/speed_benchmark.rst:348
+#: ../../source/benchmark/speed_benchmark.rst:387
+#: b729c12bd207442c984700a48bfdb3ff
+msgid "Model"
+msgstr "模型"
+
+#: ../../source/benchmark/speed_benchmark.rst:46
+#: ../../source/benchmark/speed_benchmark.rst:84
+#: ../../source/benchmark/speed_benchmark.rst:123
+#: ../../source/benchmark/speed_benchmark.rst:161
+#: ../../source/benchmark/speed_benchmark.rst:200
+#: ../../source/benchmark/speed_benchmark.rst:239
+#: ../../source/benchmark/speed_benchmark.rst:294
+#: ../../source/benchmark/speed_benchmark.rst:316
+#: ../../source/benchmark/speed_benchmark.rst:348
+#: ../../source/benchmark/speed_benchmark.rst:387
+#: a8779c4e04c74dd0a24836465b57794e
+msgid "Input Length"
+msgstr "输入长度"
+
+#: ../../source/benchmark/speed_benchmark.rst:46
+#: ../../source/benchmark/speed_benchmark.rst:84
+#: ../../source/benchmark/speed_benchmark.rst:123
+#: ../../source/benchmark/speed_benchmark.rst:161
+#: ../../source/benchmark/speed_benchmark.rst:200
+#: ../../source/benchmark/speed_benchmark.rst:239
+#: ../../source/benchmark/speed_benchmark.rst:294
+#: ../../source/benchmark/speed_benchmark.rst:316
+#: ../../source/benchmark/speed_benchmark.rst:330
+#: ../../source/benchmark/speed_benchmark.rst:348
+#: ../../source/benchmark/speed_benchmark.rst:387
+#: 2543cd648b094e00990b63d343b882e8
+msgid "Quantization"
+msgstr "量化"
+
+#: ../../source/benchmark/speed_benchmark.rst:46
+#: ../../source/benchmark/speed_benchmark.rst:84
+#: ../../source/benchmark/speed_benchmark.rst:123
+#: ../../source/benchmark/speed_benchmark.rst:161
+#: ../../source/benchmark/speed_benchmark.rst:200
+#: ../../source/benchmark/speed_benchmark.rst:239
+#: ../../source/benchmark/speed_benchmark.rst:294
+#: ../../source/benchmark/speed_benchmark.rst:316
+#: ../../source/benchmark/speed_benchmark.rst:348
+#: ../../source/benchmark/speed_benchmark.rst:387
+#: fe3ada130b30408e8e4736a55b0f8b9c
+msgid "GPU Num"
+msgstr "GPU数量"
+
+#: ../../source/benchmark/speed_benchmark.rst:46
+#: ../../source/benchmark/speed_benchmark.rst:84
+#: ../../source/benchmark/speed_benchmark.rst:123
+#: ../../source/benchmark/speed_benchmark.rst:161
+#: ../../source/benchmark/speed_benchmark.rst:200
+#: ../../source/benchmark/speed_benchmark.rst:239
+#: ../../source/benchmark/speed_benchmark.rst:294
+#: ../../source/benchmark/speed_benchmark.rst:316
+#: ../../source/benchmark/speed_benchmark.rst:348
+#: ../../source/benchmark/speed_benchmark.rst:387
+#: 6ab3aea03cb44388b6bd7ee3a1d7684c
+msgid "Speed(tokens/s)"
+msgstr "速度 (tokens/s)"
+
+#: ../../source/benchmark/speed_benchmark.rst:46
+#: ../../source/benchmark/speed_benchmark.rst:123
+#: ../../source/benchmark/speed_benchmark.rst:200
+#: ../../source/benchmark/speed_benchmark.rst:294
+#: ../../source/benchmark/speed_benchmark.rst:348
+#: 163d63199ed74a65b096283cf0a6b3df
+msgid "GPU Memory(GB)"
+msgstr "显存占用 (GB)"
+
+#: ../../source/benchmark/speed_benchmark.rst:48
+#: ../../source/benchmark/speed_benchmark.rst:86
+#: d8e54251b281451891a5332d2d1919c2
+msgid "Qwen2-0.5B-Instruct"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:48
+#: ../../source/benchmark/speed_benchmark.rst:50
+#: ../../source/benchmark/speed_benchmark.rst:52
+#: ../../source/benchmark/speed_benchmark.rst:54
+#: ../../source/benchmark/speed_benchmark.rst:56
+#: ../../source/benchmark/speed_benchmark.rst:58
+#: ../../source/benchmark/speed_benchmark.rst:60
+#: ../../source/benchmark/speed_benchmark.rst:62
+#: ../../source/benchmark/speed_benchmark.rst:64
+#: ../../source/benchmark/speed_benchmark.rst:66
+#: ../../source/benchmark/speed_benchmark.rst:68
+#: ../../source/benchmark/speed_benchmark.rst:70
+#: ../../source/benchmark/speed_benchmark.rst:72
+#: ../../source/benchmark/speed_benchmark.rst:74
+#: ../../source/benchmark/speed_benchmark.rst:76
+#: ../../source/benchmark/speed_benchmark.rst:78
+#: ../../source/benchmark/speed_benchmark.rst:86
+#: ../../source/benchmark/speed_benchmark.rst:88
+#: ../../source/benchmark/speed_benchmark.rst:90
+#: ../../source/benchmark/speed_benchmark.rst:92
+#: ../../source/benchmark/speed_benchmark.rst:94
+#: ../../source/benchmark/speed_benchmark.rst:96
+#: ../../source/benchmark/speed_benchmark.rst:98
+#: ../../source/benchmark/speed_benchmark.rst:100
+#: ../../source/benchmark/speed_benchmark.rst:102
+#: ../../source/benchmark/speed_benchmark.rst:104
+#: ../../source/benchmark/speed_benchmark.rst:106
+#: ../../source/benchmark/speed_benchmark.rst:108
+#: ../../source/benchmark/speed_benchmark.rst:110
+#: ../../source/benchmark/speed_benchmark.rst:112
+#: ../../source/benchmark/speed_benchmark.rst:114
+#: ../../source/benchmark/speed_benchmark.rst:116
+#: ../../source/benchmark/speed_benchmark.rst:125
+#: ../../source/benchmark/speed_benchmark.rst:127
+#: ../../source/benchmark/speed_benchmark.rst:129
+#: ../../source/benchmark/speed_benchmark.rst:131
+#: ../../source/benchmark/speed_benchmark.rst:133
+#: ../../source/benchmark/speed_benchmark.rst:135
+#: ../../source/benchmark/speed_benchmark.rst:137
+#: ../../source/benchmark/speed_benchmark.rst:139
+#: ../../source/benchmark/speed_benchmark.rst:141
+#: ../../source/benchmark/speed_benchmark.rst:143
+#: ../../source/benchmark/speed_benchmark.rst:145
+#: ../../source/benchmark/speed_benchmark.rst:147
+#: ../../source/benchmark/speed_benchmark.rst:149
+#: ../../source/benchmark/speed_benchmark.rst:151
+#: ../../source/benchmark/speed_benchmark.rst:153
+#: ../../source/benchmark/speed_benchmark.rst:155
+#: ../../source/benchmark/speed_benchmark.rst:163
+#: ../../source/benchmark/speed_benchmark.rst:165
+#: ../../source/benchmark/speed_benchmark.rst:167
+#: ../../source/benchmark/speed_benchmark.rst:169
+#: ../../source/benchmark/speed_benchmark.rst:171
+#: ../../source/benchmark/speed_benchmark.rst:173
+#: ../../source/benchmark/speed_benchmark.rst:175
+#: ../../source/benchmark/speed_benchmark.rst:177
+#: ../../source/benchmark/speed_benchmark.rst:179
+#: ../../source/benchmark/speed_benchmark.rst:181
+#: ../../source/benchmark/speed_benchmark.rst:183
+#: ../../source/benchmark/speed_benchmark.rst:185
+#: ../../source/benchmark/speed_benchmark.rst:187
+#: ../../source/benchmark/speed_benchmark.rst:189
+#: ../../source/benchmark/speed_benchmark.rst:191
+#: ../../source/benchmark/speed_benchmark.rst:193
+#: ../../source/benchmark/speed_benchmark.rst:202
+#: ../../source/benchmark/speed_benchmark.rst:204
+#: ../../source/benchmark/speed_benchmark.rst:206
+#: ../../source/benchmark/speed_benchmark.rst:208
+#: ../../source/benchmark/speed_benchmark.rst:210
+#: ../../source/benchmark/speed_benchmark.rst:212
+#: ../../source/benchmark/speed_benchmark.rst:214
+#: ../../source/benchmark/speed_benchmark.rst:216
+#: ../../source/benchmark/speed_benchmark.rst:218
+#: ../../source/benchmark/speed_benchmark.rst:220
+#: ../../source/benchmark/speed_benchmark.rst:222
+#: ../../source/benchmark/speed_benchmark.rst:224
+#: ../../source/benchmark/speed_benchmark.rst:226
+#: ../../source/benchmark/speed_benchmark.rst:228
+#: ../../source/benchmark/speed_benchmark.rst:230
+#: ../../source/benchmark/speed_benchmark.rst:232
+#: ../../source/benchmark/speed_benchmark.rst:241
+#: ../../source/benchmark/speed_benchmark.rst:243
+#: ../../source/benchmark/speed_benchmark.rst:245
+#: ../../source/benchmark/speed_benchmark.rst:247
+#: ../../source/benchmark/speed_benchmark.rst:249
+#: ../../source/benchmark/speed_benchmark.rst:251
+#: ../../source/benchmark/speed_benchmark.rst:253
+#: ../../source/benchmark/speed_benchmark.rst:255
+#: ../../source/benchmark/speed_benchmark.rst:257
+#: ../../source/benchmark/speed_benchmark.rst:259
+#: ../../source/benchmark/speed_benchmark.rst:261
+#: ../../source/benchmark/speed_benchmark.rst:263
+#: ../../source/benchmark/speed_benchmark.rst:265
+#: ../../source/benchmark/speed_benchmark.rst:267
+#: ../../source/benchmark/speed_benchmark.rst:269
+#: ../../source/benchmark/speed_benchmark.rst:271
+#: ../../source/benchmark/speed_benchmark.rst:273
+#: ../../source/benchmark/speed_benchmark.rst:275
+#: ../../source/benchmark/speed_benchmark.rst:277
+#: ../../source/benchmark/speed_benchmark.rst:279
+#: ../../source/benchmark/speed_benchmark.rst:281
+#: ../../source/benchmark/speed_benchmark.rst:283
+#: ../../source/benchmark/speed_benchmark.rst:285
+#: ../../source/benchmark/speed_benchmark.rst:287
+#: ../../source/benchmark/speed_benchmark.rst:296
+#: ../../source/benchmark/speed_benchmark.rst:298
+#: ../../source/benchmark/speed_benchmark.rst:302
+#: ../../source/benchmark/speed_benchmark.rst:306
+#: ../../source/benchmark/speed_benchmark.rst:310
+#: ../../source/benchmark/speed_benchmark.rst:318
+#: ../../source/benchmark/speed_benchmark.rst:350
+#: ../../source/benchmark/speed_benchmark.rst:354
+#: ../../source/benchmark/speed_benchmark.rst:356
+#: ../../source/benchmark/speed_benchmark.rst:362
+#: ../../source/benchmark/speed_benchmark.rst:364
+#: ../../source/benchmark/speed_benchmark.rst:370
+#: ../../source/benchmark/speed_benchmark.rst:372
+#: ../../source/benchmark/speed_benchmark.rst:389
+#: ../../source/benchmark/speed_benchmark.rst:395
+#: ../../source/benchmark/speed_benchmark.rst:405
+#: 088012662cc1481aa4119d7f6e097f51
+msgid "1"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:48
+#: ../../source/benchmark/speed_benchmark.rst:56
+#: ../../source/benchmark/speed_benchmark.rst:64
+#: ../../source/benchmark/speed_benchmark.rst:72
+#: ../../source/benchmark/speed_benchmark.rst:86
+#: ../../source/benchmark/speed_benchmark.rst:94
+#: ../../source/benchmark/speed_benchmark.rst:102
+#: ../../source/benchmark/speed_benchmark.rst:110
+#: ../../source/benchmark/speed_benchmark.rst:125
+#: ../../source/benchmark/speed_benchmark.rst:133
+#: ../../source/benchmark/speed_benchmark.rst:141
+#: ../../source/benchmark/speed_benchmark.rst:149
+#: ../../source/benchmark/speed_benchmark.rst:163
+#: ../../source/benchmark/speed_benchmark.rst:171
+#: ../../source/benchmark/speed_benchmark.rst:179
+#: ../../source/benchmark/speed_benchmark.rst:187
+#: ../../source/benchmark/speed_benchmark.rst:202
+#: ../../source/benchmark/speed_benchmark.rst:210
+#: ../../source/benchmark/speed_benchmark.rst:218
+#: ../../source/benchmark/speed_benchmark.rst:226
+#: ../../source/benchmark/speed_benchmark.rst:241
+#: ../../source/benchmark/speed_benchmark.rst:249
+#: ../../source/benchmark/speed_benchmark.rst:257
+#: ../../source/benchmark/speed_benchmark.rst:265
+#: ../../source/benchmark/speed_benchmark.rst:273
+#: ../../source/benchmark/speed_benchmark.rst:281
+#: ../../source/benchmark/speed_benchmark.rst:296
+#: ../../source/benchmark/speed_benchmark.rst:300
+#: ../../source/benchmark/speed_benchmark.rst:304
+#: ../../source/benchmark/speed_benchmark.rst:308
+#: ../../source/benchmark/speed_benchmark.rst:318
+#: ../../source/benchmark/speed_benchmark.rst:320
+#: ../../source/benchmark/speed_benchmark.rst:322
+#: ../../source/benchmark/speed_benchmark.rst:324
+#: ../../source/benchmark/speed_benchmark.rst:332
+#: ../../source/benchmark/speed_benchmark.rst:334
+#: ../../source/benchmark/speed_benchmark.rst:336
+#: ../../source/benchmark/speed_benchmark.rst:338
+#: ../../source/benchmark/speed_benchmark.rst:350
+#: ../../source/benchmark/speed_benchmark.rst:358
+#: ../../source/benchmark/speed_benchmark.rst:366
+#: ../../source/benchmark/speed_benchmark.rst:374
+#: ../../source/benchmark/speed_benchmark.rst:389
+#: ../../source/benchmark/speed_benchmark.rst:391
+#: ../../source/benchmark/speed_benchmark.rst:401
+#: ../../source/benchmark/speed_benchmark.rst:411
+#: ../../source/benchmark/speed_benchmark.rst:419
+#: ../../source/benchmark/speed_benchmark.rst:427
+#: ../../source/benchmark/speed_benchmark.rst:435
+#: ../../source/benchmark/speed_benchmark.rst:443
+#: 005cece541024c82832f5c8b5f1887a5
+msgid "BF16"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:48
+#: fa45d4fccc0d44c2800f972d2630a14f
+msgid "49.94"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:48
+#: 4eb0e83451fc4f93a061d148039df0de
+msgid "1.17"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:50
+#: ../../source/benchmark/speed_benchmark.rst:58
+#: ../../source/benchmark/speed_benchmark.rst:66
+#: ../../source/benchmark/speed_benchmark.rst:74
+#: ../../source/benchmark/speed_benchmark.rst:88
+#: ../../source/benchmark/speed_benchmark.rst:96
+#: ../../source/benchmark/speed_benchmark.rst:104
+#: ../../source/benchmark/speed_benchmark.rst:112
+#: ../../source/benchmark/speed_benchmark.rst:127
+#: ../../source/benchmark/speed_benchmark.rst:135
+#: ../../source/benchmark/speed_benchmark.rst:143
+#: ../../source/benchmark/speed_benchmark.rst:151
+#: ../../source/benchmark/speed_benchmark.rst:165
+#: ../../source/benchmark/speed_benchmark.rst:173
+#: ../../source/benchmark/speed_benchmark.rst:181
+#: ../../source/benchmark/speed_benchmark.rst:189
+#: ../../source/benchmark/speed_benchmark.rst:204
+#: ../../source/benchmark/speed_benchmark.rst:212
+#: ../../source/benchmark/speed_benchmark.rst:220
+#: ../../source/benchmark/speed_benchmark.rst:228
+#: ../../source/benchmark/speed_benchmark.rst:243
+#: ../../source/benchmark/speed_benchmark.rst:251
+#: ../../source/benchmark/speed_benchmark.rst:259
+#: ../../source/benchmark/speed_benchmark.rst:267
+#: ../../source/benchmark/speed_benchmark.rst:275
+#: ../../source/benchmark/speed_benchmark.rst:283
+#: ../../source/benchmark/speed_benchmark.rst:352
+#: ../../source/benchmark/speed_benchmark.rst:360
+#: ../../source/benchmark/speed_benchmark.rst:368
+#: ../../source/benchmark/speed_benchmark.rst:376
+#: ../../source/benchmark/speed_benchmark.rst:393
+#: ../../source/benchmark/speed_benchmark.rst:403
+#: ../../source/benchmark/speed_benchmark.rst:413
+#: ../../source/benchmark/speed_benchmark.rst:421
+#: ../../source/benchmark/speed_benchmark.rst:429
+#: ../../source/benchmark/speed_benchmark.rst:437
+#: ../../source/benchmark/speed_benchmark.rst:445
+#: 360e69153b484c13a7b341af2104245e
+msgid "GPTQ-Int8"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:50
+#: 937ae93383b649c4a9676caa076e2dfd
+msgid "36.35"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:50
+#: 54bc220ea7dd4876b029adefc06e51b8
+msgid "0.85"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:52
+#: ../../source/benchmark/speed_benchmark.rst:60
+#: ../../source/benchmark/speed_benchmark.rst:68
+#: ../../source/benchmark/speed_benchmark.rst:76
+#: ../../source/benchmark/speed_benchmark.rst:90
+#: ../../source/benchmark/speed_benchmark.rst:98
+#: ../../source/benchmark/speed_benchmark.rst:106
+#: ../../source/benchmark/speed_benchmark.rst:114
+#: ../../source/benchmark/speed_benchmark.rst:129
+#: ../../source/benchmark/speed_benchmark.rst:137
+#: ../../source/benchmark/speed_benchmark.rst:145
+#: ../../source/benchmark/speed_benchmark.rst:153
+#: ../../source/benchmark/speed_benchmark.rst:167
+#: ../../source/benchmark/speed_benchmark.rst:175
+#: ../../source/benchmark/speed_benchmark.rst:183
+#: ../../source/benchmark/speed_benchmark.rst:191
+#: ../../source/benchmark/speed_benchmark.rst:206
+#: ../../source/benchmark/speed_benchmark.rst:214
+#: ../../source/benchmark/speed_benchmark.rst:222
+#: ../../source/benchmark/speed_benchmark.rst:230
+#: ../../source/benchmark/speed_benchmark.rst:245
+#: ../../source/benchmark/speed_benchmark.rst:253
+#: ../../source/benchmark/speed_benchmark.rst:261
+#: ../../source/benchmark/speed_benchmark.rst:269
+#: ../../source/benchmark/speed_benchmark.rst:277
+#: ../../source/benchmark/speed_benchmark.rst:285
+#: ../../source/benchmark/speed_benchmark.rst:298
+#: ../../source/benchmark/speed_benchmark.rst:302
+#: ../../source/benchmark/speed_benchmark.rst:306
+#: ../../source/benchmark/speed_benchmark.rst:310
+#: ../../source/benchmark/speed_benchmark.rst:354
+#: ../../source/benchmark/speed_benchmark.rst:362
+#: ../../source/benchmark/speed_benchmark.rst:370
+#: ../../source/benchmark/speed_benchmark.rst:378
+#: ../../source/benchmark/speed_benchmark.rst:395
+#: ../../source/benchmark/speed_benchmark.rst:397
+#: ../../source/benchmark/speed_benchmark.rst:405
+#: ../../source/benchmark/speed_benchmark.rst:407
+#: ../../source/benchmark/speed_benchmark.rst:415
+#: ../../source/benchmark/speed_benchmark.rst:423
+#: ../../source/benchmark/speed_benchmark.rst:431
+#: ../../source/benchmark/speed_benchmark.rst:439
+#: ../../source/benchmark/speed_benchmark.rst:447
+#: 16599c94f7314c0c9605b2f3a4c69d8f
+msgid "GPTQ-Int4"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:52
+#: ../../source/benchmark/speed_benchmark.rst:64
+#: 3986a4bb478443d6a8b6d2316691873a
+msgid "49.56"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:52
+#: ../../source/benchmark/speed_benchmark.rst:54
+#: 27651c408d4346628ed094125b3b9aa5
+msgid "0.68"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:54
+#: ../../source/benchmark/speed_benchmark.rst:62
+#: ../../source/benchmark/speed_benchmark.rst:70
+#: ../../source/benchmark/speed_benchmark.rst:78
+#: ../../source/benchmark/speed_benchmark.rst:92
+#: ../../source/benchmark/speed_benchmark.rst:100
+#: ../../source/benchmark/speed_benchmark.rst:108
+#: ../../source/benchmark/speed_benchmark.rst:116
+#: ../../source/benchmark/speed_benchmark.rst:131
+#: ../../source/benchmark/speed_benchmark.rst:139
+#: ../../source/benchmark/speed_benchmark.rst:147
+#: ../../source/benchmark/speed_benchmark.rst:155
+#: ../../source/benchmark/speed_benchmark.rst:169
+#: ../../source/benchmark/speed_benchmark.rst:177
+#: ../../source/benchmark/speed_benchmark.rst:185
+#: ../../source/benchmark/speed_benchmark.rst:193
+#: ../../source/benchmark/speed_benchmark.rst:208
+#: ../../source/benchmark/speed_benchmark.rst:216
+#: ../../source/benchmark/speed_benchmark.rst:224
+#: ../../source/benchmark/speed_benchmark.rst:232
+#: ../../source/benchmark/speed_benchmark.rst:247
+#: ../../source/benchmark/speed_benchmark.rst:255
+#: ../../source/benchmark/speed_benchmark.rst:263
+#: ../../source/benchmark/speed_benchmark.rst:271
+#: ../../source/benchmark/speed_benchmark.rst:279
+#: ../../source/benchmark/speed_benchmark.rst:287
+#: ../../source/benchmark/speed_benchmark.rst:356
+#: ../../source/benchmark/speed_benchmark.rst:364
+#: ../../source/benchmark/speed_benchmark.rst:372
+#: ../../source/benchmark/speed_benchmark.rst:380
+#: ../../source/benchmark/speed_benchmark.rst:399
+#: ../../source/benchmark/speed_benchmark.rst:409
+#: ../../source/benchmark/speed_benchmark.rst:417
+#: ../../source/benchmark/speed_benchmark.rst:425
+#: ../../source/benchmark/speed_benchmark.rst:433
+#: ../../source/benchmark/speed_benchmark.rst:441
+#: ../../source/benchmark/speed_benchmark.rst:449
+#: c04b5415b5a44246bbadbf885865c319
+msgid "AWQ"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:54
+#: c7854ac0df17462398f1f76a46b3ceb1
+msgid "38.78"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:56
+#: ../../source/benchmark/speed_benchmark.rst:94
+#: ../../source/benchmark/speed_benchmark.rst:133
+#: ../../source/benchmark/speed_benchmark.rst:171
+#: ../../source/benchmark/speed_benchmark.rst:210
+#: ../../source/benchmark/speed_benchmark.rst:249
+#: ../../source/benchmark/speed_benchmark.rst:300
+#: ../../source/benchmark/speed_benchmark.rst:320
+#: ../../source/benchmark/speed_benchmark.rst:358
+#: ../../source/benchmark/speed_benchmark.rst:401
+#: 5af45da3133a4d77889a92dd902810fc
+msgid "6144"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:56
+#: fc1783a72ac548478ee1012f058540cf
+msgid "50.83"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:56
+#: 6234760eccdf45a8b46bb9b7f9934cc7
+msgid "6.42"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:58
+#: 81e100aa291f4a69bdb8fbbfbd1c756c
+msgid "36.56"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:58
+#: bd4eaeffae8b4b95b65a1510c0ec72af
+msgid "6.09"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:60
+#: 4d49282ef20744d683c57940b1ba28ae
+msgid "49.63"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:60
+#: ../../source/benchmark/speed_benchmark.rst:208
+#: ../../source/benchmark/speed_benchmark.rst:360
+#: e0a48a78d7ea46b3b2cffdaba0e9d5f9
+msgid "5.93"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:62
+#: 3b516aa67f8a4719bd2ea63babf07c15
+msgid "38.73"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:62
+#: 2dba1cef974e4eceb3cb96338c962a41
+msgid "5.92"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:64
+#: ../../source/benchmark/speed_benchmark.rst:102
+#: ../../source/benchmark/speed_benchmark.rst:141
+#: ../../source/benchmark/speed_benchmark.rst:179
+#: ../../source/benchmark/speed_benchmark.rst:218
+#: ../../source/benchmark/speed_benchmark.rst:257
+#: ../../source/benchmark/speed_benchmark.rst:304
+#: ../../source/benchmark/speed_benchmark.rst:322
+#: ../../source/benchmark/speed_benchmark.rst:366
+#: ../../source/benchmark/speed_benchmark.rst:411
+#: 4d9a02ffd625473ea24f167b93b22e31
+msgid "14336"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:64
+#: 9469dd8432ef400ca83ec82378ed742c
+msgid "13.48"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:66
+#: 5e888acd738b403280fcc366d84bd968
+msgid "36.23"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:66
+#: 576263eb00ff4410838b596a671b32ca
+msgid "13.15"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:68
+#: b1b3af71d6014981a26d9b93dc746830
+msgid "48.68"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:68
+#: ccb41af5c955448b9e86b13cb8032915
+msgid "12.97"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:70
+#: 70ad05614e664d58acd34db476124c98
+msgid "38.94"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:70
+#: 21f5daf199a54d5baa68038b1de87035
+msgid "12.99"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:72
+#: ../../source/benchmark/speed_benchmark.rst:110
+#: ../../source/benchmark/speed_benchmark.rst:149
+#: ../../source/benchmark/speed_benchmark.rst:187
+#: ../../source/benchmark/speed_benchmark.rst:226
+#: ../../source/benchmark/speed_benchmark.rst:265
+#: ../../source/benchmark/speed_benchmark.rst:308
+#: ../../source/benchmark/speed_benchmark.rst:324
+#: ../../source/benchmark/speed_benchmark.rst:374
+#: ../../source/benchmark/speed_benchmark.rst:419
+#: ../../source/benchmark/speed_benchmark.rst:427
+#: 66434d21ca3c4500b21c610d842fea26
+msgid "30720"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:72
+#: 6caac0e92a0c4878ab182276f59b1a5a
+msgid "49.25"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:72
+#: ../../source/benchmark/speed_benchmark.rst:224
+#: bd358e18689d4d7e958a7c40b95f54c9
+msgid "27.61"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:74
+#: b6534e4b6d2e49a9b52f49136ff4160b
+msgid "34.61"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:74
+#: 95f412d519524eeeaed30c404cfbe853
+msgid "27.28"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:76
+#: cbf81c32f81e4727aa522a1776d3e5d4
+msgid "48.18"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:76
+#: cb08e94a34884e0189889838ec3ae24d
+msgid "27.12"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:78
+#: 3885fdf7986847ee9e2e2a515b35708e
+msgid "38.19"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:78
+#: 00160d4e4a8a4b7281d69a5561c93465
+msgid "27.11"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:81
+#: fe2476be1e1e4fe78b61ef1568f74a09
+msgid "0.5B (vLLM)"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:86
+#: dd484cd49ebf4be8b751b7fd8c4d6251
+msgid "270.49"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:88
+#: 3ff18bb246f6426eae917293e1a3023f
+msgid "235.95"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:90
+#: 420043ef7154432c9caeba778897860b
+msgid "240.07"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:92
+#: ba025c19312c461d974b3d1e3620a5b0
+msgid "233.31"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:94
+#: 513ca55c943349dbbfc57cf8454a368f
+msgid "256.16"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:96
+#: 862f3bc6ff0b4eb0a8f75d47edbb7175
+msgid "224.30"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:98
+#: de1a2b035d6f4884b92a5ea391615fd4
+msgid "226.41"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:100
+#: 01684d53f5b14502ba31d26c8af11670
+msgid "222.83"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:102
+#: 6996912f3e8a41d1a7032f04193d96fa
+msgid "108.89"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:104
+#: 42fffbad74c74a498f2dc6707bec3e5a
+msgid "108.10"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:106
+#: 9bc4d5a9413640bfaf2e8cdaf3d9de23
+msgid "106.51"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:108
+#: 1f0f4505f7284df78a4322a61914f601
+msgid "104.16"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:110
+#: 461402e6ab4f470c9982574e2fa8bc68
+msgid "97.20"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:112
+#: bdaa7f6e026f47a4b2cacb232ad06387
+msgid "94.49"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:114
+#: 293677d7f8b9447e918689bb816f3579
+msgid "93.94"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:116
+#: 3f723444a6184d3cb313ae0c6a7787dd
+msgid "92.23"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:120
+#: 3bc05396581d451091e1ab8447ac93e6
+msgid "1.5B (Transformer)"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:125
+#: ../../source/benchmark/speed_benchmark.rst:163
+#: c075f7be1bd3453582f4853d19cf6c5a
+msgid "Qwen2-1.5B-Instruct"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:125
+#: 940f647973f941f18361f2102d70056b
+msgid "40.89"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:125
+#: 33a93e83ba564a9e917b2d6a754439fa
+msgid "3.44"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:127
+#: 84d70d96dde541f5971359449048324d
+msgid "31.51"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:127
+#: c30109a7082543f9bc6a5fe55a8b6a58
+msgid "2.31"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:129
+#: 6f68abe9e42c47639eeaeb4f5609f7b4
+msgid "42.47"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:129
+#: 73734b29fe234dbfbafba34f242c1e4a
+msgid "1.67"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:131
+#: c1fa797eb41a422f9361864ff712afa2
+msgid "33.62"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:131
+#: e700d18b36e64ad0a232c0214294920b
+msgid "1.64"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:133
+#: 688d1121e73a4812a4df971e66eb67c1
+msgid "40.86"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:133
+#: a3b341cd57c64071af1e1177c9eef514
+msgid "8.74"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:135
+#: ea1ea6dae9f04dec9ec1577bd1fb199e
+msgid "31.31"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:135
+#: caadde1aa8004027a18d1c239f6e5e14
+msgid "7.59"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:137
+#: 765e83dfbd2f40e7b77ca5a50feb121a
+msgid "42.78"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:137
+#: 93a119e08db942b29b2bcd62b9add69a
+msgid "6.95"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:139
+#: c7948bf6de3d40c3b36c011960dfcce0
+msgid "32.90"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:139
+#: 42f7420278f0473390c49416b4f41d34
+msgid "6.92"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:141
+#: 5b3fe348759643dc9c660c83da77b653
+msgid "40.08"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:141
+#: 773ea8ca41ba4c3e8e8e958b597c0fcb
+msgid "15.92"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:143
+#: e1bb60b24d8b442f99ee0b8682bde89c
+msgid "31.19"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:143
+#: 018567fe9dca42dfb12653d1977ccfe8
+msgid "14.79"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:145
+#: c69e4b4c0c604dc48eb84e00cfde594f
+msgid "42.25"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:145
+#: 20b961001b59497f8ab30c4085507df3
+msgid "14.14"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:147
+#: 8c68b14d52844f2d886c35a686834974
+msgid "33.24"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:147
+#: 0212afe446b145549d91c105e5e76614
+msgid "14.12"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:149
+#: 265ca5aa4b75412cb97db32ede5c0b80
+msgid "34.09"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:149
+#: 624e92cc77e74e74aa6a9b39bfecb4fd
+msgid "30.31"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:151
+#: 51548441e0e344cfb930a8834eb4487f
+msgid "28.52"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:151
+#: 6ae32ef178ec468885ed6481e3309479
+msgid "29.18"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:153
+#: 9de15749ba814fe5a9cd3eed27b72791
+msgid "31.30"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:153
+#: 770e0c3fc018489eae33ae577cca5cec
+msgid "28.54"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:155
+#: f7130dfa6c33425d86256e256d858806
+msgid "32.16"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:155
+#: 9147b886700248fb8c2727be584ae56b
+msgid "28.51"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:158
+#: d92811c61f17424b8776a4e80e11ca58
+msgid "1.5B (vLLM)"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:163
+#: 54ce51f375824d0094cc2e0926faab25
+msgid "175.55"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:165
+#: 0b778c681ce54d66be31e0cd56771b23
+msgid "172.28"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:167
+#: f10c01b0ec4949ce84cbc10634cef502
+msgid "184.58"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:169
+#: 24aa76bfc9e74b2da07dbd9b8d002f8f
+msgid "170.87"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:171
+#: 84d125e1ff8c4b22a31e67956aafaccb
+msgid "166.23"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:173
+#: b25360ebc8e64572afddba261b2e0454
+msgid "164.32"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:175
+#: 2371d6f852d9434da97e0c241fe2df5b
+msgid "174.04"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:177
+#: cec70be90f1246829919090565da1d04
+msgid "162.81"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:179
+#: 62e808f52f67419291ce162de4f75483
+msgid "83.67"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:181
+#: 325a76ef42644a9e81aa6841e40d2b49
+msgid "98.63"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:183
+#: 9fd5160c9fba4c0885e594392be90344
+msgid "97.65"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:185
+#: ca9f28089d854da28bd96755773ad0b7
+msgid "92.48"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:187
+#: b6a87ff7de0f443faa640c5211e0895c
+msgid "77.69"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:189
+#: aaf0a02fd4d34de7bb47aacdd731ca6d
+msgid "86.42"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:191
+#: edf6ad7d5056492ebdfe8f6dfacf7c05
+msgid "87.49"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:193
+#: 177861083b7b4faaaea3aed0bde2ee5e
+msgid "82.88"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:197
+#: 591b5d8eb7cf4e268960c3c765641bbc
+msgid "7B (Transformer)"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:202
+#: ../../source/benchmark/speed_benchmark.rst:241
+#: 2425a940728e4d9ea72b078da4335782
+msgid "Qwen2-7B-Instruct"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:202
+#: 13be9dd7081145d09cf5136f67a9fe3c
+msgid "37.97"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:202
+#: a8306c2c6628426ba629671f2b91d432
+msgid "14.92"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:204
+#: 7d2cae030101487294be3e6005c861fc
+msgid "30.85"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:204
+#: 5bda58cdaa24458faf190e38cbad13f5
+msgid "8.97"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:206
+#: 2a27fc54d87e41a9ab1e8992df16b23b
+msgid "36.17"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:206
+#: ffe46abbb7824a679d02206dee3333ab
+msgid "6.06"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:208
+#: 36df0c1fcd6a4407bfe596b1a1aa4a5b
+msgid "33.08"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:210
+#: ca21c086017e42c08ae8b48e38ba2e44
+msgid "34.74"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:210
+#: ad871a1ca3ef4c96bdf19b804c822fb4
+msgid "20.26"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:212
+#: 2add23066bb544ca801a8e8aaefd21f4
+msgid "31.13"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:212
+#: 5a49e504bb8349db8c995ec87262c6df
+msgid "14.31"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:214
+#: 3592401b6bfc46f68f11e99174f16644
+msgid "33.34"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:214
+#: 7e085044411946c5b74535ee688e7578
+msgid "11.40"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:216
+#: fec42d24f42a41d9873614085b1b4e31
+msgid "30.86"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:216
+#: b29634fb88a74077b1f1be29df2a1645
+msgid "11.27"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:218
+#: 9455c7d10a054c709e2ceabf6e85b819
+msgid "26.63"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:218
+#: fb7f29c39ecf4f408be4c6fc67debc47
+msgid "27.71"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:220
+#: 65b74ffea4554c749a6a0a3de7f676ab
+msgid "24.58"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:220
+#: 738cf84c7aa344bf93ee7fadba3f4309
+msgid "21.76"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:222
+#: 73a7770b142f445eb30cb8382df8ea63
+msgid "25.81"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:222
+#: ca82acc2868442c8bef3498d26b0fb6a
+msgid "18.86"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:224
+#: 00333797cbb34fddb0640685c2c18503
+msgid "18.72"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:226
+#: 0ade2fd6695d4947aa5d9f7ee6691f4d
+msgid "17.49"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:226
+#: 7dec10fbf5c040628de9df93e9c43799
+msgid "42.62"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:228
+#: 3f53840a8d974f52a121217b307ac088
+msgid "16.69"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:228
+#: 8aa4b800aadf451ab3a9a8fb57897120
+msgid "36.67"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:230
+#: 0e67e5cc63804e18aceaeb5ada3a94f5
+msgid "17.17"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:230
+#: db55bfed060249c284b3b0136de467dc
+msgid "33.76"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:232
+#: 7fe02e10cb3c4d23a8c031e0428e133c
+msgid "17.87"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:232
+#: b5692baa3c674fca950de5a1b9f0cf9e
+msgid "33.63"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:236
+#: 6e13a225b07b4757a3bf80d9aa33cc2c
+msgid "7B (vLLM)"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:241
+#: 57234c3af122433396e3e87d36299bcb
+msgid "80.45"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:243
+#: c5ef1e109ba5454bb955d15d7ce21818
+msgid "114.32"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:245
+#: 3df1a4c3f1c44f839d10d7ac7116a2a8
+msgid "143.40"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:247
+#: 3d59b820531d4ac59651d0b8b18b19fb
+msgid "96.65"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:249
+#: 89b50d236ae14900bdeae0d1886c3f00
+msgid "76.41"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:251
+#: 60ec294ddffa41fdb80bee7d408fe785
+msgid "107.02"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:253
+#: 0c0b7dbd9e1a4e6b94f5fc7f0ddaad46
+msgid "131.55"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:255
+#: 214fdc0aeede43a19e44a01625f2776b
+msgid "91.38"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:257
+#: 8be1d5ce382b44a6812db41b83a93747
+msgid "66.54"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:259
+#: e378d26b45584f00867b6aff18a201e1
+msgid "89.72"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:261
+#: f71fd9f2f0774608bf4ce9c1e91b9de6
+msgid "97.93"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:263
+#: 021c3f5aa7ac48ee9ae264aa74eba998
+msgid "76.87"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:265
+#: b27fd4caaacd4cebb883d46d69213898
+msgid "55.83"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:267
+#: 8cdb1a3217bf404399522fd20eb7c4d8
+msgid "71.58"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:269
+#: ee2c11a873f8417b8e87a646254ae81b
+msgid "81.48"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:271
+#: 6dd766b8464449238a924226065364ea
+msgid "63.62"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:273
+#: ../../source/benchmark/speed_benchmark.rst:435
+#: f02b84950b1045b3962f30a0898657e6
+msgid "63488"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:273
+#: 48ea75f36ff24d8f8d1c276a3020bc8d
+msgid "41.20"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:275
+#: 849a3504e01d406fbe7ebe5c1df7f7f5
+msgid "49.37"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:277
+#: 0ed4057d80274bad9344c263ffab2287
+msgid "54.12"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:279
+#: a6b5c183234541a5ad3d0a4477bb63fd
+msgid "45.89"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:281
+#: ../../source/benchmark/speed_benchmark.rst:443
+#: d4b4a84209274040a7285fc33bf13e93
+msgid "129024"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:281
+#: d8feeaa0ce814250bfe7706195f5e51c
+msgid "25.01"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:283
+#: ../../source/benchmark/speed_benchmark.rst:399
+#: eb9cc19c7743488a83b40c84b3edfabc
+msgid "27.73"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:285
+#: ae31f01fe1764ce2ae730eaaf1a20a1a
+msgid "29.39"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:287
+#: aab6112852674b11b9f30d0fbdde451e
+msgid "27.13"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:291
+#: 7ecf74aaa7344de2b10d3e451117ca3a
+msgid "57B-A14B (Transformer)"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:296
+#: ../../source/benchmark/speed_benchmark.rst:318
+#: ../../source/benchmark/speed_benchmark.rst:334
+#: ../../source/benchmark/speed_benchmark.rst:338
+#: f6db37832efd438894e5a7520268a63c
+msgid "Qwen2-57B-A14B-Instruct"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:296
+#: ../../source/benchmark/speed_benchmark.rst:300
+#: ../../source/benchmark/speed_benchmark.rst:304
+#: ../../source/benchmark/speed_benchmark.rst:308
+#: ../../source/benchmark/speed_benchmark.rst:318
+#: ../../source/benchmark/speed_benchmark.rst:320
+#: ../../source/benchmark/speed_benchmark.rst:322
+#: ../../source/benchmark/speed_benchmark.rst:324
+#: ../../source/benchmark/speed_benchmark.rst:350
+#: ../../source/benchmark/speed_benchmark.rst:352
+#: ../../source/benchmark/speed_benchmark.rst:358
+#: ../../source/benchmark/speed_benchmark.rst:360
+#: ../../source/benchmark/speed_benchmark.rst:368
+#: ../../source/benchmark/speed_benchmark.rst:376
+#: ../../source/benchmark/speed_benchmark.rst:378
+#: ../../source/benchmark/speed_benchmark.rst:380
+#: ../../source/benchmark/speed_benchmark.rst:389
+#: ../../source/benchmark/speed_benchmark.rst:393
+#: ../../source/benchmark/speed_benchmark.rst:397
+#: ../../source/benchmark/speed_benchmark.rst:399
+#: ../../source/benchmark/speed_benchmark.rst:403
+#: ../../source/benchmark/speed_benchmark.rst:407
+#: ../../source/benchmark/speed_benchmark.rst:409
+#: ../../source/benchmark/speed_benchmark.rst:413
+#: ../../source/benchmark/speed_benchmark.rst:415
+#: ../../source/benchmark/speed_benchmark.rst:417
+#: ../../source/benchmark/speed_benchmark.rst:421
+#: ../../source/benchmark/speed_benchmark.rst:423
+#: ../../source/benchmark/speed_benchmark.rst:425
+#: ../../source/benchmark/speed_benchmark.rst:429
+#: ../../source/benchmark/speed_benchmark.rst:431
+#: ../../source/benchmark/speed_benchmark.rst:433
+#: ../../source/benchmark/speed_benchmark.rst:437
+#: ../../source/benchmark/speed_benchmark.rst:439
+#: ../../source/benchmark/speed_benchmark.rst:441
+#: ../../source/benchmark/speed_benchmark.rst:447
+#: ../../source/benchmark/speed_benchmark.rst:449
+#: 28f5671ff9f0473bad8ecb1dc85fd4fd
+msgid "2"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:296
+#: cbe6a8135d7a499baf156fd40345740b
+msgid "4.76"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:296
+#: ab154c4808ab43ddb8d3fefb070b94d8
+msgid "110.29"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:298
+#: 8224ca1206f64485bea889415b74ffcb
+msgid "5.55"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:298
+#: f864b9292afa43d09b82cd8eaae4a7e8
+msgid "30.38"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:300
+#: fb809e7ceace400b8a082acac8fd4c61
+msgid "4.90"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:300
+#: 56194000744746b4a1e686600caf901c
+msgid "117.80"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:302
+#: 42beaf246b97438b8ee652873b047c52
+msgid "5.44"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:302
+#: c27750f759f24f85bef8955a43d19a98
+msgid "35.67"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:304
+#: 292a44b1c4f84f538a4681a1c9370a65
+msgid "4.58"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:304
+#: 082119c4a2cf4f77a403a48e45bab6f1
+msgid "128.17"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:306
+#: 64b7ab50e0324dd4b28a8e13165dcd50
+msgid "5.31"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:306
+#: f567c71bdba14d1fbf5d6c0b9fb9b4fa
+msgid "43.11"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:308
+#: ../../source/benchmark/speed_benchmark.rst:366
+#: 46bce29cddac48c9ab1c86a77f39b99c
+msgid "4.12"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:308
+#: 28b0a74ed44a4d4bb2848643d0cedb61
+msgid "163.77"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:310
+#: b06bf0b700294d86b5e0b83fff8b5cdc
+msgid "4.72"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:310
+#: ef78f3c059084e2c851ccc57bef3fa60
+msgid "58.01"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:313
+#: a25143ba4b5b4e17a2c24ef133f808ba
+msgid "57B-A14B (vLLM)"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:318
+#: 0c60acb691614f19a388b98b290c5380
+msgid "31.44"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:320
+#: 2e50af3e813c47d28b950d78c92b06d6
+msgid "31.77"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:322
+#: 670e9d878d6c4ff78cdf4f890c4fb163
+msgid "21.25"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:324
+#: 05c9e0c8cf4d4eb1b7c896c748b8e40a
+msgid "20.24"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:327
+#: 3afade020cfb40c3ac2521327ceb9278
+msgid "Note: Compared with dense models, MOE models have larger throughput when batch size is large, which is shown as follows:"
+msgstr "混合专家模型 (Mixture-of-Experts, MoE) 与稠密模型相比，当批大小较大时，吞吐量更大。下表展示了有关数据："
+
+#: ../../source/benchmark/speed_benchmark.rst:330
+#: 2e819ceb9e43455ab51c447ce96a3d56
+msgid "# Prompts"
+msgstr "请求数"
+
+#: ../../source/benchmark/speed_benchmark.rst:330
+#: 4e979ae74bab41e38717901f7f96171c
+msgid "QPS"
+msgstr "请求每秒 (QPS)"
+
+#: ../../source/benchmark/speed_benchmark.rst:330
+#: c0c85f59ac994011a81dfcc84f7ecdae
+msgid "Tokens/s"
+msgstr "速度 (tokens/s)"
+
+#: ../../source/benchmark/speed_benchmark.rst:332
+#: ../../source/benchmark/speed_benchmark.rst:336
+#: 1776dcc8818644d58d5933f9933e4e4e
+msgid "Qwen1.5-32B-Chat"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:332
+#: ../../source/benchmark/speed_benchmark.rst:334
+#: 0952bdd1354240ee9d60e7925c4ea42b
+msgid "100"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:332
+#: 6eae8bcf6ff946b8bea2957b3ded71be
+msgid "6.68"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:332
+#: 53f595571768489ba575c8b12fef3ec3
+msgid "7343.56"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:334
+#: f9f2397a1baf4e09814a418c5f61a592
+msgid "4.81"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:334
+#: d3cc853999fa404bbcb2f40d9ba74487
+msgid "5291.15"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:336
+#: ../../source/benchmark/speed_benchmark.rst:338
+#: c2e443593c0a4c4c8805450f7f4437c0
+msgid "1000"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:336
+#: 3cc76ffdf7e849d0a4d8dc36eb654fdf
+msgid "7.99"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:336
+#: 8683668f120647d8a234357dfab12b47
+msgid "8791.35"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:338
+#: 4a449baa6803435ba984163e7663cc5a
+msgid "5.18"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:338
+#: 6a62898ae87f4b3ea31c871f5eacb53a
+msgid "5698.37"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:341
+#: 092e36507d1d48638cd439cefe2a9e77
+msgid "The results are obtained from vLLM throughput benchmarking scripts, which can be reproduced by:"
+msgstr "数据由vLLM吞吐量测试脚本测得，可通过以下命令复现"
+
+#: ../../source/benchmark/speed_benchmark.rst:343
+#: ffdbcf34e9d64bfbac5cf88eef55cf76
+msgid "``python vllm/benchmarks/benchmark_throughput.py --input-len 1000 --output-len 100 --model <model_path> --num-prompts <number of prompts> --enforce-eager -tp 2``"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:345
+#: 4f799c9a507b45f0a6eeed9887fce4a9
+msgid "72B (Transformer)"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:350
+#: ../../source/benchmark/speed_benchmark.rst:389
+#: d179bb53b2774464b254c8fc169c9125
+msgid "Qwen2-72B-Instruct"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:350
+#: c60dad5fafab4a0ab8409ff5993fc81c
+msgid "7.45"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:350
+#: f3bb0a3fd6874bc39ae8bf32e50c5708
+msgid "134.74"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:352
+#: 3a199090c9d64c259a408eaeb48d481d
+msgid "7.30"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:352
+#: c0ce906ec79347419857b7018238cdcb
+msgid "71.00"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:354
+#: 4e60bd8a343a413080a258f4e3972257
+msgid "9.05"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:354
+#: 95fe8e443bb34e579229392653e8f2f2
+msgid "41.80"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:356
+#: e3f3148f13334ec18395e17ee0b22e1f
+msgid "9.96"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:356
+#: b4fb66e12fe54fefb762c7cb37beb7b2
+msgid "41.31"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:358
+#: 51d1ef53b0894cbda6f5876ab5f2c26b
+msgid "5.99"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:358
+#: 5e2eed3a83fc4f468d2c8cd2e8e8ed2c
+msgid "144.38"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:360
+#: 6db8fd30a9ca466b847825fdcd5cc37d
+msgid "80.60"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:362
+#: 64b0147addbe404693cb0edb5b8cf69b
+msgid "6.79"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:362
+#: 703be6e494414d6d980c4f4af7973c65
+msgid "47.90"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:364
+#: f77a7042530646d0bbd6596dc3b04e05
+msgid "7.49"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:364
+#: f547fb57b33f48f1a77dc065110be0d3
+msgid "47.42"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:366
+#: ../../source/benchmark/speed_benchmark.rst:374
+#: 3089d24bda534c67b5be05e281ad64e3
+msgid "3"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:366
+#: ffa5f85189ff4b128cc169437949572f
+msgid "169.93"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:368
+#: e9903e0519a24d94b06fd64480743688
+msgid "4.43"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:368
+#: 154c3b57143d4b92b5ee1c95e636ffe7
+msgid "95.14"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:370
+#: 19c10d1f9e284e18819df8e2180c4590
+msgid "4.87"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:370
+#: 85574d14ce2d43748b53c5ab5cc3a05b
+msgid "57.79"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:372
+#: 0d987bcce064487681d5cc4e6affd306
+msgid "5.23"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:372
+#: a49809ae1c804efc82256b58e1c8fa5a
+msgid "57.30"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:374
+#: d5e76c1fdbbc461996421d71b7a864db
+msgid "2.86"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:374
+#: b4b313dbb165470ab875032d569fa2c6
+msgid "209.03"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:376
+#: 254f53b31b6141478bf4c914cd3303c0
+msgid "2.83"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:376
+#: 8c14e41ad0cc4567ba1a1bc4a5e55194
+msgid "124.20"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:378
+#: 7338224b41e04ba988aee3b919a63c19
+msgid "3.02"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:378
+#: da4e3178c39a4c8284fa63428a298ece
+msgid "107.94"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:380
+#: d0c944ecc68d4c79a1cabc605aafdd3b
+msgid "1.85"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:380
+#: 83404c21d99d47568ada6ca97e4dc08c
+msgid "88.60"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:384
+#: 01710f215568440cb8193443cb4d2d11
+msgid "72B (vLLM)"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:387
+#: b426a4c94d9e46d0acb50f650c5aba1d
+msgid "Setting"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:389
+#: e69c240d64334418a00fd79fb5374896
+msgid "17.68"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:389
+#: 54209a9ed7064ea5999b591f3b581c85
+msgid "[Setting 1]"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:391
+#: ../../source/benchmark/speed_benchmark.rst:401
+#: ../../source/benchmark/speed_benchmark.rst:411
+#: ../../source/benchmark/speed_benchmark.rst:419
+#: ../../source/benchmark/speed_benchmark.rst:427
+#: ../../source/benchmark/speed_benchmark.rst:435
+#: ../../source/benchmark/speed_benchmark.rst:443
+#: ../../source/benchmark/speed_benchmark.rst:445
+#: 44fd7b7e19aa411785e2db8e02443b34
+msgid "4"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:391
+#: 8b7ff0d4a4eb4be1b88d5b41eff75c8f
+msgid "30.01"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:393
+#: 975913f1bbec4e149dcc576aba012b16
+msgid "27.56"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:395
+#: 4a055963a1eb4098aaed27e3b21b71b2
+msgid "29.60"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:395
+#: 74c3cf2b89f5438ab0f20f7d36a010b2
+msgid "[Setting 2]"
+msgstr "[设定2]"
+
+#: ../../source/benchmark/speed_benchmark.rst:397
+#: 03bfb2c5a69b4d3482518577c32fa39a
+msgid "42.82"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:401
+#: 3b8fe08697904a03bd49f267e9a8c223
+msgid "27.98"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:403
+#: dcc68256009b4048aa3bc8a1d9fa326b
+msgid "25.46"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:405
+#: bca0bc1c87c5451fb0eaffc5abe9ceff
+msgid "25.16"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:405
+#: 650de88091f441869c90042ec8034a97
+msgid "[Setting 3]"
+msgstr "[设定3]"
+
+#: ../../source/benchmark/speed_benchmark.rst:407
+#: 3c0e2a52803d4d22af83fb75abbf5233
+msgid "38.23"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:409
+#: 631ea6009552452b8fa46934e8e0f0d0
+msgid "25.77"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:411
+#: 8bf01519422a45d8a2e84533c6a20c06
+msgid "21.81"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:413
+#: 0b688d7ae4a6418da298b6f3b12fe4b3
+msgid "22.71"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:415
+#: 4b7e706fa6314752af02fbf0d293121f
+msgid "26.54"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:417
+#: 7c232a8ad11c47afaa0143d9db108b19
+msgid "21.50"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:419
+#: ../../source/benchmark/speed_benchmark.rst:427
+#: 3aaf3ae8d8714b0e9c9f14031b5d97a9
+msgid "19.43"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:421
+#: ../../source/benchmark/speed_benchmark.rst:429
+#: 4d8b93b402b94ceba65c5da2383327f6
+msgid "18.69"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:423
+#: ../../source/benchmark/speed_benchmark.rst:431
+#: cf8c56e770ac439fb0e668dd1f4bd745
+msgid "23.12"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:425
+#: ../../source/benchmark/speed_benchmark.rst:433
+#: d7b01f09c1d041029296a4d89f0685ae
+msgid "18.09"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:435
+#: 158d7f4cd81b4bcbbcab4f470074c0a4
+msgid "17.46"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:437
+#: 70c34f305d3f4b9d931355d1d48832dd
+msgid "15.30"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:439
+#: 162b19a8a6ae46129942682f783c3606
+msgid "13.23"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:441
+#: 455093999fa9451cae981ff12b01cd50
+msgid "13.14"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:443
+#: 8411be189ad24683af4e17fc8f2ac222
+msgid "11.70"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:445
+#: 4e4131989f7f4e57b75a6f14636c3c2c
+msgid "12.94"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:447
+#: 65fd14035c9d401f98f9013ad13e3db3
+msgid "8.33"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:449
+#: e6065cf3a98d4dc5be1c8ac43c759743
+msgid "7.78"
+msgstr ""
+
+#: ../../source/benchmark/speed_benchmark.rst:452
+#: 984f697c77ad416480978c2e703d3281
+msgid "[Default Setting]=(gpu_memory_utilization=0.9 max_model_len=32768 enforce_eager=False)"
+msgstr "[默认设定]=(gpu_memory_utilization=0.9 max_model_len=32768 enforce_eager=False)"
+
+#: ../../source/benchmark/speed_benchmark.rst:453
+#: 1a3dd3717c5b4dcebbd12bcfe0fbc33e
+msgid "[Setting 1]=(gpu_memory_utilization=0.98 max_model_len=4096 enforce_eager=True)"
+msgstr "[设定 1]=(gpu_memory_utilization=0.98 max_model_len=4096 enforce_eager=True)"
+
+#: ../../source/benchmark/speed_benchmark.rst:454
+#: ff06cfda1923459a9fbc40c68aa8359a
+msgid "[Setting 2]=(gpu_memory_utilization=1.0 max_model_len=4096 enforce_eager=True)"
+msgstr "[设定 2]=(gpu_memory_utilization=1.0 max_model_len=4096 enforce_eager=True)"
+
+#: ../../source/benchmark/speed_benchmark.rst:455
+#: adb3086724db4afa97ba526f69bd15b3
+msgid "[Setting 3]=(gpu_memory_utilization=1.0 max_model_len=8192 enforce_eager=True)"
+msgstr "[设定 3]=(gpu_memory_utilization=1.0 max_model_len=8192 enforce_eager=True)"
+
