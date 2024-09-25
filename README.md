@@ -8,6 +8,10 @@ my machine learning log
 conda create -n ml python=3.11 -y
 conda activate ml
 pip install -r requirements.txt
+
+python3.x -m venv .venv
+.venv\Scripts\activate
+source .venv/bin/activate
 ```
 
 ### Type
