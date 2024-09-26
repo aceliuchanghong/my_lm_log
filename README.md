@@ -30,7 +30,14 @@ source .venv/bin/activate
 9_recommendation_system
 ```
 
+
 ### prompt
+
+- 公式
+
+```
+使得$符号围绕公式,方便markdown显示
+```
 
 - zh
 
@@ -111,10 +118,6 @@ Please use Markdown format for your responses.
 可以通过一个示例，告诉GPT你想要
 ```
 
-- 公式
-```
-使得$符号围绕公式,方便markdown显示
-```
 
 ### Reference
 
