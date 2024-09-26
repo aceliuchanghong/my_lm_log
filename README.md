@@ -36,7 +36,7 @@ source .venv/bin/activate
 - 公式
 
 ```
-使得$符号围绕公式,方便markdown显示
+1.使得$符号围绕公式,2.对于\(包围的数学字母,替换为$符号,方便markdown显示
 ```
 
 - zh
