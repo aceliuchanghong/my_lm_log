@@ -1,0 +1,4 @@
+unsloth
+ipykernel
+jupyter
+notebook
