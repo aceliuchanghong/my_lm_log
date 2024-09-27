@@ -13,10 +13,15 @@
 # limitations under the License.
 import requests
 
-file_path = 'z_using_files/pics/00006737.jpg'
-json_input = {
-    "content": file_path,
-    "prompt": "以markdown表格形式描述图片"
-}
-response = requests.post("http://127.0.0.1:8927/predict", json=json_input)
+# 图像的URL和文本输入
+image_url = "https://picsum.photos/id/237/536/354"
+text_input = "以markdown表格形式描述图片"
+
+# 发送POST请求
+response = requests.post(
+    "http://127.0.0.1:8927/predict",
+    json={"image_url": image_url, "text_input": text_input}
+)
+
+# 打印状态码和响应内容
 print(f"Status: {response.status_code}\nResponse:\n {response.text}")

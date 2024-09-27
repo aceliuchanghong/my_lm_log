@@ -7,12 +7,14 @@ class SimpleLitAPI(ls.LitAPI):
         self.model2 = lambda x: x ** 3
 
     def decode_request(self, request):
-        return request["input"]
+        return request["input"], request["image_url"]
 
     def predict(self, x):
-        squared = self.model1(x)
-        cubed = self.model2(x)
+        input, image_url = x
+        squared = self.model1(input)
+        cubed = self.model2(input)
         output = squared + cubed
+        print(image_url+"00")
         return {"output": output}
 
     def encode_response(self, output):
