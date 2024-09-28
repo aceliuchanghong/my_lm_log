@@ -18,7 +18,7 @@ custom_config = r'--oem 3 --psm 6'
 # image = Image.open('../z_using_files/pics/00006737.jpg')
 # image = Image.open('../z_using_files/pics/00111002.jpg')
 # image = Image.open('../z_using_files/pics/img.png')
-image = Image.open('../z_using_files/pics/00077949.jpg')
+image = Image.open('../../z_using_files/pics/00077949.jpg')
 
 # 放大图片，resize() 方法中 (width, height) 是新大小
 # 比如放大2倍
