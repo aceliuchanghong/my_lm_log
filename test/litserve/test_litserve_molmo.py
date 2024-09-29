@@ -7,7 +7,7 @@ import requests
 model_path = '/mnt/data/llch/molmo/Molmo-7B-D-0924'
 
 
-class SimpleLitAPI(ls.LitAPI):
+class MolmoLitAPI(ls.LitAPI):
     def setup(self, device):
         self.processor = AutoProcessor.from_pretrained(
             model_path,
@@ -55,6 +55,6 @@ class SimpleLitAPI(ls.LitAPI):
 
 
 if __name__ == "__main__":
-    api = SimpleLitAPI()
+    api = MolmoLitAPI()
     server = ls.LitServer(api, accelerator="gpu", devices=1)
     server.run(port=8927)
