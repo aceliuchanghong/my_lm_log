@@ -4,7 +4,6 @@ import torch.optim as optim
 import torchvision.datasets as dsets
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
-import time
 
 # 创建数据集
 transform = transforms.Compose([
@@ -20,7 +19,7 @@ transform = transforms.Compose([
 class Generator(nn.Module):
     def __init__(self):
         super(Generator, self).__init__()
-        self.Encoder = nn.Sequential(
+        self.gen = nn.Sequential(
             # 输入维度100表示随机噪声向量的大小
             # 生成器的目标是将这个低维的随机噪声空间映射到高维的图像空间。逐步通过神经网络将100维的向量转换成28*28的图像。
             nn.Linear(100, 256),
@@ -35,14 +34,14 @@ class Generator(nn.Module):
         )
 
     def forward(self, input):
-        return self.Encoder(input).reshape(-1, 1, 28, 28)
+        return self.gen(input).reshape(-1, 1, 28, 28)
 
 
 # 判别器网络
 class Discriminator(nn.Module):
     def __init__(self):
         super(Discriminator, self).__init__()
-        self.Encoder = nn.Sequential(
+        self.disc = nn.Sequential(
             nn.Linear(28 * 28, 1024),
             nn.ReLU(True),
             nn.Linear(1024, 512),
@@ -55,7 +54,7 @@ class Discriminator(nn.Module):
         )
 
     def forward(self, input):
-        return self.Encoder(input.view(-1, 28 * 28))
+        return self.disc(input.view(-1, 28 * 28))
 
 
 # 封装训练过程为train函数

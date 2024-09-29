@@ -53,7 +53,6 @@ class MolmoLitAPI(ls.LitAPI):
         return {"output": output["output"]}
 
 
-
 if __name__ == "__main__":
     api = MolmoLitAPI()
     server = ls.LitServer(api, accelerator="gpu", devices=1)
