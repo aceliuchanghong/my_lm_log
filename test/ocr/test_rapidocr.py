@@ -1,3 +1,4 @@
+# 方向识别 https://github.com/RapidAI/RapidStructure/blob/main/docs/README_Orientation.md
 from rapidocr_onnxruntime import RapidOCR
 import time
 start_time = time.time()
@@ -6,7 +7,7 @@ end_time = time.time()
 elapsed_time = end_time - start_time
 print(f"rapidocr初始化耗时: {elapsed_time:.2f}秒")
 start_time = time.time()
-img_path = '../z_using_files/pics/page_1.png'
+img_path = './z_using_files/pics/11.jpg'
 result, _ = engine(img_path)
 end_time = time.time()
 elapsed_time = end_time - start_time
