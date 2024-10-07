@@ -30,9 +30,18 @@ source .venv/bin/activate
 9_recommendation_system
 ```
 
+### Thinking
+```text
+1.先学经典的引人入胜的如cnn/transformer之类的
+2.然后接触一些复杂生僻的网络架构
+3.补数学知识
+4.重学之前的内容
+5.全方面细节学习
+```
 
 ### Reference
 
 - [Machine Learning From Scratch](https://www.youtube.com/watch?v=p1hGz0w_OCo&list=PLFJCJMjAqfRLtPS5TOdrr8c3Gv6M1djmi)
 - [人工智能：现代方法（第4版）](pdf-no-links)
+- [深度学习500问](https://github.com/aceliuchanghong/DeepLearning-500-questions)
 - 
