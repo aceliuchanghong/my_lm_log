@@ -54,6 +54,8 @@ class MolmoLitAPI(ls.LitAPI):
 
 
 if __name__ == "__main__":
+    # python test/litserve/test_litserve_molmo.py
+    # export no_proxy="localhost,127.0.0.1"
     api = MolmoLitAPI()
     server = ls.LitServer(api, accelerator="gpu", devices=1)
     server.run(port=8927)

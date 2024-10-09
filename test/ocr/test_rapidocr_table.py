@@ -23,5 +23,6 @@ table_html_str, table_cell_bboxes, elapse = table_engine(img_path, ocr_result)
 # save_drawed_path = save_dir / f"vis_{Path(img_path).name}"
 # # hether to visualize the layout results.
 # viser(img_path, table_html_str, save_html_path, table_cell_bboxes, save_drawed_path)
-
+for buck in ocr_result:
+    print(buck[1])
 print(table_html_str.replace("<html><body>","").replace("</body></html>",""))
