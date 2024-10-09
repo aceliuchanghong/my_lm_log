@@ -44,6 +44,8 @@ class QuickOcrAPI(ls.LitAPI):
         tsr, local_images_path = inputs
         ocr_output_result = []
         for local_image in local_images_path:
+            single_result = {}
+            single_result['file_name'] = os.path.basename(local_image)
             ocr_result, _ = self.ocr_engine(local_image)
             ss = ''
             if tsr == 'normal':
@@ -54,11 +56,12 @@ class QuickOcrAPI(ls.LitAPI):
                 ss = table_html_str.replace("<html><body>", "").replace("</body></html>", "")
             else:
                 raise ValueError("Unsupported tsr value: {}".format(tsr))
-            ocr_output_result.append(ss)
+            single_result['ocr_result'] = ss
+            ocr_output_result.append(single_result)
         return {"output": ocr_output_result}
 
     def encode_response(self, output):
-        return {"output": output["output"]}
+        return output["output"]
 
 
 if __name__ == "__main__":
