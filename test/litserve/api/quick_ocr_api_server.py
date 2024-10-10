@@ -59,7 +59,7 @@ def extract_entity(llm, rule, all_text):
     # 从文本中提取信息
     basic_info = all_text
     ans = get_entity_result(llm, user_prompt, basic_info)
-    logger.info(f"{ans}")
+    logger.info(f"LLM回答结果:{ans}")
 
     if "answer" in ans and ans["answer"] != "DK":
         entity["result"] = ans["answer"]

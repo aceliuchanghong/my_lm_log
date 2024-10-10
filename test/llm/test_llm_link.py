@@ -32,16 +32,14 @@ def get_entity_result(client, user_prompt, Basic_info=""):
 1. 无法提取到正确匹配值时，answer应为"DK"
 2. 结果以JSON格式回复
 3. OCR结果不一定准，可能需要自动修复错别字
-"""
-    style = """## 示例输出
+## 示例输出
 {
     "question": "提取世界上最高的山的名字",
     "answer": "珠穆朗玛峰"
 }
 """
     prompt = (
-        style
-        + ("## 基本信息:\n" + Basic_info if len(Basic_info) > 10 else "")
+        ("## 基本信息:\n" + Basic_info if len(Basic_info) > 10 else "")
         + "\n## 要求:\n"
         + user_prompt
     )
@@ -61,7 +59,7 @@ def get_entity_result(client, user_prompt, Basic_info=""):
     ans_temp = response.choices[0].message.content
 
     logger.info(f"user-prompt:\n{prompt}")
-    logger.debug(f"LLM回答耗时: {elapsed_time:.2f}秒")
+    logger.info(f"LLM回答耗时: {elapsed_time:.2f}秒")
     logger.debug(f"大模型response:{response}")
     return parse_json_markdown(ans_temp)
 
