@@ -5,6 +5,8 @@ from rapid_table import RapidTable
 from dotenv import load_dotenv
 import requests
 from openai import OpenAI
+from langchain_ollama import OllamaEmbeddings
+from langchain_core.vectorstores import InMemoryVectorStore
 import logging
 import time
 import re
@@ -22,6 +24,7 @@ sys.path.insert(
 
 from test.llm.test_llm_link import get_entity_result
 from z_utils.rotate2fix_pic import detect_text_orientation
+from z_utils.get_text_chunk import chunk_by_LCEL
 
 load_dotenv()
 log_level = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -29,7 +32,7 @@ logging.basicConfig(level=getattr(logging, log_level))
 logger = logging.getLogger(__name__)
 
 
-def extract_entity(llm, rule, all_text):
+def extract_entity(llm, retriever, rule, all_text):
     """
     提取指定的实体信息。
 
@@ -58,7 +61,12 @@ def extract_entity(llm, rule, all_text):
 
     # 从文本中提取信息
     basic_info = all_text
-    ans = get_entity_result(llm, user_prompt, basic_info)
+    if len(all_text) > int(os.getenv("long_ocr_result")):
+        basic_info = "".join(
+            [i.page_content for i in retriever.invoke(user_prompt)[:2]]
+        )
+        logger.info(f"emb结果:{basic_info}")
+    ans = get_entity_result(llm, user_prompt, basic_info[:1800])
     logger.info(f"LLM回答结果:{ans}")
 
     if "answer" in ans and ans["answer"] != "DK":
@@ -176,6 +184,9 @@ class QuickOcrAPI(ls.LitAPI):
         )
         self.ocr_engine = RapidOCR()
         self.llm = OpenAI(api_key=os.getenv("API_KEY"), base_url=os.getenv("BASE_URL"))
+        self.embeddings = OllamaEmbeddings(
+            model=os.getenv("EMB_MODEL"), base_url=os.getenv("EMB_BASE_URL")
+        )
 
     def decode_request(self, request):
         images_path = request["images_path"]
@@ -210,7 +221,15 @@ class QuickOcrAPI(ls.LitAPI):
 
         # 定义多线程处理单个规则的函数
         def process_single_rule(rule):
-            return extract_entity(self.llm, rule, all_text[:2000])
+            retriever = None
+            if len(all_text) > int(os.getenv("long_ocr_result")):
+                text_doc = chunk_by_LCEL(all_text)
+                vectorstore = InMemoryVectorStore.from_texts(
+                    text_doc,
+                    embedding=self.embeddings,
+                )
+                retriever = vectorstore.as_retriever()
+            return extract_entity(self.llm, retriever, rule, all_text)
 
         # 使用 ThreadPoolExecutor 并行执行规则处理
         with concurrent.futures.ThreadPoolExecutor() as executor:
