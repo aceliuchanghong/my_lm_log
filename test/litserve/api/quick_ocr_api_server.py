@@ -9,7 +9,7 @@ import logging
 import time
 import re
 import concurrent.futures
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import sys
 
 
@@ -21,6 +21,7 @@ sys.path.insert(
 )
 
 from test.llm.test_llm_link import get_entity_result
+from z_utils.rotate2fix_pic import detect_text_orientation
 
 load_dotenv()
 log_level = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -101,27 +102,47 @@ def download_image(image_url, save_dir):
 
 
 def get_local_images(images_path):
-    local_images_path = []
     save_dir = os.path.join(os.getenv("upload_file_save_path"), "images")
+    local_images_path = []
+    rotate_path = os.path.join(os.getenv("upload_file_save_path"), "rotate_pics")
 
-    with ThreadPoolExecutor() as executor:
+    # 多线程下载和处理图片
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        # 提交下载任务，非本地文件才下载
         future_to_image = {
             executor.submit(download_image, image, save_dir): image
             for image in images_path
             if not os.path.isfile(image)
         }
 
-        for future in future_to_image:
+        # 处理所有任务，无论是下载还是文字方向检测
+        for future in as_completed(future_to_image):
             image = future_to_image[future]
             try:
-                local_image = future.result()
-                local_images_path.append(local_image)
+                # 下载后进行文字方向检测
+                downloaded_image = future.result()
+                result_image = detect_text_orientation(downloaded_image, rotate_path)
+                local_images_path.append(result_image)
             except Exception as e:
                 print(f"Error processing image {image}: {e}")
 
-        local_images_path.extend(
-            [image for image in images_path if os.path.isfile(image)]
+        # 对本地文件进行文字方向检测
+        future_to_image.update(
+            {
+                executor.submit(detect_text_orientation, image, rotate_path): image
+                for image in images_path
+                if os.path.isfile(image)
+            }
         )
+
+        # 处理已有本地图片的任务
+        for future in as_completed(future_to_image):
+            image = future_to_image[future]
+            try:
+                result_image = future.result()
+                local_images_path.append(result_image)
+            except Exception as e:
+                print(f"Error processing image {image}: {e}")
 
     return local_images_path
 
