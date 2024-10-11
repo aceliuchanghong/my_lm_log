@@ -4,3 +4,6 @@ litserve
 scikit-learn
 matplotlib
 openai
+torch
+gradio
+ipykernel

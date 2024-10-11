@@ -2,22 +2,6 @@
 
 my machine learning log
 
-author wechat account:sisconsavior
-
-### Env
-
-```shell
-conda create -n ml python=3.11 -y
-conda activate ml
-pip install -r requirements.txt
-
-python3.11 -m venv .venv
-.venv\Scripts\activate
-source .venv/bin/activate
-
-jupyter notebook --port=8888 --allow-root --ip='*'
-```
-
 ### Type
 
 ```
@@ -44,10 +28,27 @@ jupyter notebook --port=8888 --allow-root --ip='*'
 5.全方面细节学习
 ```
 
-### Testing
+### Env
+
+```shell
+# create
+conda create -n ml python=3.11 -y
+conda activate ml
+python -m venv .venv
+pip install -r requirements.txt
+# win
+Set-ExecutionPolicy Bypass -Scope Process -Force
+.venv\Scripts\activate
+# linux
+source .venv/bin/activate
+# jupyter
+jupyter notebook --port=8888 --allow-root --ip='*'
+```
+
+### Others
 
 ```text
-Hybrid_AI_Search_Engine:https://github.com/memfreeme/memfree
+author wechat account:sisconsavior
 ```
 
 ### Reference
@@ -55,4 +56,5 @@ Hybrid_AI_Search_Engine:https://github.com/memfreeme/memfree
 - [Machine Learning From Scratch](https://www.youtube.com/watch?v=p1hGz0w_OCo&list=PLFJCJMjAqfRLtPS5TOdrr8c3Gv6M1djmi)
 - [人工智能：现代方法（第4版.pdf）](pdf-no-links)
 - [深度学习500问](https://github.com/aceliuchanghong/DeepLearning-500-questions)
+- [深度学习入门：基于Python的理论与实现-鱼书](pdf-no-links)
 - 
