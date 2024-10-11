@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Index Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 头部样式 */
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        /* 布局样式 */
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* 左侧标题链接样式 */
+        .sidebar {
+            width: 20%;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            margin: 10px 0;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .sidebar a:hover {
+            background-color: #ddd;
+            padding-left: 10px;
+        }
+
+        /* 右侧主体内容样式 */
+        .content {
+            width: 80%;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 头部 -->
+    <header>
+        <h1>Welcome to the Index Page</h1>
+    </header>
+
+    <!-- 主题内容区域 -->
+    <div class="container">
+        <!-- 左侧标题链接 -->
+        <div class="sidebar">
+            <a href="#section1">Section 1</a>
+            <a href="#section2">Section 2</a>
+            <a href="#section3">Section 3</a>
+        </div>
+
+        <!-- 右侧主体内容 -->
+        <div class="content">
+            <h2 id="section1">Section 1</h2>
+            <p>This is the content for Section 1.</p>
+            <h2 id="section2">Section 2</h2>
+            <p>This is the content for Section 2.</p>
+            <h2 id="section3">Section 3</h2>
+            <p>This is the content for Section 3.</p>
+        </div>
+    </div>
+
+    <!-- JavaScript to handle keypress -->
+    <script>
+        document.addEventListener('keydown', function(event) {
+            if (event.ctrlKey && event.shiftKey && event.altKey && event.key === 'K') {
+                document.body.innerHTML = '00';  // Clear the entire page content
+            }
+        });
+    </script>
+</body>
+</html>

@@ -2,6 +2,8 @@
 
 my machine learning log
 
+author wechat account:sisconsavior
+
 ### Env
 
 ```shell
@@ -12,6 +14,8 @@ pip install -r requirements.txt
 python3.11 -m venv .venv
 .venv\Scripts\activate
 source .venv/bin/activate
+
+jupyter notebook --port=8888 --allow-root --ip='*'
 ```
 
 ### Type
@@ -43,12 +47,12 @@ source .venv/bin/activate
 ### Testing
 
 ```text
-https://github.com/memfreeme/memfree
+Hybrid_AI_Search_Engine:https://github.com/memfreeme/memfree
 ```
 
 ### Reference
 
 - [Machine Learning From Scratch](https://www.youtube.com/watch?v=p1hGz0w_OCo&list=PLFJCJMjAqfRLtPS5TOdrr8c3Gv6M1djmi)
-- [人工智能：现代方法（第4版）](pdf-no-links)
+- [人工智能：现代方法（第4版.pdf）](pdf-no-links)
 - [深度学习500问](https://github.com/aceliuchanghong/DeepLearning-500-questions)
 - 

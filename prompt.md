@@ -57,6 +57,8 @@
 
 ## Format
 请使用Markdown格式回答。
+使用中文回答
+使得$符号围绕公式
 ```
 
 - eng
@@ -85,6 +87,7 @@ The explanation should focus on the following aspects:
 ## Format
 Please use Markdown format for your responses.
 Response in Chinese
+Make the $ symbol surround the mathematical formula.
 ```
 
 - 会议纪要

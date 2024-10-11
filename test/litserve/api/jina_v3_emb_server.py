@@ -1,12 +1,12 @@
 # https://huggingface.co/jinaai/jina-embeddings-v3
 # V100跑不起来
 import os
-from dotenv import load_dotenv
-import logging
 import time
 import litserve as ls
 from sentence_transformers import SentenceTransformer
 
+from dotenv import load_dotenv
+import logging
 
 load_dotenv()
 log_level = os.getenv("LOG_LEVEL", "INFO").upper()
