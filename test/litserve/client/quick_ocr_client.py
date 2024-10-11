@@ -10,9 +10,9 @@ response = requests.post(
         "images_path": [
             "./z_using_files/pics/00.png",
             "./z_using_files/pics/11.jpg",
-            "./z_using_files/pics/00006737.jpg",
+            # "./z_using_files/pics/00006737.jpg",
             "https://www.fmprc.gov.cn/zwbd_673032/jghd_673046/202410/W020241008504386437112.jpg",
-            "https://www.mfa.gov.cn/zwbd_673032/jghd_673046/202410/W020241008522924065946.jpg",
+            # "https://www.mfa.gov.cn/zwbd_673032/jghd_673046/202410/W020241008522924065946.jpg",
         ],
         "table": "tsr",
         "rule": [

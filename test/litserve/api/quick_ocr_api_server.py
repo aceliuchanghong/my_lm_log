@@ -32,7 +32,7 @@ logging.basicConfig(level=getattr(logging, log_level))
 logger = logging.getLogger(__name__)
 
 
-def extract_entity(llm, retriever, rule, all_text):
+def extract_entity(llm, rule, all_text, retriever=None):
     """
     提取指定的实体信息。
 
@@ -48,12 +48,12 @@ def extract_entity(llm, retriever, rule, all_text):
         "提取"
         + rule["entity_name"]
         + (
-            ",结果案例:" + rule["entity_format"]
+            ",它的可能结果案例:" + rule["entity_format"]
             if len(rule["entity_format"]) > 1
             else ""
         )
         + (
-            ",结果正则:" + rule["entity_regex_pattern"]
+            ",它的可能结果正则:" + rule["entity_regex_pattern"]
             if len(rule["entity_regex_pattern"]) > 1
             else ""
         )
@@ -66,7 +66,9 @@ def extract_entity(llm, retriever, rule, all_text):
             [i.page_content for i in retriever.invoke(user_prompt)[:2]]
         )
         logger.info(f"emb结果:{basic_info}")
-    ans = get_entity_result(llm, user_prompt, basic_info[:1800])
+    ans = get_entity_result(
+        llm, user_prompt, basic_info[: min(int(os.getenv("long_ocr_result")), 1800)]
+    )
     logger.info(f"LLM回答结果:{ans}")
 
     if "answer" in ans and ans["answer"] != "DK":
@@ -219,17 +221,18 @@ class QuickOcrAPI(ls.LitAPI):
         start_time = time.time()
         entity_list = []
 
+        retriever = None
+        if len(all_text) > int(os.getenv("long_ocr_result")):
+            text_doc = chunk_by_LCEL(all_text)
+            vectorstore = InMemoryVectorStore.from_texts(
+                text_doc,
+                embedding=self.embeddings,
+            )
+            retriever = vectorstore.as_retriever()
+
         # 定义多线程处理单个规则的函数
         def process_single_rule(rule):
-            retriever = None
-            if len(all_text) > int(os.getenv("long_ocr_result")):
-                text_doc = chunk_by_LCEL(all_text)
-                vectorstore = InMemoryVectorStore.from_texts(
-                    text_doc,
-                    embedding=self.embeddings,
-                )
-                retriever = vectorstore.as_retriever()
-            return extract_entity(self.llm, retriever, rule, all_text)
+            return extract_entity(self.llm, rule, all_text, retriever)
 
         # 使用 ThreadPoolExecutor 并行执行规则处理
         with concurrent.futures.ThreadPoolExecutor() as executor:

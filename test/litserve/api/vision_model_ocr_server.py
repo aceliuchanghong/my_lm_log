@@ -46,12 +46,12 @@ class MolmoOcrLitAPI(ls.LitAPI):
             "提取"
             + rule["entity_name"]
             + (
-                ",结果案例:" + rule["entity_format"]
+                ",它的可能结果案例:" + rule["entity_format"]
                 if len(rule["entity_format"]) > 1
                 else ""
             )
             + (
-                ",结果正则:" + rule["entity_regex_pattern"]
+                ",它的可能结果正则:" + rule["entity_regex_pattern"]
                 if len(rule["entity_regex_pattern"]) > 1
                 else ""
             )
