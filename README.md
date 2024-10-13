@@ -57,4 +57,5 @@ author wechat account:sisconsavior
 - [人工智能：现代方法（第4版.pdf）](pdf-no-links)
 - [深度学习500问](https://github.com/aceliuchanghong/DeepLearning-500-questions)
 - [深度学习入门：基于Python的理论与实现-鱼书](z_using_files/paper/《深度学习入门：基于Python的理论与实现》高清中文版-鱼书.pdf)
+- [minimind训练教程](https://github.com/aceliuchanghong/minimind/)
 - 
