@@ -164,18 +164,15 @@ class QuickOcrAPI(ls.LitAPI):
 
         ocr_result, _ = self.ocr_engine(local_image)
         ss = ""
-        if tsr == "normal":
-            for buck in ocr_result:
-                ss = ss + buck[1] + " "
-        elif tsr == "tsr":
+        for buck in ocr_result:
+            ss += buck[1] + " "
+        if tsr == "tsr":
             table_html_str, table_cell_bboxes, elapse = self.table_engine(
                 local_image, ocr_result
             )
             ss = table_html_str.replace("<html><body>", "").replace(
                 "</body></html>", ""
             )
-        else:
-            raise ValueError("Unsupported tsr value: {}".format(tsr))
 
         single_result["ocr_result"] = ss
         return single_result

@@ -8,18 +8,20 @@ response = requests.post(
     f"http://{ip}:8109/predict",
     json={
         "images_path": [
-            "./z_using_files/pics/00.png",
-            "./z_using_files/pics/11.jpg",
+            # "no_git_oic/采购合同4.pdf_show_0.jpg",
+            # "./z_using_files/pics/00.png",
+            # "./z_using_files/pics/11.jpg",
             # "./z_using_files/pics/00006737.jpg",
-            "https://www.fmprc.gov.cn/zwbd_673032/jghd_673046/202410/W020241008504386437112.jpg",
+            "no_git_oic/page_3.png",
+            # "https://www.fmprc.gov.cn/zwbd_673032/jghd_673046/202410/W020241008504386437112.jpg",
             # "https://www.mfa.gov.cn/zwbd_673032/jghd_673046/202410/W020241008522924065946.jpg",
         ],
-        "table": "tsr",
+        "table": "normal",  # 推荐normal 页面复杂使用normal,图像规则使用tsr,tsr是html表格
         "rule": [
             {
                 "entity_name": "10位数条形码号码",
                 "entity_format": "2100000010",
-                "entity_regex_pattern": "[0-9]{10}",
+                "entity_regex_pattern": "[1-2][0-9]{9}",
             },
             {
                 "entity_name": "受票单位名称",
@@ -39,7 +41,7 @@ response = requests.post(
             {
                 "entity_name": "合同-SOB号",
                 "entity_format": "SOB20..-..",
-                "entity_regex_pattern": "S[Oo0][BA](\d{6}|\d{8})-\d{5}",
+                "entity_regex_pattern": "S[Oo0][3BA](\d{6}|\d{8})-\d{5}",
             },
         ],
     },
