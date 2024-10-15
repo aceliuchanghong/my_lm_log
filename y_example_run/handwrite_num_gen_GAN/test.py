@@ -2,7 +2,7 @@ import torch
 import matplotlib.pyplot as plt
 import torchvision.utils as vutils
 
-from y_example_run.handwrite_num_GAN.GAN import Generator
+from y_example_run.handwrite_num_gen_GAN.GAN import Generator
 
 
 def test(generator_path, device, num_samples=16):
@@ -30,6 +30,6 @@ def test(generator_path, device, num_samples=16):
 
 
 if __name__ == "__main__":
-    run_device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    run_device = "cuda" if torch.cuda.is_available() else "cpu"
     device = torch.device(run_device)
-    test('generator.pth', device)
+    test("generator.pth", device)
