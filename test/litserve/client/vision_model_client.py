@@ -21,7 +21,7 @@ response = requests.post(
         "rule": {
             "entity_name": "10位数条形码号码",
             "entity_format": "2100000010",
-            "entity_regex_pattern": "[0-9]{10}",
+            "entity_regex_pattern": "[1-2][0-9]{9}",
         },
     },
 )
@@ -29,3 +29,9 @@ print(f"Status: {response.status_code}\nResponse:\n {response.text}")
 end_time = time.time()
 elapsed_time = end_time - start_time
 logger.info(f"耗时: {elapsed_time:.2f}秒")
+
+"""
+Status: 200
+Response:
+ {"result":"2200000003","entity_name":"10位数条形码号码"}
+"""

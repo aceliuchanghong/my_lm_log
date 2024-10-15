@@ -9,9 +9,9 @@ table_engine = RapidTable(model_path="./test/ocr/ch_ppstructure_mobile_v2_SLANet
 ocr_engine = RapidOCR()
 # viser = VisTable()
 
-img_path = "no_git_oic/page_1.png"
+# img_path = "no_git_oic/page_1.png"
 # img_path = "no_git_oic/采购合同4.pdf_show_0.jpg"
-# img_path = './z_using_files/pics/00.png'
+img_path = "no_git_oic/企业微信截图_17288805401553.png"
 
 ocr_result, _ = ocr_engine(img_path)
 table_html_str, table_cell_bboxes, elapse = table_engine(img_path, ocr_result)

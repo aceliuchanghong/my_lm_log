@@ -14,7 +14,9 @@ start_time = time.time()
 url = "http://127.0.0.1:8927/predict"
 data = {
     "image_path": "no_git_oic/采购合同4.pdf_show_0.jpg",
-    "text_input": "提取SOB号码,它的可能结果案例:SOB20..-..它的可能结果正则:S[Oo0][BA](\d{6}|\d{8})-\d{5}",
+    # "text_input": "提取SOB号码,它的可能结果案例:SOB20..-..它的可能结果正则:S[Oo0][BA](\d{6}|\d{8})-\d{5}",
+    "text_input": "提取图片中kv,json格式返回",
+    # "text_input": "将图片还原回markdown格式",
 }
 
 response = requests.post(url, json=data)
