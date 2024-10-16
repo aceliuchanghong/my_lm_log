@@ -49,6 +49,8 @@ jupyter notebook --port=8888 --allow-root --ip='*'
 
 ```text
 author wechat account:sisconsavior
+
+moffee make xx.md -o output_html/
 ```
 
 ### Reference

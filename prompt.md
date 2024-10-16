@@ -9,6 +9,17 @@
 3.翻译为地道的英文:
 ```
 
+```from:i will-beatles,lch改编
+  E   C#m  F#m  B7
+让 AI 与你  同   行
+E       C#m      G#m
+从基础  一步步    学起
+E7    A     B     C#m
+人工  智能  探索   未知
+ A     B      E 
+并肩  不怕难 来吧
+```
+
 - Prompt标准化结构
 
 ```
@@ -32,6 +43,8 @@
 
 示例（Example）
 可以通过一个示例，告诉GPT你想要
+
+Instruction
 ```
 
 - zh
