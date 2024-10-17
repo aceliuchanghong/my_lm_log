@@ -1,4 +1,12 @@
-### 循环神经网络（RNN
+### 循环神经网络（RNN)
+
+(input0, state0) -> LSTM RNN -> (output0, state1);
+
+(input1, state1) -> LSTM RNN -> (output1, state2);
+
+...
+
+(inputN, stateN)-> LSTM RNN -> (outputN, stateN+1);
 
 #### 1. 核心概念
 循环神经网络（RNN，Recurrent Neural Network）是一种专门用于处理序列数据的神经网络。RNN通过隐藏状态（hidden state）来记忆之前的输入，使其能够捕捉到时间步之间的依赖关系。这使得RNN特别适合处理时间序列、自然语言处理等涉及顺序信息的问题。
