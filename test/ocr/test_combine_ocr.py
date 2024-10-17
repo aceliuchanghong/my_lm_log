@@ -50,7 +50,7 @@ def create_textline_from_data(data):
 
 if __name__ == "__main__":
     IMAGE_PATH = "no_git_oic/page_1.png"
-    IMAGE_PATH = "no_git_oic/发票签收单2.pdf_show_0.jpg"
+    IMAGE_PATH = "no_git_oic/Snipaste_2024-10-14_13-41-02.png"
 
     det_model_path = os.getenv("SURYA_DET3_MODEL_PATH")
     rec_model_path = os.getenv("SURYA_REC2_MODEL_PATH")
@@ -78,8 +78,9 @@ if __name__ == "__main__":
         text_lines.append(text_line)
     markdown0 = polygon_to_markdown(text_lines)
     markdown1 = markdown0.splitlines()[:14]
-    for markdown in markdown1:
-        print(f"{markdown}")
+
+    rapid_ocr_markdown = "\n".join([text for text in markdown1 if len(text) > 0])
+    print(f"{rapid_ocr_markdown}")
 
     ocr_result = run_surya_ocr(
         IMAGE_PATH, det_model, det_processor, rec_model, rec_processor

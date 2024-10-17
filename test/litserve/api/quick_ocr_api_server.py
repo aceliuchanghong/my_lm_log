@@ -13,7 +13,13 @@ import re
 import concurrent.futures
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import sys
-
+from surya.model.detection.model import (
+    load_model as load_det_model,
+    load_processor as load_det_processor,
+)
+from surya.model.recognition.model import load_model as load_rec_model
+from surya.model.recognition.processor import load_processor as load_rec_processor
+from PIL import Image
 
 sys.path.insert(
     0,
@@ -22,6 +28,8 @@ sys.path.insert(
     ),
 )
 
+from test.ocr.test_surya import polygon_to_markdown, run_surya_ocr
+from test.ocr.test_combine_ocr import create_textline_from_data
 from test.llm.test_llm_link import get_entity_result
 from z_utils.rotate2fix_pic import detect_text_orientation
 from z_utils.get_text_chunk import chunk_by_LCEL
@@ -162,22 +170,47 @@ class QuickOcrAPI(ls.LitAPI):
         single_result = {}
         single_result["file_name"] = os.path.basename(local_image)
 
-        ocr_result, _ = self.ocr_engine(local_image)
-        ss = ""
-        for buck in ocr_result:
-            ss += buck[1] + " "
-        if tsr == "tsr":
-            table_html_str, table_cell_bboxes, elapse = self.table_engine(
-                local_image, ocr_result
-            )
-            ss = table_html_str.replace("<html><body>", "").replace(
-                "</body></html>", ""
-            )
+        rapid_ocr_result, _ = self.ocr_engine(local_image)
+        # ss = ""
+        # for buck in ocr_result:
+        #     ss += buck[1] + " "
+        # if tsr == "tsr":
+        #     table_html_str, table_cell_bboxes, elapse = self.table_engine(
+        #         local_image, ocr_result
+        #     )
+        #     ss = table_html_str.replace("<html><body>", "").replace(
+        #         "</body></html>", ""
+        #     )
+        text_lines = []
+        for line in rapid_ocr_result:
+            text_line = create_textline_from_data(line)
+            text_lines.append(text_line)
+        markdown0 = polygon_to_markdown(text_lines)
+        markdown1 = markdown0.splitlines()[: int(os.getenv("import_head_lines"))]
+        rapid_ocr_markdown = "\n".join([text for text in markdown1 if len(text) > 0])
+        logger.info(f"rapid_ocr_markdown:{rapid_ocr_markdown}")
 
-        single_result["ocr_result"] = ss
+        surya_ocr_result = run_surya_ocr(
+            local_image,
+            self.det_model,
+            self.det_processor,
+            self.rec_model,
+            self.rec_processor,
+        )
+        logger.info(f"surya_ocr_result:{surya_ocr_result}")
+
+        single_result["ocr_result"] = rapid_ocr_markdown + surya_ocr_result
         return single_result
 
     def setup(self, device):
+        det_model_path = os.getenv("SURYA_DET3_MODEL_PATH")
+        rec_model_path = os.getenv("SURYA_REC2_MODEL_PATH")
+
+        self.rec_processor = load_rec_processor()
+        self.det_model = load_det_model(det_model_path)
+        self.det_processor = load_det_processor(det_model_path)
+        self.rec_model = load_rec_model(rec_model_path)
+
         self.table_engine = RapidTable(
             model_path=os.getenv("rapidocr_table_engine_model_path")
         )

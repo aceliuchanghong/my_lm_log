@@ -87,8 +87,13 @@ def run_surya_ocr(IMAGE_PATH, det_model, det_processor, rec_model, rec_processor
         logger.debug(f"polygon:{text_line.polygon}")
         logger.debug(f"bbox:{text_line.bbox}")
 
-    logger.info(f"markdown:\n{polygon_to_markdown(predictions[0].text_lines)}")
-    return predictions
+    markdown_predictions0 = polygon_to_markdown(predictions[0].text_lines)
+    markdown_predictions1 = markdown_predictions0.splitlines()
+    markdown_predictions = "\n".join(
+        [text for text in markdown_predictions1 if len(text) > 0]
+    )
+    logger.debug(f"markdown:\n{markdown_predictions}")
+    return markdown_predictions
 
 
 def run_surya_batch_text_detection(IMAGE_PATH, det_model, det_processor):
