@@ -19,7 +19,7 @@ from surya.model.detection.model import (
 )
 from surya.model.recognition.model import load_model as load_rec_model
 from surya.model.recognition.processor import load_processor as load_rec_processor
-from PIL import Image
+
 
 sys.path.insert(
     0,
@@ -200,6 +200,19 @@ class QuickOcrAPI(ls.LitAPI):
         logger.info(f"surya_ocr_result:{surya_ocr_result}")
 
         single_result["ocr_result"] = rapid_ocr_markdown + surya_ocr_result
+
+        try:
+            save_dir = os.path.join(os.getenv("upload_file_save_path"), "images")
+            rotate_path = os.path.join(
+                os.getenv("upload_file_save_path"), "rotate_pics"
+            )
+            upload_image = os.path.join(save_dir, single_result["file_name"])
+            rotate_image = os.path.join(rotate_path, single_result["file_name"])
+            os.remove(upload_image)
+            os.remove(rotate_image)
+        except Exception as e:
+            logger.error(f"{e}\ndel:{upload_image} or {rotate_image} failed")
+
         return single_result
 
     def setup(self, device):
