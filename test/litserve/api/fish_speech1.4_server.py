@@ -1,7 +1,10 @@
 from fish_audio_sdk import Session, TTSRequest, ReferenceAudio
+import argparse
 
 
-def generate_tts_file(session_id, input_text, reference_audio_path, output_path):
+def generate_tts_file(
+    session_id, input_text, reference_audio_path, reference_text, output_path
+):
     session = Session(session_id)
 
     with open(reference_audio_path, "rb") as audio_file:
@@ -12,7 +15,7 @@ def generate_tts_file(session_id, input_text, reference_audio_path, output_path)
                     references=[
                         ReferenceAudio(
                             audio=audio_file.read(),
-                            text="清晨温柔的光缓缓卸下,亲闭双眼,感觉那光像柔软的手在鼻尖轻敲,满是母亲的宠溺,张开双手,阳光便长绕了我,一点点一滴滴地融入我的身体,使我的血液都变得温热起来。",
+                            text=reference_text,
                         )
                     ],
                 )
@@ -20,10 +23,42 @@ def generate_tts_file(session_id, input_text, reference_audio_path, output_path)
                 f.write(chunk)
 
 
-# 调用函数示例
-generate_tts_file(
-    "233caaxxxx45eac26e905",
-    "外观检查：应无机械损伤、起层或内电极裸露现象,安装用表面的每个棱边的熔蚀应不超过 25%(见图1)。",
-    "z_using_files/mp3/ylh.wav",
-    "no_git_oic/ylh_gen.mp3",
-)
+if __name__ == "__main__":
+
+    """    
+    python test/litserve/api/fish_speech1.4_server.py \
+        --input_text "打开文档提取网站,上传pdf合同文件,设置好基本参数,点击开始提取,然后等待一下,查看提取结果" \
+        --reference_audio_path "z_using_files/mp3/登陆系统,进入层数和K值预测界面.wav" \
+        --reference_text "登陆系统,进入层数和K值预测界面" \
+        --output_path "no_git_oic/ADET.mp3"
+    """
+    parser = argparse.ArgumentParser(
+        description="Process TTS file generation arguments."
+    )
+    parser.add_argument(
+        "--key",
+        default="233caab7218248c8b97d145eac26e905",
+        help="API key for TTS service",
+    )
+    parser.add_argument(
+        "--input_text", required=True, help="Text to be converted to speech"
+    )
+    parser.add_argument(
+        "--reference_audio_path", required=True, help="Path to reference audio file"
+    )
+    parser.add_argument(
+        "--reference_text", required=True, help="Reference text for comparison"
+    )
+    parser.add_argument(
+        "--output_path", required=True, help="Path where output TTS file will be saved"
+    )
+    args = parser.parse_args()
+
+    generate_tts_file(
+        args.key,
+        args.input_text,
+        args.reference_audio_path,
+        args.reference_text,
+        args.output_path,
+    )
+    print(f"out:{args.output_path} suc")

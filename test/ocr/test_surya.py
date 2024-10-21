@@ -35,6 +35,7 @@ from tabled.extract import extract_tables
 from tabled.fileinput import load_pdfs_images
 from surya.model.table_rec.model import load_model as load_table_rec_model
 from surya.model.table_rec.processor import load_processor as load_table_rec_processor
+from surya.settings import settings
 
 load_dotenv()
 log_level = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -197,6 +198,7 @@ if __name__ == "__main__":
     table_rec_model_path = os.getenv("SURYA_TABLEREC_MODEL_PATH")
 
     start_time = time.time()
+    settings.TORCH_DEVICE = "cuda:2"
 
     rec_processor = load_rec_processor()
     det_model = load_det_model(det_model_path)
@@ -216,20 +218,20 @@ if __name__ == "__main__":
     elapsed_time = end_time - start_time
     logger.info(f"surya模型加载耗时: {elapsed_time:.2f}秒")
 
-    # ocr_result = run_surya_ocr(
-    #     IMAGE_PATH, det_model, det_processor, rec_model, rec_processor
-    # )
-    # logger.debug(f"ocr_result:\n{ocr_result}")
+    ocr_result = run_surya_ocr(
+        IMAGE_PATH, det_model, det_processor, rec_model, rec_processor
+    )
+    logger.info(f"ocr_result:\n{ocr_result}")
 
     # text_detection = run_surya_batch_text_detection(
     #     IMAGE_PATH, det_model, det_processor
     # )
     # logger.info(f"text_detection:\n{text_detection}")
 
-    layout_detection = run_surya_batch_layout_detection(
-        IMAGE_PATH, layout_model, layout_processor, det_model, det_processor
-    )
-    logger.info(f"layout_detection:\n{layout_detection}")
+    # layout_detection = run_surya_batch_layout_detection(
+    #     IMAGE_PATH, layout_model, layout_processor, det_model, det_processor
+    # )
+    # logger.info(f"layout_detection:\n{layout_detection}")
 
     # table_detection = run_surya_table_detection(
     #     PDF_PATH,
