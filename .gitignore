@@ -203,3 +203,4 @@ practical/微调实践记录/unsloth_qwen2/lora_model/vocab.json
 test/ocr/ch_PP-OCRv4_det_server_infer.onnx
 test/ocr/ch_PP-OCRv4_rec_server_infer.onnx
 client.py
+lightning_logs/
