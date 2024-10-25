@@ -53,6 +53,13 @@ author wechat account:sisconsavior
 moffee make xx.md -o output_html/
 ```
 
+### Thought
+```
+like others:我感觉自己有很多想法，想把它们整理、发布出来。当我准备去构思文章该怎么写的时候，我总会开始想一些问题：“我要写的东西会不会质量太低？”“我写的东西会不会内容涉及得不够全面？”“我不去查阅资料就来写会不会失去严谨性甚至是正确性？”想的问题多了起来后，我还会发现自己还没有发出视频或者文章的准备。音频自己录？字幕怎么加，视频录屏也很麻烦，于是乎就这么搁置下来了。有罪.....
+```
+
+
+
 ### Reference
 
 - [Machine Learning From Scratch](https://www.youtube.com/watch?v=p1hGz0w_OCo&list=PLFJCJMjAqfRLtPS5TOdrr8c3Gv6M1djmi)
