@@ -53,18 +53,14 @@ author wechat account:sisconsavior
 moffee make xx.md -o output_html/
 ```
 
-### Thought
-```
-like others:我感觉自己有很多想法，想把它们整理、发布出来。当我准备去构思文章该怎么写的时候，我总会开始想一些问题：“我要写的东西会不会质量太低？”“我写的东西会不会内容涉及得不够全面？”“我不去查阅资料就来写会不会失去严谨性甚至是正确性？”想的问题多了起来后，我还会发现自己还没有发出视频或者文章的准备。音频自己录？字幕怎么加，视频录屏也很麻烦，于是乎就这么搁置下来了。有罪.....
-```
-
-
 
 ### Reference
 
-- [Machine Learning From Scratch](https://www.youtube.com/watch?v=p1hGz0w_OCo&list=PLFJCJMjAqfRLtPS5TOdrr8c3Gv6M1djmi)
 - [人工智能：现代方法（第4版.pdf）](pdf-no-links)
 - [深度学习500问](https://github.com/aceliuchanghong/DeepLearning-500-questions)
 - [深度学习入门：基于Python的理论与实现-鱼书](z_using_files/paper/《深度学习入门：基于Python的理论与实现》高清中文版-鱼书.pdf)
 - [minimind训练教程](https://github.com/aceliuchanghong/minimind/)
+- [周弈帆AI基础博客](https://zhouyifan.net/archives/)
+- [Machine Learning From Scratch Youtube](https://www.youtube.com/watch?v=p1hGz0w_OCo&list=PLFJCJMjAqfRLtPS5TOdrr8c3Gv6M1djmi)
+- [基础文章](https://github.com/aceliuchanghong/others-AI-Articles)
 - 
