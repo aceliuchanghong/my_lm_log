@@ -56,11 +56,12 @@ moffee make xx.md -o output_html/
 
 ### Reference
 
+- [概率论与数理统计-浙江大学-第五版](buy-book-oneself)
 - [人工智能：现代方法（第4版.pdf）](pdf-no-links)
 - [深度学习500问](https://github.com/aceliuchanghong/DeepLearning-500-questions)
 - [深度学习入门：基于Python的理论与实现-鱼书](z_using_files/paper/《深度学习入门：基于Python的理论与实现》高清中文版-鱼书.pdf)
 - [minimind训练教程](https://github.com/aceliuchanghong/minimind/)
 - [周弈帆AI基础博客](https://zhouyifan.net/archives/)
 - [Machine Learning From Scratch Youtube](https://www.youtube.com/watch?v=p1hGz0w_OCo&list=PLFJCJMjAqfRLtPS5TOdrr8c3Gv6M1djmi)
-- [基础文章](https://github.com/aceliuchanghong/others-AI-Articles)
+- [别人的从基础到入门渐进文章](https://github.com/aceliuchanghong/others-AI-Articles)
 - 
