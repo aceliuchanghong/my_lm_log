@@ -14,10 +14,20 @@
 让 AI 与你  同   行
 E       C#m      G#m
 从基础  一步步    学起
-E7    A     B     C#m
+E7    A     B     C#m | E7
 人工  智能  探索   未知
- A     B      E 
+(E7) A     B      E | E7
 并肩  不怕难 来吧
+
+
+    E         C#m        F#m       B7
+Who knows how long I've loved you?
+    E      C#m      G#m
+You know I love you still
+E7   A      B      C#m      E7
+Will I wait a lonely lifetime?
+(E7)    A     B      E | C#m | F#m | B7
+If you want me to, I will
 ```
 
 - Prompt标准化结构
