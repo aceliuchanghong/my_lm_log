@@ -50,7 +50,8 @@ jupyter notebook --port=8888 --allow-root --ip='*'
 ```text
 author wechat account:sisconsavior
 
-moffee make xx.md -o output_html/
+moffee make .\0_数学基础\AI-数学-必学\对数.md -o output_html/
+moffee live .\0_数学基础\AI-数学-必学\对数.md
 ```
 
 
