@@ -11,7 +11,7 @@ ocr_engine = RapidOCR()
 
 # img_path = "no_git_oic/page_1.png"
 # img_path = "no_git_oic/采购合同4.pdf_show_0.jpg"
-img_path = "no_git_oic/企业微信截图_17288805401553.png"
+img_path = "z_using_files/pics/std_table.png"
 
 ocr_result, _ = ocr_engine(img_path)
 table_html_str, table_cell_bboxes, elapse = table_engine(img_path, ocr_result)
