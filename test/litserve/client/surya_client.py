@@ -2,6 +2,7 @@ import requests
 import os
 from dotenv import load_dotenv
 import logging
+import json
 
 load_dotenv()
 log_level = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -21,7 +22,9 @@ response = requests.post(
         ],
     },
 )
-print(f"Status: {response.status_code}\nResponse:\n {response.text}")
+print(
+    f"response:{response}\nStatus: {response.status_code}\nResponse:\n {response.text}\n dict:{json.loads(response.text)['output']}"
+)
 end_time = time.time()
 elapsed_time = end_time - start_time
 logger.info(f"耗时: {elapsed_time:.2f}秒")

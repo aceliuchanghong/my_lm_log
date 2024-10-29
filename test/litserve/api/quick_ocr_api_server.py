@@ -13,12 +13,6 @@ import re
 import concurrent.futures
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import sys
-from surya.model.detection.model import (
-    load_model as load_det_model,
-    load_processor as load_det_processor,
-)
-from surya.model.recognition.model import load_model as load_rec_model
-from surya.model.recognition.processor import load_processor as load_rec_processor
 
 
 sys.path.insert(
@@ -28,7 +22,7 @@ sys.path.insert(
     ),
 )
 
-from test.ocr.test_surya import polygon_to_markdown, run_surya_ocr
+from test.ocr.test_surya import polygon_to_markdown
 from test.ocr.test_combine_ocr import create_textline_from_data
 from test.llm.test_llm_link import get_entity_result
 from z_utils.rotate2fix_pic import detect_text_orientation
@@ -190,13 +184,20 @@ class QuickOcrAPI(ls.LitAPI):
         rapid_ocr_markdown = "\n".join([text for text in markdown1 if len(text) > 0])
         logger.info(f"rapid_ocr_markdown:{rapid_ocr_markdown}")
 
-        surya_ocr_result = run_surya_ocr(
-            local_image,
-            self.det_model,
-            self.det_processor,
-            self.rec_model,
-            self.rec_processor,
+        ip = "127.0.0.1"
+        response = requests.post(
+            f"http://{ip}:{os.getenv('SURYA_PORT')}/predict",
+            json={
+                "images_path": [
+                    os.path.join(os.getcwd(), local_image),
+                ],
+            },
         )
+        import json
+
+        surya_ocr_result = json.loads(response.text)["output"][
+            os.path.join(os.getcwd(), local_image)
+        ]
         logger.info(f"surya_ocr_result:{surya_ocr_result}")
 
         single_result["ocr_result"] = rapid_ocr_markdown + surya_ocr_result
@@ -216,14 +217,6 @@ class QuickOcrAPI(ls.LitAPI):
         return single_result
 
     def setup(self, device):
-        det_model_path = os.getenv("SURYA_DET3_MODEL_PATH")
-        rec_model_path = os.getenv("SURYA_REC2_MODEL_PATH")
-
-        self.rec_processor = load_rec_processor()
-        self.det_model = load_det_model(det_model_path)
-        self.det_processor = load_det_processor(det_model_path)
-        self.rec_model = load_rec_model(rec_model_path)
-
         self.table_engine = RapidTable(
             model_path=os.getenv("rapidocr_table_engine_model_path")
         )
@@ -298,6 +291,7 @@ class QuickOcrAPI(ls.LitAPI):
 if __name__ == "__main__":
     # python test/litserve/api/quick_ocr_api_server.py
     # export no_proxy="localhost,112.48.199.202,127.0.0.1"
+    # nohup python test/litserve/api/quick_ocr_api_server.py > no_git_oic/quick_ocr_api_server.log &
     api = QuickOcrAPI()
-    server = ls.LitServer(api, accelerator="gpu", devices=1)
+    server = ls.LitServer(api, accelerator="gpu", devices=[1])
     server.run(port=int(os.getenv("quick_ocr_port")))

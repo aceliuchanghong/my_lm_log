@@ -60,6 +60,7 @@ class SuryaAPI(ls.LitAPI):
 if __name__ == "__main__":
     # python test/litserve/api/surya_server.py
     # export no_proxy="localhost,112.48.199.202,127.0.0.1"
+    # nohup python test/litserve/api/surya_server.py> no_git_oic/surya_server.log &
     api = SuryaAPI()
     server = ls.LitServer(api, devices=1)
     server.run(port=int(os.getenv("SURYA_PORT")))
