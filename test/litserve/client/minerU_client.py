@@ -10,7 +10,11 @@ import logging
 
 load_dotenv()
 log_level = os.getenv("LOG_LEVEL", "INFO").upper()
-logging.basicConfig(level=getattr(logging, log_level))
+logging.basicConfig(
+    level=getattr(logging, log_level),
+    format="%(asctime)s-%(levelname)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 logger = logging.getLogger(__name__)
 
 
@@ -25,11 +29,12 @@ def to_pdf(file_path):
 
 def do_parse(
     file_path,
-    url=f"http://127.0.0.1:{int(os.getenv('MINERU_SERVER_PORT'))}/predict",
+    url=f"http://127.0.0.1:8116/predict",
     **kwargs,
 ):
     try:
         kwargs.setdefault("parse_method", "auto")
+        kwargs.setdefault("convert_html_to_md", True)
         kwargs.setdefault("debug_able", False)
 
         response = requests.post(
@@ -43,13 +48,13 @@ def do_parse(
         else:
             raise Exception(response.text)
     except Exception as e:
-        logger.error(f"File: {file_path} - Info: {e}")
+        logger.error(f"File: {file_path} - : {e}")
 
 
 if __name__ == "__main__":
     # export no_proxy="localhost,112.48.199.202,127.0.0.1"
     # python test/litserve/client/minerU_client.py
-    files = ["no_git_oic/页面提取自－NPD2317设计开发记录.pdf"]
+    files = ["no_git_oic/页面提取自-NPD2317设计开发记录.pdf"]
     n_jobs = np.clip(len(files), 1, 4)
     results = Parallel(n_jobs, prefer="threads", verbose=10)(
         delayed(do_parse)(p) for p in files

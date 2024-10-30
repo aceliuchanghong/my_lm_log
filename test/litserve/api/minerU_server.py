@@ -7,6 +7,7 @@ from unittest.mock import patch
 from fastapi import HTTPException
 from magic_pdf.tools.common import do_parse
 from magic_pdf.model.doc_analyze_by_custom_model import ModelSingleton
+from openai import OpenAI
 
 # pip install rapidocr_onnxruntime,rapid-table,rapid-orientation
 from rapidocr_onnxruntime import RapidOCR
@@ -109,10 +110,13 @@ class MinerUAPI(ls.LitAPI):
             model_manager.get_model(True, False)
             model_manager.get_model(False, False)
             mock_obj.assert_called()
-            logger.info(f"Model initialization complete!")
+            print(f"MinerU Model initialization complete!")
             self.ocr_engine = RapidOCR()
             self.table_engine = RapidTable(
                 model_path=os.getenv("rapidocr_table_engine_model_path")
+            )
+            self.client = OpenAI(
+                api_key=os.getenv("API_KEY"), base_url=os.getenv("BASE_URL")
             )
 
     def decode_request(self, request):
@@ -124,6 +128,8 @@ class MinerUAPI(ls.LitAPI):
     def predict(self, inputs):
         try:
             pdf_name = str(uuid.uuid4())
+            convert_html_to_md_param = inputs[1]["convert_html_to_md"]
+            del inputs[1]["convert_html_to_md"]
             do_parse(self.output_dir, pdf_name, inputs[0], [], **inputs[1])
 
             files_path = os.path.join(
@@ -159,6 +165,14 @@ class MinerUAPI(ls.LitAPI):
                 table_code = table_html_str.replace("<html><body>", "").replace(
                     "</body></html>", ""
                 )
+                convert_html_to_md = convert_html_to_md_param
+                if convert_html_to_md:
+                    response = self.client.chat.completions.create(
+                        model=os.getenv("HTML_PARSER_MODEL"),
+                        messages=[{"role": "user", "content": table_code}],
+                        temperature=0.2,
+                    )
+                    table_code = response.choices[0].message.content
                 table_results["images/" + os.path.basename(image)] = table_code
             print(f"表格识别完成table_results:{table_results}")
             # 替换md
@@ -184,5 +198,6 @@ class MinerUAPI(ls.LitAPI):
 if __name__ == "__main__":
     # python test/litserve/api/minerU_server.py
     # export no_proxy="localhost,112.48.199.202,127.0.0.1"
+    # nohup python test/litserve/api/minerU_server.py > no_git_oic/minerU_server.log &
     server = ls.LitServer(MinerUAPI(), accelerator="gpu", devices=[3])
     server.run(port=int(os.getenv("MINERU_SERVER_PORT")))

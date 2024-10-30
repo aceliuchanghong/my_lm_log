@@ -31,11 +31,6 @@ response = requests.post(
                 "entity_regex_pattern": "",
             },
             {
-                "entity_name": "业务员姓名",
-                "entity_format": "",
-                "entity_regex_pattern": "",
-            },
-            {
                 "entity_name": "开票日期年月",
                 "entity_format": "202009",
                 "entity_regex_pattern": "[1-2][0-9]{5}",
