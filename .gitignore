@@ -205,3 +205,4 @@ test/ocr/ch_PP-OCRv4_rec_server_infer.onnx
 client.py
 lightning_logs/
 x_site_building/site/*
+MaskGCT/

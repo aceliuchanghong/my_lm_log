@@ -130,6 +130,7 @@ class MinerUAPI(ls.LitAPI):
             pdf_name = str(uuid.uuid4())
             convert_html_to_md_param = inputs[1]["convert_html_to_md"]
             del inputs[1]["convert_html_to_md"]
+            # core
             do_parse(self.output_dir, pdf_name, inputs[0], [], **inputs[1])
 
             files_path = os.path.join(
