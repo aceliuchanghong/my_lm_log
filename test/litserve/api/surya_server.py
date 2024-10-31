@@ -9,6 +9,7 @@ import os
 from dotenv import load_dotenv
 import logging
 import sys
+import torch
 
 sys.path.insert(
     0,
@@ -30,6 +31,16 @@ logger = logging.getLogger(__name__)
 
 
 class SuryaAPI(ls.LitAPI):
+    @staticmethod
+    def clean_memory(device):
+        import gc
+
+        if torch.cuda.is_available():
+            with torch.cuda.device(device):
+                torch.cuda.empty_cache()
+                torch.cuda.ipc_collect()
+        gc.collect()
+
     def setup(self, device):
         det_model_path = os.getenv("SURYA_DET3_MODEL_PATH")
         rec_model_path = os.getenv("SURYA_REC2_MODEL_PATH")
@@ -40,18 +51,23 @@ class SuryaAPI(ls.LitAPI):
         self.rec_model = load_rec_model(rec_model_path)
 
     def predict(self, inputs):
-        ocr_results = {}
-        images_path = inputs["images_path"]
-        for image in images_path:
-            ocr_result = run_surya_ocr(
-                image,
-                self.det_model,
-                self.det_processor,
-                self.rec_model,
-                self.rec_processor,
-            )
-            ocr_results[image] = ocr_result
-        return ocr_results
+        try:
+            ocr_results = {}
+            images_path = inputs["images_path"]
+            for image in images_path:
+                ocr_result = run_surya_ocr(
+                    image,
+                    self.det_model,
+                    self.det_processor,
+                    self.rec_model,
+                    self.rec_processor,
+                )
+                ocr_results[image] = ocr_result
+            return ocr_results
+        except Exception as e:
+            logger.error(f"error:{e}")
+        finally:
+            self.clean_memory(self.device)
 
     def encode_response(self, output):
         return {"output": output}
@@ -62,5 +78,5 @@ if __name__ == "__main__":
     # export no_proxy="localhost,112.48.199.202,127.0.0.1"
     # nohup python test/litserve/api/surya_server.py> no_git_oic/surya_server.log &
     api = SuryaAPI()
-    server = ls.LitServer(api, devices=1)
+    server = ls.LitServer(api, devices=[1])
     server.run(port=int(os.getenv("SURYA_PORT")))

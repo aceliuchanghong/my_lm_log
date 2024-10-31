@@ -43,6 +43,8 @@ Set-ExecutionPolicy Bypass -Scope Process -Force
 source .venv/bin/activate
 # jupyter
 jupyter notebook --port=8888 --allow-root --ip='*'
+# 端口进程查询关闭
+netstat -tlnp|grep 5500
 ```
 
 ### Others
