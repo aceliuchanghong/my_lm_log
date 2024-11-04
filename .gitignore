@@ -206,3 +206,4 @@ client.py
 lightning_logs/
 x_site_building/site/*
 MaskGCT/
+node_modules/
