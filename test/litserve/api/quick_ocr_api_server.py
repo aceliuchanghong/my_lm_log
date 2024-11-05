@@ -30,7 +30,11 @@ from z_utils.get_text_chunk import chunk_by_LCEL
 
 load_dotenv()
 log_level = os.getenv("LOG_LEVEL", "INFO").upper()
-logging.basicConfig(level=getattr(logging, log_level))
+logging.basicConfig(
+    level=getattr(logging, log_level),
+    format="%(asctime)s-%(levelname)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 logger = logging.getLogger(__name__)
 
 
@@ -227,6 +231,7 @@ class QuickOcrAPI(ls.LitAPI):
         )
 
     def decode_request(self, request):
+        logger.info(f"received request:\n{request}")
         images_path = request["images_path"]
         tsr = request.get("table", "normal")  # 只能tsr,normal
         rules = request["rule"]

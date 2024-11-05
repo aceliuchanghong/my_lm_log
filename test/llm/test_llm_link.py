@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_entity_result(client, user_prompt, Basic_info="", system_prompt=None):
-    if len(system_prompt) <= 1:
+    if system_prompt is None or len(system_prompt) <= 1:
         system_prompt = """你是一个OCR文档结果提取信息专家
 ## 技能
 - 擅长从有瑕疵的OCR文档中提取信息
