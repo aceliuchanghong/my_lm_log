@@ -1,7 +1,19 @@
 import httpx
 import ormsgpack
 import argparse
+import os
+from dotenv import load_dotenv
+import logging
+import re
 
+load_dotenv()
+log_level = os.getenv("LOG_LEVEL", "INFO").upper()
+logging.basicConfig(
+    level=getattr(logging, log_level),
+    format="%(asctime)s-%(levelname)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger(__name__)
 # https://fish.audio/go-api/billing/
 
 
@@ -40,12 +52,20 @@ def transcribe_audio(file_input, language="zh", ignore_timestamps=False):
     result = response.json()
 
     # 打印结果
-    print(f"Transcribed text: {result['text']}")
-    print(f"Audio duration: {result['duration']} seconds")
+    logger.info(f"Transcribed text: {result['text']}")
+    logger.info(f"Audio duration: {result['duration']} seconds")
 
     for segment in result["segments"]:
-        print(f"Segment: {segment['text']}")
-        print(f"Start time: {segment['start']}, End time: {segment['end']}")
+        logger.info(f"Segment: {segment['text']}")
+        logger.info(f"Start time: {segment['start']}, End time: {segment['end']}")
+
+    # 保存转录文本文件，文件名与输入文件相同，后缀改为 .txt
+    output_file = os.path.splitext(file_input)[0] + ".txt"
+    with open(output_file, "w", encoding="utf-8") as text_file:
+        result_without_punctuation = re.sub(
+            r"([，。])\n", r"\n", re.sub(r"([，。])", r"\n", result["text"])
+        )
+        text_file.write(result_without_punctuation)
 
     return result
 
