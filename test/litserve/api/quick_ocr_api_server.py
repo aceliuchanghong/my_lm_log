@@ -119,7 +119,7 @@ def download_image(image_url, save_dir):
 
 def get_local_images(images_path):
     save_dir = os.path.join(os.getenv("upload_file_save_path"), "images")
-    local_images_path = []
+    local_images_path = set()  # 使用集合来避免重复
     rotate_path = os.path.join(os.getenv("upload_file_save_path"), "rotate_pics")
 
     # 多线程下载和处理图片
@@ -138,29 +138,22 @@ def get_local_images(images_path):
                 # 下载后进行文字方向检测
                 downloaded_image = future.result()
                 result_image = detect_text_orientation(downloaded_image, rotate_path)
-                local_images_path.append(result_image)
+                local_images_path.add(result_image)  # 使用集合的add方法
             except Exception as e:
                 print(f"Error processing image {image}: {e}")
+        logger.debug(f"local_images_path1:{list(local_images_path)}")
 
         # 对本地文件进行文字方向检测
-        future_to_image.update(
-            {
-                executor.submit(detect_text_orientation, image, rotate_path): image
-                for image in images_path
-                if os.path.isfile(image)
-            }
-        )
+        for image in images_path:
+            if os.path.isfile(image):
+                try:
+                    result_image = detect_text_orientation(image, rotate_path)
+                    local_images_path.add(result_image)  # 使用集合的add方法
+                except Exception as e:
+                    print(f"Error processing image {image}: {e}")
+        logger.debug(f"local_images_path2:{list(local_images_path)}")
 
-        # 处理已有本地图片的任务
-        for future in as_completed(future_to_image):
-            image = future_to_image[future]
-            try:
-                result_image = future.result()
-                local_images_path.append(result_image)
-            except Exception as e:
-                print(f"Error processing image {image}: {e}")
-
-    return local_images_path
+    return list(local_images_path)  # 返回列表格式
 
 
 class QuickOcrAPI(ls.LitAPI):
