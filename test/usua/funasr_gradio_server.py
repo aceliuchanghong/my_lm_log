@@ -17,19 +17,19 @@ logger = logging.getLogger(__name__)
 def get_example():
     case = [
         [
-            "z_using_files/mp3/登陆系统,进入层数和K值预测界面.wav",
+            "./z_using_files/mp3/登陆系统,进入层数和K值预测界面.wav",
             "是",
-            "否",
+            "是",
             "K值",
         ],
         [
-            "z_using_files/mp3/我是一座孤岛,处在相思之水中.wav",
+            "./z_using_files/mp3/我是一座孤岛,处在相思之水中.wav",
             "是",
-            "是",
-            "会议",
+            "否",
+            "相思",
         ],
         [
-            "z_using_files/mp3/清晨温柔的光.wav",
+            "./z_using_files/mp3/清晨温柔的光.wav",
             "否",
             "是",
             "清晨",
@@ -46,7 +46,6 @@ def to_asr(upload_file, timeline_output, spk_output, hot_words):
     mode = "normal"
     need_spk = False
     initial_prompt = hot_words
-    result_path = "/mnt/data/asr/result"
     ip = "127.0.0.1"
     if timeline_output == "是":
         mode = "timeline"
@@ -69,10 +68,14 @@ def to_asr(upload_file, timeline_output, spk_output, hot_words):
             },
         )
         if response.status_code == 200:
-            content = response.text
+            content = ""
+            for info in response.json()["information"]:
+                content += info + "\n"
             file_out = os.path.join(
                 result_path, os.path.basename(upload_file).split(".")[0] + ".txt"
             )
+            with open(file_out, "w") as f:
+                f.write(content)
             return content, gr.update(value=file_out, visible=True)
         else:
             return f"response_status_err_code{response.status_code}", None
@@ -97,7 +100,7 @@ def create_app():
                     label="🌐上传音频或者视频",
                     file_types=["audio", "video"],
                 )
-                file.GRADIO_CACHE = file_default_path
+                # file.GRADIO_CACHE = file_default_path
                 output_file = gr.File(
                     label="💼结果下载", interactive=False, visible=False
                 )
@@ -131,6 +134,7 @@ def create_app():
                 )
         with gr.Row():
             gr.Examples(
+                label="示例",
                 examples=get_example(),
                 fn=run_for_examples,
                 inputs=[
@@ -143,9 +147,11 @@ def create_app():
             )
 
         def clear_output():
-            return gr.update(visible=False)
+            return gr.update(visible=False), "是", "是", "会议"
 
-        clear_button.click(clear_output, [], [output_file])
+        clear_button.click(
+            clear_output, [], [output_file, timeline_output, spk_output, hot_words]
+        )
         clear_button.add([file, output_file, output_content])
         convert_button.click(
             fn=to_asr,
@@ -166,9 +172,11 @@ if __name__ == "__main__":
     # nohup python test/usua/funasr_gradio_server.py > no_git_oic/funasr_gradio_server.log &
     file_default_path = os.path.join(os.getenv("upload_file_save_path"), "funasr_video")
     os.makedirs(file_default_path, exist_ok=True)
+    result_path = "/mnt/data/asr/result"
     app = create_app()
     app.launch(
         server_name="0.0.0.0",
         server_port=int(os.getenv("FUNASR_FRONT_END_PORT")),
         share=False,
+        allowed_paths=[result_path],
     )
