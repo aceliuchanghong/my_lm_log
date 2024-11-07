@@ -15,7 +15,9 @@ response = requests.post(
     f"http://{ip}:8110/predict",
     json={
         "images_path": [
-            "./upload_files/images/发票签收单2.pdf_show_0.jpg",
+            "./no_git_oic/发票签收单2.pdf_show_0.jpg",
+            # "./no_git_oic/企业微信截图_17288805401553.png",
+            # "./no_git_oic/企业微信截图_17288805261441.png",
             "https://www.mfa.gov.cn/zwbd_673032/jghd_673046/202410/W020241008522924065946.jpg",
         ],
         "rule": {
@@ -31,6 +33,8 @@ elapsed_time = end_time - start_time
 logger.info(f"耗时: {elapsed_time:.2f}秒")
 
 """
+export no_proxy="localhost,112.48.199.202,127.0.0.1"
+python test/litserve/client/vision_model_client.py
 Status: 200
 Response:
  {"result":"2200000003","entity_name":"10位数条形码号码"}

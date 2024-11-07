@@ -163,8 +163,8 @@ def create_app():
         with gr.Row():
             gr.Image(
                 label="🤖Torch-pdf-converter",
-                value="z_using_files/pics/pdf2md_4.png",
-                height=300,
+                value="z_using_files/pics/pdf2md_2.png",
+                height=260,
             )
         with gr.Row():
             with gr.Column(variant="panel", scale=5):
