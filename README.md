@@ -58,7 +58,7 @@ moffee live .\0_数学基础\AI-数学-必学\对数.md
 
 | 音频格式转化             | 声音克隆                    | 声音转录文本                       |
 |----------------------|-----------------------------|--------------------------------|
-| z_utils/audio_trans.py | test/litserve/api/fish_speech1.4_server.py | test/litserve/api/fish_speech1.4_asr_server.py |
+| z_utils/audio_trans.py | test/litserve/api/fish_speech1.4_server.py | test/litserve/api/whisper_large_v3_turbo_server.py |
 
 ### Reference
 

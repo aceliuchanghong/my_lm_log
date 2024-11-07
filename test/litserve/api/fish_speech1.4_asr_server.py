@@ -49,7 +49,12 @@ def transcribe_audio(file_input, language="zh", ignore_timestamps=False):
         )
 
     # 解析响应
+    if response.status_code != 200:
+        result = response.json()
+        logger.error(f"ERR:{result}")
+        return
     result = response.json()
+    # logger.info(f"result:{result}")
 
     # 打印结果
     logger.info(f"Transcribed text: {result['text']}")
