@@ -176,6 +176,7 @@ if __name__ == "__main__":
     app = create_app()
     app.launch(
         server_name="0.0.0.0",
+        root_path="/ASRTool",
         server_port=int(os.getenv("FUNASR_FRONT_END_PORT")),
         share=False,
         allowed_paths=[result_path],

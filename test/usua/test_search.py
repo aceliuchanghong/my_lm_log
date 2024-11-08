@@ -3,6 +3,24 @@ from bs4 import BeautifulSoup
 import argparse
 import json
 from termcolor import colored
+import sys
+import os
+from dotenv import load_dotenv
+import logging
+
+load_dotenv()
+log_level = os.getenv("LOG_LEVEL", "INFO").upper()
+logging.basicConfig(
+    level=getattr(logging, log_level),
+    format="%(asctime)s-%(levelname)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger(__name__)
+sys.path.insert(
+    0,
+    os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../")),
+)
+from z_utils.get_ai_tools import my_tools
 
 # https://github.com/bravekingzhang/search-engine-tool/issues/1
 
@@ -14,7 +32,7 @@ def get_page_content(url, headers):
         response.encoding = response.apparent_encoding
         soup = BeautifulSoup(response.text, "html.parser")
         main_content = soup.get_text().replace("\n", "")
-        return main_content[:300]
+        return main_content[:750]
     except requests.RequestException as e:
         print(f"Error fetching page content: {e}")
         return "无法获取内容"
@@ -70,16 +88,40 @@ def main():
     parser = argparse.ArgumentParser(description="Bing Search Results Scraper")
     parser.add_argument("-q", "--query", help="The search query", required=True)
     parser.add_argument(
-        "-c", "--count", type=int, default=5, help="Number of results to retrieve"
+        "-c", "--count", type=int, default=2, help="Number of results to retrieve"
     )
     args = parser.parse_args()
-
+    content = ""
+    logger.info(colored(f"开始检索答案...", "green"))
     search_results = scrape_bing_search_results(args.query, args.count)
     for result in search_results:
-        print(colored(json.dumps(result, indent=2, ensure_ascii=False), "yellow"))
+        # print(colored(json.dumps(result, indent=2, ensure_ascii=False), "yellow"))
+        content += result["abstract"] + "\n" + result["content"]
+    logger.info(colored(f"{args.query}...", "green"))
+    response = ai_tools.llm.chat.completions.create(
+        model=os.getenv("MODEL"),
+        messages=[
+            {
+                "role": "user",
+                "content": f"基本事实内容:\n{content}\n\n\n回答:{args.query}",
+            }
+        ],
+        temperature=0.2,
+    )
+    print(response.choices[0].message.content)
 
 
 if __name__ == "__main__":
-    # python test/usua/test_search.py -q 今天上海天气 -c 2
-    # python test/usua/test_search.py -q 大道争锋 -c 2
+    # export no_proxy="localhost,112.48.199.202,127.0.0.1"
+    # python test/usua/test_search.py -q 今天上海天气介绍 -c 2
+    # python test/usua/test_search.py -q 大道争锋介绍 -c 2
+    # python test/usua/test_search.py -q 中国现在领导人班子人物介绍 -c 2
+    # python test/usua/test_search.py -q 美国大选结果详细介绍 -c 2
+    ai_tools = my_tools()
+    import time
+
+    start_time = time.time()
     main()
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    logger.info(f"耗时: {elapsed_time:.2f}秒")

@@ -222,6 +222,7 @@ if __name__ == "__main__":
     app = create_app()
     app.launch(
         server_name="0.0.0.0",
+        root_path="/Pdf2MdTool",
         server_port=int(os.getenv("MINERU_FRONT_END_PORT")),
         share=False,
     )

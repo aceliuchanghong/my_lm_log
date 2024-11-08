@@ -21,8 +21,8 @@ ZincSearch 是一个进行全文索引的搜索引擎:https://mp.weixin.qq.com/s
 kg构建:https://mp.weixin.qq.com/s/lVcEqoe4gwP29lAf7QO4ig
 Contextual RAG开源实现:https://mp.weixin.qq.com/s/E-kIExOtP1jZWtwhat0bdQ
 KAG介绍:https://mp.weixin.qq.com/s/TqgGLlEYL5DqPEg6sB3tGA
-Mistral 7B+Neo4j：构建知识图谱:https://mp.weixin.qq.com/s/7irzDGwMdvCaexcPE_iu8w
-iText2KG：使用大型语言模型构建增量知识图谱:https://mp.weixin.qq.com/s/oiDffH1_0JiGpVGw83-guQ
+Mistral 7B+Neo4j:构建知识图谱:https://mp.weixin.qq.com/s/7irzDGwMdvCaexcPE_iu8w
+iText2KG:使用大型语言模型构建增量知识图谱:https://mp.weixin.qq.com/s/oiDffH1_0JiGpVGw83-guQ
 """
 
 
