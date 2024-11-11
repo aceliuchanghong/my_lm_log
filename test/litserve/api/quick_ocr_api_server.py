@@ -173,6 +173,8 @@ class QuickOcrAPI(ls.LitAPI):
         #         "</body></html>", ""
         #     )
         text_lines = []
+        if rapid_ocr_result is None:
+            rapid_ocr_result = []
         for line in rapid_ocr_result:
             text_line = create_textline_from_data(line)
             text_lines.append(text_line)

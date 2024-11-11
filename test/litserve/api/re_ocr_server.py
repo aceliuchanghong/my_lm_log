@@ -102,6 +102,7 @@ class ReOcrLitAPI(ls.LitAPI):
 if __name__ == "__main__":
     # python test/litserve/api/re_ocr_server.py
     # export no_proxy="localhost,112.48.199.202,127.0.0.1"
+    # nohup python test/litserve/api/re_ocr_server.py > no_git_oic/re_ocr_server.log &
     api = ReOcrLitAPI()
     server = ls.LitServer(api, accelerator="auto", devices=1)
     server.run(port=int(os.getenv("MOLMO_PORT")))

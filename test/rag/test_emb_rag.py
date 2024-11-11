@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 from langchain_ollama import OllamaEmbeddings
 from langchain_core.vectorstores import InMemoryVectorStore
+from sentence_transformers import util
 
 
 def emb_docs(embeddings, docs):
@@ -36,6 +37,8 @@ def get_retrieve(embeddings, docs, query):
 
 
 if __name__ == "__main__":
+    # export no_proxy="localhost,112.48.199.202,127.0.0.1"
+    # python test/rag/test_emb_rag.py
     load_dotenv()
     docs = [
         "Alpha is the first letter of Greek alphabet",
@@ -51,7 +54,12 @@ if __name__ == "__main__":
         model=os.getenv("EMB_MODEL"), base_url=os.getenv("EMB_BASE_URL")
     )
 
-    # emb_docs(embeddings, docs)
-    # emb_query(embeddings, query)
-    text_new = get_retrieve(embeddings, docs, query)
-    print(text_new)
+    docs_vector = emb_docs(embeddings, docs)
+    query_vector = emb_query(embeddings, query)
+    print(f"vec:{query_vector[:5]}, dim:{len(query_vector)}")
+    similarity = util.cos_sim(query_vector, docs_vector)
+    similarity_list = similarity.squeeze().tolist()
+    print("Similarity:", similarity_list)
+
+    # text_new = get_retrieve(embeddings, docs, query)
+    # print(text_new)

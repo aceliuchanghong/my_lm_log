@@ -15,7 +15,11 @@ load_dotenv()
 
 
 log_level = os.getenv("LOG_LEVEL", "INFO").upper()
-logging.basicConfig(level=getattr(logging, log_level))
+logging.basicConfig(
+    level=getattr(logging, log_level),
+    format="%(asctime)s-%(levelname)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 logger = logging.getLogger(__name__)
 
 
@@ -59,7 +63,7 @@ def get_entity_result(client, user_prompt, Basic_info="", system_prompt=None):
     elapsed_time = end_time - start_time
     ans_temp = response.choices[0].message.content
 
-    logger.info(f"user-prompt:\n{prompt}")
+    logger.debug(f"user-prompt:\n{prompt}")
     logger.info(f"LLM回答耗时: {elapsed_time:.2f}秒")
     logger.debug(f"大模型response:{response}")
     return parse_json_markdown(ans_temp)
