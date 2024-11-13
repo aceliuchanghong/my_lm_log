@@ -60,7 +60,7 @@ def polygon_to_markdown(text_lines):
         if previous_y != -1 and abs(current_y - previous_y) > 20:
             markdown_text += "\n\n"  # 大间距时换段落
         else:
-            markdown_text += " "  # 否则按空格分隔
+            markdown_text += " | "  # 否则按|分隔
 
         markdown_text += line.text
         previous_y = current_y
