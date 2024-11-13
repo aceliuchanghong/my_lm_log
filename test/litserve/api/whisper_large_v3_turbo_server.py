@@ -128,6 +128,7 @@ def send_audio_to_whisper(
     if response.status_code == 200:
         result = ""
         result_temp = response.json()
+        logger.info(f"3.0.翻译开始,共{len(result_temp["segments"])}句")
         for i, segment in enumerate(result_temp["segments"], start=1):
             start = round(segment["start"], 2)
             end = round(segment["end"], 2)

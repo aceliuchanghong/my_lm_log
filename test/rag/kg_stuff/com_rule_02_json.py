@@ -152,7 +152,7 @@ if __name__ == "__main__":
                 },
                 {
                     "role": "user",
-                    "content": "".join(["可以用作参考的当前文档的结构树:\n", struct]),
+                    "content": "".join(["主要用作参考的当前文档的结构树:\n", struct]),
                 },
                 {
                     "role": "user",
