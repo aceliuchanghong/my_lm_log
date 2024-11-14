@@ -112,7 +112,66 @@ fsr = """
 │   ├── 文件发放至公司各部门及各子公司人力资源部。
 """
 kg_json = """
-
+[
+    {
+        "章节": "5.4",
+        "子章节": "培训计划",
+        "内容": [
+            {
+                "条目": "每年年初子公司应将年度培训计划提报股份公司人力资源中心备案；"
+            },
+            {
+                "条目": "股份公司及各子公司应共享培训资源，达到培训资源利用率的最大化。"
+            }
+        ]
+    },
+    {
+        "章节": "5.5",
+        "子章节": "培训实施",
+        "内容": [
+            {
+                "条目": "5.5.1 培训通知的拟定：公司组织的培训，通知由人力资源中心统一拟定，培训通知中涉及内容包括课题、讲师、场地、时间、参加人员及其他相关事项。大型培训（人数50人以上）的通知必须经过人资总监审核后方可发布。"
+            },
+            {
+                "条目": "5.5.2 培训前的准备：",
+                "子内容": [
+                    {
+                        "条目": "场地、设备、设施：培训前需要对场地、座位进行确认，应确保培训环境安静、安全、整洁，所有学员都能看到听得清楚老师的讲授。对投影仪、笔记本电脑、音响、麦克风等进行测试，确认无误后投入使用；"
+                    },
+                    {
+                        "条目": "教材、资料：如果培训需要教材或资料，须提前准备并在培训前进行发放。教材、资料印刷应清晰、并留有空白，以便学员听课时直接在教材上作笔记；"
+                    },
+                    {
+                        "条目": "空调、饮水：培训前必须调试空调温度以及准备饮用水；"
+                    },
+                    {
+                        "条目": "讲师服务：安排讲师的饮食及住宿事宜；"
+                    },
+                    {
+                        "条目": "其他：纸张、白板、白板笔、用作学员提问的麦克风等。"
+                    }
+                ]
+            },
+            {
+                "条目": "5.5.3 培训前的组织：",
+                "子内容": [
+                    {
+                        "条目": "人员组织：培训工作人员必须在培训开始前30分钟到位，协助培训现场的组织工作，引导学员入座；"
+                    },
+                    {
+                        "条目": "培训引导：讲师上台前，由培训工作人员进行开场介绍，主要内容应包括：培训的目的、培训的安排、课题、老师介绍，培训纪律等。"
+                    }
+                ]
+            },
+            {
+                "条目": "5.5.4 培训工具的应用和更新：人力资源中心应根据实际情况引进相应的培训工具，优化培训流程，提高培训效率，增强培训趣味性，并及时更新分享培训工具的使用。"
+            },
+            {
+                "条目": "5.5.5 培训纪律："
+            }
+        ]
+    }
+]
 """
 
 
@@ -126,7 +185,7 @@ def read_docx(file_path):
 
 if __name__ == "__main__":
     # export no_proxy="localhost,112.48.199.202,127.0.0.1"
-    # test/rag/kg_stuff/com_rule_03_kg.py
+    # python test/rag/kg_stuff/com_rule_03_kg.py
     docx_path = "no_git_oic/com_rule_start"
     ASPECT = "公司培训管理制度"
     ai_tools = my_tools()
@@ -146,31 +205,29 @@ if __name__ == "__main__":
         start_time = time.time()
 
         page_number = 1  # 初始化页码
-        for contents in tqdm(content_read, desc="文件KG生成中..."):
-            messages = [
-                {
-                    "role": "system",
-                    "content": structure_kg_prompt.format(ASPECT=ASPECT),
-                },
-                {
-                    "role": "user",
-                    "content": "".join(["主要用作参考的当前文档的结构树!!:\n", struct]),
-                },
-                {
-                    "role": "user",
-                    "content": "".join(["待转化的json内容:\n", contents]),
-                },
-            ]
-            response = ai_tools.llm.chat.completions.create(
-                model=os.getenv("MODEL"),
-                messages=messages,
-                temperature=0.2,
-            )
-            logger.info(
-                f"\npage_number:{page_number}\n{response.choices[0].message.content}"
-            )
-            result = response.choices[0].message.content
-            page_number += 1  # 增加页码
+        messages = [
+            {
+                "role": "system",
+                "content": structure_kg_prompt,
+            },
+            {
+                "role": "user",
+                "content": "".join(["主要用作参考的当前文档的结构树!!:\n", struct]),
+            },
+            {
+                "role": "user",
+                "content": "".join(["待转化的json内容:\n", kg_json]),
+            },
+        ]
+        response = ai_tools.llm.chat.completions.create(
+            model=os.getenv("MODEL"),
+            messages=messages,
+            temperature=0.2,
+        )
+        logger.info(
+            f"\npage_number:{page_number}\n{response.choices[0].message.content}"
+        )
+        result = response.choices[0].message.content
 
         end_time = time.time()
         elapsed_time = end_time - start_time

@@ -142,6 +142,7 @@ if __name__ == "__main__":
         struct = fsr
         start_time = time.time()
 
+        x = ""
         previous_content = "第一页,暂无内容"  # 用于存储上一部分内容
         page_number = 1  # 初始化页码
         for contents in tqdm(content_read, desc="文件json生成中..."):
@@ -176,6 +177,8 @@ if __name__ == "__main__":
             result = response.choices[0].message.content
             previous_content = contents  # 更新上一部分内容
             page_number += 1  # 增加页码
+            x += result
+        logger.info(f"\n{x}")
 
         end_time = time.time()
         elapsed_time = end_time - start_time

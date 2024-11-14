@@ -33,7 +33,7 @@ structure_json_prompt = """# Role
 
 
 structure_kg_prompt = """# Role
-你是一个了解{ASPECT}的文档结构化助手
+你是一个知识图谱文档结构化助手
 
 ## Instruct
 1.用户提供内容:
