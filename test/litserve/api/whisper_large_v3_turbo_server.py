@@ -169,6 +169,8 @@ if __name__ == "__main__":
     python test/litserve/api/whisper_large_v3_turbo_server.py \
         --file no_git_oic/会议纪要操作演示6.mp4 \
         --translate
+
+    python test/litserve/api/whisper_large_v3_turbo_server.py --file "D:\机器学习记录\make_video\AI-数学-对数-02\AI-数学-对数-02.mp4" --translate
     """
     parser = argparse.ArgumentParser(
         description="Process audio file with optional timeline."
