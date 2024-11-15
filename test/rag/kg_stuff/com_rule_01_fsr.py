@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import logging
 from tqdm import tqdm
 import sys
-import time
+from termcolor import colored
 
 load_dotenv()
 log_level = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -35,7 +35,14 @@ def read_docx(file_path):
 
 
 def process_docx_files_fsr(
-    docx_path, ai_tools, model, chunk_size, chunk_overlap, aspect, level="二级目录"
+    docx_path,
+    ai_tools,
+    model,
+    chunk_size,
+    chunk_overlap,
+    aspect,
+    level="二级目录",
+    temperature=0.2,
 ):
     """
     :param docx_path: 文档存放的文件路径
@@ -45,12 +52,21 @@ def process_docx_files_fsr(
     :param chunk_overlap: 每个chunk的重叠部分
     :param model: 使用的AI模型名称
     """
+    structs_list = []
+    logger.info(colored(f"\n文档转化starting...", "green"))
 
     struct = aspect  # 初始化结构
-    start_time = time.time()
+    structs_list.append(struct)
+    if docx_path.endswith(".docx"):
+        file_content = read_docx(docx_path)
+    elif docx_path.endswith(".md"):
+        with open(docx_path, "r", encoding="utf-8") as f:
+            file_content = f.read()
+    else:
+        raise ValueError("不支持的文件类型")  # 抛出具体的异常信息
 
     content_read = chunk_by_LCEL(
-        read_docx(docx_path),
+        file_content,
         chunk_size=chunk_size,
         chunk_overlap=chunk_overlap,
     )
@@ -73,16 +89,13 @@ def process_docx_files_fsr(
         response = ai_tools.llm.chat.completions.create(
             model=model,
             messages=messages,
-            temperature=0.2,
+            temperature=temperature,
         )
         # logger.info(f"\n{response.choices[0].message.content}")
         struct = response.choices[0].message.content
-
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    logger.info(f"\n{struct}")
-    logger.info(f"结构树生成耗时: {elapsed_time:.2f}秒")
-    return struct
+        structs_list.append(struct)
+        logger.info(f"\n{struct}")
+    return structs_list
 
 
 if __name__ == "__main__":

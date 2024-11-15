@@ -6,6 +6,7 @@ import sys
 import time
 import json
 import concurrent.futures
+from termcolor import colored
 
 load_dotenv()
 log_level = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -46,7 +47,7 @@ def parse_to_list(kg_final_result: str):
 
 def process_content(
     content,
-    struct,
+    structs_list,
     previous_content,
     ai_tools,
     model,
@@ -54,10 +55,13 @@ def process_content(
     page_number,
     temperature=0.2,
 ):
-    logger.info(f"fixing the {page_number}th chunk")
+    logger.info(colored(f"handling the {page_number}th chunk", "green"))
     messages = [
         {"role": "system", "content": structure_json_prompt.format(ASPECT=aspect)},
-        {"role": "user", "content": f"主要参考的当前文档的结构树!!:\n{struct}"},
+        {
+            "role": "user",
+            "content": f"主要参考的当前文档的结构树!!:\n{structs_list[page_number]}",
+        },
         {
             "role": "user",
             "content": f"可以用作参考的上页文档部分内容:\n{previous_content}",
@@ -71,24 +75,30 @@ def process_content(
     )
     result = response.choices[0].message.content
     logger.debug(f"json:\n{result}")
+    # 避免多线程太多请求时出现失败或超时
+    time.sleep(5)
 
     # JSON 转换
     conversion_messages = [
         {"role": "system", "content": structure_kg_prompt},
-        {"role": "user", "content": f"主要参考的当前文档的结构树!!:\n{struct}"},
+        {
+            "role": "user",
+            "content": f"主要参考的当前文档的结构树!!:\n{structs_list[page_number]}",
+        },
         {"role": "user", "content": f"待转化的json内容:\n{result}"},
     ]
-
+    # logger.info(f"conversion_messages:{conversion_messages}")
     response = ai_tools.llm.chat.completions.create(
         model=model, messages=conversion_messages, temperature=temperature
     )
     final_result = response.choices[0].message.content
     final_result_list = parse_to_list(final_result)
+    time.sleep(5)
 
     # 添加必要的内容
     for res in final_result_list:
-        res["content"] = content
         res["id"] = page_number
+        res["content"] = content
     logger.debug(f"final_result_list:\n{final_result_list}")
 
     return final_result_list
@@ -97,22 +107,21 @@ def process_content(
 def process_docx_files_kg(
     docx_file, ai_tools, model, chunk_size, chunk_overlap, fsr, aspect
 ):
-    struct = fsr
-    start_time = time.time()
+    structs_list = fsr
     content_read = chunk_by_LCEL(
         read_docx(docx_file), chunk_size=chunk_size, chunk_overlap=chunk_overlap
     )
     previous_content = "第一页,暂无内容"
     kg_list = []
 
-    with concurrent.futures.ThreadPoolExecutor() as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
         futures = []
         for page_number, content in enumerate(content_read, start=1):
             futures.append(
                 executor.submit(
                     process_content,
                     content,
-                    struct,
+                    structs_list,
                     previous_content,
                     ai_tools,
                     model,
@@ -121,7 +130,7 @@ def process_docx_files_kg(
                 )
             )
             previous_content = content  # 更新上一部分内容
-
+            time.sleep(2)
         for future in tqdm(
             concurrent.futures.as_completed(futures),
             total=len(futures),
@@ -131,9 +140,6 @@ def process_docx_files_kg(
                 kg_list.extend(future.result())
             except Exception as e:
                 logger.error(f"Error processing content: {e}")
-
-    elapsed_time = time.time() - start_time
-    logger.info(f"kg生成耗时: {elapsed_time:.2f}秒")
     return kg_list
 
 
@@ -146,103 +152,19 @@ if __name__ == "__main__":
     chunk_overlap = int(os.getenv("chunk_overlap"))
     model = os.getenv("MODEL")
     aspect = "公司培训管理制度"
-    fsr = """
-公司培训管理制度
-├── 公司管理文件
-├── 培训管理制度
-│   ├── 目的
-│   ├── 范围
-│   ├── 职责
-├── TE-MF-B011
-├── 人力资源中心职责
-│   ├── 培训计划支持与督导
-│   ├── 新员工培训组织
-│   ├── 人员资格和能力管理
-│   ├── 外部培训机构管理
-│   ├── 内训讲师管理
-│   ├── 培训效果评估及改进
-│   ├── 年度培训总结报告
-│   ├── 培训记录与档案管理
-│   ├── 企业文化培训内容检查
-│   ├── 培训资源整合与分享
-├── 各中心/部门负责人职责
-│   ├── 年度培训计划制订
-│   ├── 培训预算控制及审批
-│   ├── 配合人力资源中心工作
-│   ├── 岗位培训要求填报改进
-│   ├── 业务培训要求提出
-│   ├── 培训教材设计与实施
-├── 员工职责
-│   ├── 积极参与培训课程
-│   ├── 提交培训心得报告
-│   ├── 培训权利和义务
-│   ├── 培训期间纪律遵守
-│   ├── 培训资料提交及分享
-│   ├── 培训成果应用与转训
-│   ├── 个人原因导致培训中止的责任承担
-├── 子公司人力资源部职责
-│   ├── 制定子公司培训制度
-│   ├── 年度培训计划及预算制订
-│   ├── 备案股份公司人力资源中心
-│   ├── 企业文化或公司简介培训课件制定
-│   ├── 培训资源共享
-├── 培训经费管理
-│   ├── 日常培训经费
-│   │   ├── 年度培训总预算
-│   │   ├── 培训预算分解
-│   │   ├── 培训经费使用范围
-│   │   ├── 日常培训经费使用规定
-│   ├── 特殊培训经费管理
-│   │   ├── 经费清零规则
-│   │   ├── 报销规定
-│   │   ├── 调休处理
-│   │   ├── 内部分享义务
-│   │   ├── 公司级培训项目经费管理
-│   │   ├── 领导审批权限
-├── 学历教育奖励
-│   ├── 奖励标准
-│   ├── 申请程序
-│   ├── 报销规定
-├── 培训的策划
-│   ├── 能力要求识别
-│   ├── 岗位培训要求制定与修订
-├── 新生产线岗位培训
-│   ├── 培训要求及能力策划
-├── 培训类型
-│   ├── 内部培训
-│   │   ├── 新员工培训
-│   │   ├── 在职人员培训
-│   ├── 外部培训
-│   │   ├── 外部集中培训
-│   │   ├── 学历教育
-│   ├── 自我发展与提高
-├── 培训对象
-│   ├── 人员组织
-│   ├── 培训引导
-│   ├── 培训工具的应用和更新
-│   ├── 培训权利和义务
-├── 培训档案管理
-│   ├── 档案记录
-│   │   ├── 教育训练记录
-│   │   ├── 个人培训档案
-│   │   ├── 年度培训计划表
-│   │   ├── 岗位能力评价记录表
-│   │   ├── 部门培训需求表
-│   │   ├── 实际操作考核记录表
-│   │   ├── 季度培训合格率统计分析表
-│   │   ├── 季度培训计划跟踪情况表
-│   │   ├── 培训心得
-│   │   ├── 培训效果评估表
-│   │   ├── 培训经费申请表
-│   │   ├── 培训协议
-│   │   ├── 学历教育奖励申请表
-│   │   ├── 新材料、新技术、新工艺培训跟踪表
-├── 文件发放范围
-│   ├── 公司各部门
-│   ├── 各子公司人力资源部
-├── TE-QR-G299
-"""
+    fsr = [
+        "公司培训管理制度",
+        "公司培训管理制度\n├── 公司电子管理文件\n├── 培训管理制度\n├── TE-MF-B011",
+        "公司培训管理制度\n├── 公司电子管理文件\n├── 培训管理制度\n│   ├── 目的\n│   ├── 范围\n│   ├── 职责\n├── TE-MF-B011",
+        "公司培训管理制度\n├── 公司电子管理文件\n├── 培训管理制度\n│   ├── 目的\n│   ├── 范围\n│   ├── 职责\n├── TE-MF-B011-4",
+        "公司培训管理制度\n├── 公司电子管理文件\n├── 培训管理制度\n│   ├── 目的\n│   ├── 范围\n│   ├── 职责\n├── TE-MF-B011-5",
+    ]
+    start_time = time.time()
     kg_list = process_docx_files_kg(
         docx_path, ai_tools, model, chunk_size, chunk_overlap, fsr, aspect
     )
     logger.info(f"{kg_list}")
+    elapsed_time = time.time() - start_time
+    logger.info(f"kg生成耗时: {elapsed_time:.2f}秒")
+    with open("no_git_oic/fsr_kg.txt", "w") as f:
+        f.write("[" + "\n".join(str(item) for item in kg_list) + "]")
