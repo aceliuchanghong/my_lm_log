@@ -152,6 +152,7 @@ def send_audio_to_whisper(
                 # 生成SRT格式内容
                 result += f"{i}\n{start_time} --> {end_time}\n{simple_text}{translate_text_out}\n\n"
         logger.info(f"4.开始输出...")
+        logger.info(colored(f"\n{result}", "green"))
         return result
     else:
         response.raise_for_status()  # 如果请求失败，抛出异常
@@ -196,6 +197,5 @@ if __name__ == "__main__":
     output_file = os.path.join(
         file_dir, f"{file_name_without_extension}.{args.out_type}"
     )
-    with open(output_file, "w") as f:
+    with open(output_file, "w", encoding="utf-8") as f:
         f.write(result)
-    logger.info(colored(f"\n{result}", "green"))

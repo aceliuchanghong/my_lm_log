@@ -39,4 +39,5 @@ def main():
 if __name__ == "__main__":
     # python z_utils/audio_trans.py "C:\Users\lawrence\Music\Wednesday at 10-44 PM.m4a..mp3" "00.wav"
     # python z_utils/audio_trans.py "C:\Users\lawrence\Music\Wednesday at 10-44 PM.m4a..mp3"
+    # python z_utils/audio_trans.py "D:\机器学习记录\make_video\AI-数学-随机变量与概率分布-03\Monday at 7-45 PM.m4a..mp3"
     main()
