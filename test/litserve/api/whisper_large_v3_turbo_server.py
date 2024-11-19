@@ -78,12 +78,12 @@ def process_translation(text, translate):
 
 
 def send_audio_to_whisper(
-    audio_path, out_type="txt", translate=False, tran_type="simple"
+    audio_path, out_type="txt", translate=False, tran_type="simple", language="zh"
 ):
     url = "https://api.deepinfra.com/v1/inference/openai/whisper-large-v3-turbo"
     headers = {"Authorization": "bearer 3iQIT7UW994mUKVLLmJDLEI4aJiDnXsy"}
     data = {
-        "language": "zh",
+        "language": language,
         "temperature": 0.1,
     }
     # 获取文件扩展名并转换为小写
@@ -96,19 +96,29 @@ def send_audio_to_whisper(
         try:
             audio_stream, err = (
                 ffmpeg.input(audio_path)
-                .output("pipe:1", acodec="pcm_s16le", format="wav")  # 输出到内存
-                .run(capture_stdout=True, capture_stderr=True)
+                # .output(
+                #     "pipe:1", acodec="pcm_s16le", format="wav"
+                # )  # 输出到内存,可能会比较大,但是速度很快
+                .output("pipe:1", acodec="libmp3lame", format="mp3").run(
+                    capture_stdout=True, capture_stderr=True
+                )
             )
         except ffmpeg._run.Error as e:
             logger.error(f"FFmpeg error occurred: {e.stderr.decode('utf-8')}")
             raise
         # 使用 io.BytesIO 将音频流包装成文件对象
         audio_file = io.BytesIO(audio_stream)
+        audio_file_size = len(audio_file.getvalue())
     elif file_extension in audio_extensions:
         # 音频文件：直接打开音频文件
         audio_file = open(audio_path, "rb")
+        audio_file_size = os.path.getsize(audio_file.name)
     else:
         raise ValueError("文件类型不支持，请提供视频或音频文件。")
+
+    audio_file_size_mb = audio_file_size / (1024 * 1024)
+    logger.info(f"获取到的音频大小: {audio_file_size_mb:.2f} MB")
+
     end_time = time.time()
     elapsed_time = end_time - start_time
     logger.info(f"1.媒体文件获取耗时: {elapsed_time:.2f}秒")
@@ -128,7 +138,7 @@ def send_audio_to_whisper(
     if response.status_code == 200:
         result = ""
         result_temp = response.json()
-        logger.info(f"3.0.翻译开始,共{len(result_temp["segments"])}句")
+        logger.info(f"3.0.翻译开始,共{len(result_temp['segments'])}句")
         for i, segment in enumerate(result_temp["segments"], start=1):
             start = round(segment["start"], 2)
             end = round(segment["end"], 2)
@@ -170,6 +180,11 @@ if __name__ == "__main__":
     python test/litserve/api/whisper_large_v3_turbo_server.py \
         --file no_git_oic/会议纪要操作演示6.mp4 \
         --translate
+        
+    python test/litserve/api/whisper_large_v3_turbo_server.py \
+        --file /mnt/data/llch/fluxgym/flowrence/WG40.mp4 \
+        --out_type txt \
+        --language en
 
     python test/litserve/api/whisper_large_v3_turbo_server.py --file "D:\机器学习记录\make_video\AI-数学-对数-02\AI-数学-对数-02.mp4" --translate
     """
@@ -182,6 +197,7 @@ if __name__ == "__main__":
     parser.add_argument("--translate", action="store_true", help="translate to eng")
     parser.add_argument("--out_type", default="srt", help="outfile type")
     parser.add_argument("--tran_type", default="simple", help="简体繁体")
+    parser.add_argument("--language", default="zh", help="语言种类")
 
     args = parser.parse_args()
     result = send_audio_to_whisper(
@@ -189,6 +205,7 @@ if __name__ == "__main__":
         out_type=args.out_type,
         translate=args.translate,
         tran_type=args.tran_type,
+        language=args.language,
     )
     # 保存字幕文件
     file_path = os.path.abspath(args.file)
