@@ -14,9 +14,9 @@ start_time = time.time()
 url = "http://127.0.0.1:8117/predict"
 data = {
     "images": [
-        "no_git_oic/采购合同4.pdf_show_0.jpg",
-        "no_git_oic/发票签收单2.pdf_show_0.jpg",
-        "https://www.fmprc.gov.cn/zwbd_673032/jghd_673046/202410/W020241008504386437112.jpg",
+        "/mnt/data/llch/fluxgym/pics/000.png",
+        "/mnt/data/llch/fluxgym/pics/6谷雨.png",
+        "/mnt/data/llch/fluxgym/pics/1立春.png",
     ],
 }
 
