@@ -138,6 +138,7 @@ def send_audio_to_whisper(
     if response.status_code == 200:
         result = ""
         result_temp = response.json()
+        start_time_1 = time.time()
         logger.info(f"3.0.翻译开始,共{len(result_temp['segments'])}句")
         for i, segment in enumerate(result_temp["segments"], start=1):
             start = round(segment["start"], 2)
@@ -151,7 +152,9 @@ def send_audio_to_whisper(
             )
             end_time = time.time()
             elapsed_time = end_time - start_time
-            logger.info(f"3.{i}.翻译第{i}句耗时: {elapsed_time:.2f}秒")
+            logger.info(
+                f"3.{i}.翻译第{i}/{len(result_temp['segments'])}句耗时: {elapsed_time:.2f}秒"
+            )
 
             if out_type == "txt":
                 time_show = f"[{start}s -> {end}s] "
@@ -161,8 +164,10 @@ def send_audio_to_whisper(
                 end_time = format_time(end)
                 # 生成SRT格式内容
                 result += f"{i}\n{start_time} --> {end_time}\n{simple_text}{translate_text_out}\n\n"
-        logger.info(f"4.开始输出...")
         logger.info(colored(f"\n{result}", "green"))
+        end_time_1 = time.time()
+        elapsed_time = end_time_1 - start_time_1
+        logger.info(f"4.输出耗时: {elapsed_time:.2f}秒")
         return result
     else:
         response.raise_for_status()  # 如果请求失败，抛出异常
