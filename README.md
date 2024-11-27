@@ -100,17 +100,22 @@ my_lm_log/
 # create
 conda create -n ml python=3.11 -y
 conda activate ml
-python -m venv .venv
+python -m venv env
 pip install -r requirements.txt
 # win
 Set-ExecutionPolicy Bypass -Scope Process -Force
 .venv\Scripts\activate
 # linux
-source .venv/bin/activate
+source env/bin/activate
 # jupyter
 jupyter notebook --port=8888 --allow-root --ip='*'
 # 端口进程查询关闭
 netstat -tlnp|grep 5500
+# pytorch 统一
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+# ollama
+Environment="OLLAMA_MODELS=/mnt/data/ollama_models"
+Environment="OLLAMA_HOST=0.0.0.0"
 ```
 
 ### Others
