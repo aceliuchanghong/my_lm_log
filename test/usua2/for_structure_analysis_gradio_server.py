@@ -3,7 +3,8 @@ import os
 from dotenv import load_dotenv
 import logging
 import pandas as pd
-from termcolor import colored
+from typing import List, Tuple
+import random
 
 load_dotenv()
 log_level = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -38,85 +39,44 @@ def generate_excel(data):
     return excel_file
 
 
-def deal_pics_analysis(file_path_list):
-    """
-    修改此函数3处即可
-    """
-    data = []
-    # 数据获取需要修改成自己的实现
-    data1 = {
-        "测试姓名": [
-            "张三",
-            "李四",
-            "王五",
-            "张三",
-            "李四",
-            "王五",
-            "张三",
-            "李四",
-            "王五",
-            "张三",
-            "李四",
-            "王五",
-        ],
-        "测试年龄": [25, 30, 28, 25, 30, 28, 25, 30, 28, 25, 30, 28],
-        "测试城市": [
-            "北京",
-            "上海",
-            "广州",
-            "北京",
-            "上海",
-            "广州",
-            "北京",
-            "上海",
-            "广州",
-            "北京",
-            "上海",
-            "广州",
-        ],
+def generate_random_data(num_rows: int = 12) -> pd.DataFrame:
+    names = ["张三", "李四", "王五"]
+    ages = [25, 30, 28]
+    cities = ["北京", "上海", "广州"]
+
+    data = {
+        "测试姓名": [random.choice(names) for _ in range(num_rows)],
+        "测试年龄": [random.choice(ages) for _ in range(num_rows)],
+        "测试城市": [random.choice(cities) for _ in range(num_rows)],
     }
-    data2 = {
-        "测试姓名3": [
-            "张三",
-            "李四",
-            "王五",
-            "张三",
-            "李四",
-            "王五",
-            "张三",
-            "李四",
-            "王五",
-            "张三",
-            "李四",
-            "王五",
-        ],
-        "测试年龄3": [25, 30, 28, 25, 30, 28, 25, 30, 28, 25, 30, 28],
-        "测试城市3": [
-            "北京",
-            "上海",
-            "广州",
-            "北京",
-            "上海",
-            "广州",
-            "北京",
-            "上海",
-            "广州",
-            "北京",
-            "上海",
-            "广州",
-        ],
-    }
-    # 全部图片的结果数据添加到data这个list里面,需要自己修改
-    data.append(data1)
-    data.append(data2)
-    # 图片添加红色条纹或者其他什么的,然后变成新的图片的逻辑,需要修改
-    file_path_list = file_path_list
+
+    return data
+
+
+def deal_pics_analysis(
+    file_path_list: List[str],
+) -> Tuple[List[str], List, pd.DataFrame, str]:
+    """
+    参数:
+        file_path_list (List[str]): 文件路径的字符串列表。
+
+    返回:
+        包含以下四个元素:
+            - new_file_path_list (List[str]): 新生成的文件路径列表。
+            - data (List): 输出的数据的列表。(长度与new_file_path_list相同)
+            - df_first (pd.DataFrame): 第一个数据框。
+            - out_excel_first (str): 输出的 Excel 文件路径。
+    """
+
+    new_file_path_list = file_path_list
+    # 生成随机数据
+    data = [generate_random_data() for _ in range(len(new_file_path_list))]
 
     # 给一个初始展示的值,此处不要修改
-    df_first = pd.DataFrame(data[0])
+    df_first = pd.DataFrame(data[0]) if data else pd.DataFrame()
     out_excel_first = generate_excel(data=df_first)
 
-    return file_path_list, data, df_first, out_excel_first
+    return new_file_path_list, data, df_first, out_excel_first
 
 
 def create_app():
@@ -158,6 +118,7 @@ def create_app():
 if __name__ == "__main__":
     # export no_proxy="localhost,127.0.0.1"
     # python test/usua2/for_structure_analysis_gradio_server.py
+    # nohup python for_structure_analysis_gradio_server.py > UI.log 2>&1 &
     file_default_path = os.path.join(
         os.getenv("upload_file_save_path"), "structure_analysis"
     )

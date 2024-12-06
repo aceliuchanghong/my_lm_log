@@ -30,12 +30,18 @@ If you want me to, I will
 ```
 
 
-## 报错解决
+## 杂项
 ```
+# 报错解决
 from torch._C import * # noqa: F403 ImportError: /mnt/data/llch/my_lm_log/env/lib/python3.12/site-packages/torch/lib/../../nvidia/cusparse/lib/libcusparse.so.12: undefined symbol: __nvJitLinkAddData_12_1, version libnvJitLink.so.12
 
 https://github.com/pytorch/pytorch/issues/111469
 export LD_LIBRARY_PATH=/mnt/data/anaconda/envs/vllm/lib/python3.10/site-packages/nvidia/nvjitlink/lib:$LD_LIBRARY_PATH
+
+# ollama
+vim /etc/systemd/system/ollama.service
+Environment="OLLAMA_MODELS=/mnt/data/ollama_models"
+Environment="OLLAMA_HOST=0.0.0.0"
 ```
 
 

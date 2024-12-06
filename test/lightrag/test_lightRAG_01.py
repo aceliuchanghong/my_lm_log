@@ -1,7 +1,7 @@
 import os
 import logging
 from lightrag import LightRAG, QueryParam
-from lightrag.llm import ollama_model_complete, ollama_embedding
+from lightrag.llm import openai_complete_if_cache, ollama_embedding
 from lightrag.utils import EmbeddingFunc
 import sys
 from dotenv import load_dotenv
@@ -26,13 +26,24 @@ from test.rag.kg_stuff.com_rule_01_fsr import read_docx
 if not os.path.exists(WORKING_DIR):
     os.mkdir(WORKING_DIR)
 
+
+async def llm_model_func(
+    prompt, system_prompt=None, history_messages=[], **kwargs
+) -> str:
+    return await openai_complete_if_cache(
+        "Qwen2.5",
+        prompt,
+        system_prompt=system_prompt,
+        history_messages=history_messages,
+        api_key="torch-elskenrgvoiserngviopsejrmoief",
+        base_url="http://36.213.66.106:11433/v1/",
+        **kwargs,
+    )
+
+
 rag = LightRAG(
     working_dir=WORKING_DIR,
-    llm_model_func=ollama_model_complete,
-    llm_model_name="qwen2.5:32b-instruct-fp16",
-    llm_model_max_async=4,
-    llm_model_max_token_size=32768,
-    llm_model_kwargs={"host": "http://localhost:11434", "options": {"num_ctx": 32768}},
+    llm_model_func=llm_model_func,
     embedding_func=EmbeddingFunc(
         embedding_dim=1024,
         max_token_size=8192,
@@ -46,32 +57,16 @@ docx_path = "no_git_oic/com_rule_start/TE-MF-B004考勤管理制度V4.1-20231020
 file_content = read_docx(docx_path)
 rag.insert(file_content)
 
-# Perform naive search
-print(
-    rag.query(
-        "What are the top themes in this content?", param=QueryParam(mode="naive")
-    )
-)
+# # Perform naive search
+# print(rag.query("病假相关条例?", param=QueryParam(mode="naive")))
 
-# Perform local search
-print(
-    rag.query(
-        "What are the top themes in this content?", param=QueryParam(mode="local")
-    )
-)
+# # Perform local search
+# print(rag.query("病假相关条例?", param=QueryParam(mode="local")))
 
-# Perform global search
-print(
-    rag.query(
-        "What are the top themes in this content?", param=QueryParam(mode="global")
-    )
-)
+# # Perform global search
+# print(rag.query("病假相关条例?", param=QueryParam(mode="global")))
 
-# Perform hybrid search
-print(
-    rag.query(
-        "What are the top themes in this content?", param=QueryParam(mode="hybrid")
-    )
-)
+# # Perform hybrid search
+# print(rag.query("病假相关条例?", param=QueryParam(mode="hybrid")))
 # python test/lightrag/test_lightRAG_01.py
-# export no_proxy="localhost,112.48.199.202,127.0.0.1"
+# export no_proxy="localhost,36.213.66.106,127.0.0.1"
