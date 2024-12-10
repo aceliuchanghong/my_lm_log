@@ -57,8 +57,8 @@ docx_path = "no_git_oic/com_rule_start/TE-MF-B004考勤管理制度V4.1-20231020
 file_content = read_docx(docx_path)
 rag.insert(file_content)
 
-# # Perform naive search
-# print(rag.query("病假相关条例?", param=QueryParam(mode="naive")))
+# Perform naive search
+print(rag.query("病假相关条例?", param=QueryParam(mode="naive")))
 
 # # Perform local search
 # print(rag.query("病假相关条例?", param=QueryParam(mode="local")))
