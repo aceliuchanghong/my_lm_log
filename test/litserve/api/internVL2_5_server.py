@@ -1,12 +1,89 @@
-import numpy as np
 import torch
 import torchvision.transforms as T
 from PIL import Image
 from torchvision.transforms.functional import InterpolationMode
 from transformers import AutoModel, AutoTokenizer
 import math
+import litserve as ls
+import os
+from dotenv import load_dotenv
+import logging
+import sys
+import requests
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+load_dotenv()
+log_level = os.getenv("LOG_LEVEL", "INFO").upper()
+logging.basicConfig(
+    level=getattr(logging, log_level),
+    format="%(asctime)s-%(levelname)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger(__name__)
+
+sys.path.insert(
+    0,
+    os.path.abspath(
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../../")
+    ),
+)
+from z_utils.rotate2fix_pic import detect_text_orientation
 
 
+def download_image(image_url, save_dir):
+    """Download an image from a URL and save it locally."""
+    os.makedirs(save_dir, exist_ok=True)
+    local_image_path = os.path.join(save_dir, os.path.basename(image_url))
+
+    response = requests.get(image_url, stream=True)
+    if response.status_code == 200:
+        with open(local_image_path, "wb") as out_file:
+            out_file.write(response.content)
+        return local_image_path
+    else:
+        raise ValueError(f"Failed to download image from {image_url}")
+
+
+def get_local_images(images_path):
+    save_dir = os.path.join(os.getenv("upload_file_save_path"), "images")
+    local_images_path = set()  # 使用集合来避免重复
+    rotate_path = os.path.join(os.getenv("upload_file_save_path"), "rotate_pics")
+
+    # 多线程下载和处理图片
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        # 提交下载任务，非本地文件才下载
+        future_to_image = {
+            executor.submit(download_image, image, save_dir): image
+            for image in images_path
+            if not os.path.isfile(image)
+        }
+
+        # 处理所有任务，无论是下载还是文字方向检测
+        for future in as_completed(future_to_image):
+            image = future_to_image[future]
+            try:
+                # 下载后进行文字方向检测
+                downloaded_image = future.result()
+                result_image = detect_text_orientation(downloaded_image, rotate_path)
+                local_images_path.add(result_image)  # 使用集合的add方法
+            except Exception as e:
+                print(f"Error processing image {image}: {e}")
+        logger.debug(f"local_images_path1:{list(local_images_path)}")
+
+        # 对本地文件进行文字方向检测
+        for image in images_path:
+            if os.path.isfile(image):
+                try:
+                    result_image = detect_text_orientation(image, rotate_path)
+                    local_images_path.add(result_image)  # 使用集合的add方法
+                except Exception as e:
+                    print(f"Error processing image {image}: {e}")
+        logger.debug(f"local_images_path2:{list(local_images_path)}")
+
+    return list(local_images_path)  # 返回列表格式
+
+
+# https://huggingface.co/OpenGVLab/InternVL2_5-8B
 def split_model(model_name):
     device_map = {}
     world_size = torch.cuda.device_count()
@@ -40,11 +117,9 @@ def split_model(model_name):
     return device_map
 
 
-IMAGENET_MEAN = (0.485, 0.456, 0.406)
-IMAGENET_STD = (0.229, 0.224, 0.225)
-
-
 def build_transform(input_size):
+    IMAGENET_MEAN = (0.485, 0.456, 0.406)
+    IMAGENET_STD = (0.229, 0.224, 0.225)
     MEAN, STD = IMAGENET_MEAN, IMAGENET_STD
     transform = T.Compose(
         [
@@ -130,29 +205,86 @@ def load_image(image_file, input_size=448, max_num=12):
     return pixel_values
 
 
-path = "/mnt/data/llch/InternVL2_5-8B/OpenGVLab/InternVL2_5-8B"
-device_map = split_model("InternVL2_5-8B")
-model = AutoModel.from_pretrained(
-    path,
-    torch_dtype=torch.bfloat16,
-    low_cpu_mem_usage=True,
-    use_flash_attn=True,
-    trust_remote_code=True,
-    device_map=device_map,
-).eval()
-tokenizer = AutoTokenizer.from_pretrained(path, trust_remote_code=True, use_fast=False)
+class InternVL2_5API(ls.LitAPI):
+    @staticmethod
+    def clean_memory(device):
+        import gc
 
-# set the max number of tiles in `max_num`
-pixel_values = (
-    load_image("no_git_oic/采购合同2.pdf_show_0.jpg", max_num=12)
-    .to(torch.bfloat16)
-    .cuda()
-)
-generation_config = dict(max_new_tokens=1024, do_sample=True)
+        if torch.cuda.is_available():
+            with torch.cuda.device(device):
+                torch.cuda.empty_cache()
+                torch.cuda.ipc_collect()
+        gc.collect()
 
-# pure-text conversation (纯文本对话)
-question = "将图片还原为markdown格式"
-response, history = model.chat(
-    tokenizer, None, question, generation_config, history=None, return_history=True
-)
-print(f"User: {question}\nAssistant: {response}")
+    def setup(self, device):
+        self.path = "/mnt/data/llch/InternVL2_5-8B/OpenGVLab/InternVL2_5-8B"
+        self.device_map = split_model("InternVL2_5-8B")
+        self.model = AutoModel.from_pretrained(
+            self.path,
+            torch_dtype=torch.bfloat16,
+            low_cpu_mem_usage=True,
+            use_flash_attn=True,
+            trust_remote_code=True,
+            device_map=self.device_map,
+        ).eval()
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            self.path, trust_remote_code=True, use_fast=False
+        )
+
+    def decode_request(self, request):
+        images_path = request["images_path"]
+        rule = request["rule"]
+        local_images_path = get_local_images(images_path)
+        user_prompt = (
+            "提取"
+            + rule["entity_name"]
+            + (
+                ",它的可能结果案例:" + rule["entity_format"]
+                if len(rule["entity_format"]) > 1
+                else ""
+            )
+            + (
+                ",它的可能结果正则:" + rule["entity_regex_pattern"]
+                if len(rule["entity_regex_pattern"]) > 1
+                else ""
+            )
+        )
+        logger.debug(f"local_images_path:\n{local_images_path}")
+        logger.info(f"user_prompt:\n{user_prompt}")
+        return local_images_path, user_prompt, rule
+
+    def predict(self, inputs):
+        try:
+            local_images_path, user_prompt, rule = inputs
+            pixel_values_list = [
+                load_image(image_path, max_num=12).to(torch.bfloat16).cuda()
+                for image_path in local_images_path  # 使用 local_images_path 提供的路径列表
+            ]
+            pixel_values = torch.cat(pixel_values_list, dim=0)
+
+            generation_config = dict(max_new_tokens=1024, do_sample=True)
+            question = f"<image>\n{user_prompt}"
+            response, history = self.model.chat(
+                self.tokenizer,
+                pixel_values,
+                question,
+                generation_config,
+                history=None,
+                return_history=True,
+            )
+            return {"message": "Processing complete", "information": response}
+        except Exception as e:
+            logger.error(f"error:{e} \ninputs:{inputs}")
+        finally:
+            self.clean_memory(self.device)
+
+    def encode_response(self, output):
+        return output
+
+
+if __name__ == "__main__":
+    # python test/litserve/api/internVL2_5_server.py
+    # export no_proxy="localhost,127.0.0.1"
+    api = InternVL2_5API()
+    server = ls.LitServer(api, accelerator="gpu", devices=1)
+    server.run(port=int(os.getenv("MOLMO_PORT")))

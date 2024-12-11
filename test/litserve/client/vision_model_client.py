@@ -15,11 +15,11 @@ response = requests.post(
     f"http://{ip}:8110/predict",
     json={
         "images_path": [
-            "no_git_oic/page_1.png",
-            # "./no_git_oic/发票签收单2.pdf_show_0.jpg",
+            "no_git_oic/采购合同2.pdf_show_0.jpg",
+            "no_git_oic/eb20901aea55ff2510a24f645bbc27dc.jpg",
             # "./no_git_oic/企业微信截图_17288805401553.png",
             # "./no_git_oic/企业微信截图_17288805261441.png",
-            # "https://www.mfa.gov.cn/zwbd_673032/jghd_673046/202410/W020241008522924065946.jpg",
+            "https://www.mfa.gov.cn/zwbd_673032/jghd_673046/202410/W020241008522924065946.jpg",
         ],
         "rule": {
             "entity_name": "10位数条形码号码",
