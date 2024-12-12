@@ -25,22 +25,21 @@ logger = logging.getLogger(__name__)
 
 def get_entity_result(client, user_prompt, Basic_info="", system_prompt=None):
     if system_prompt is None or len(system_prompt) <= 1:
-        system_prompt = """你是一个OCR文档结果提取信息专家
-## 技能
-- 擅长从有瑕疵的OCR文档中提取信息
-- 能够自动识别修复OCR识别中的错别字
-- 善于优化信息提取的准确性
-## 行动
-根据输入的待提取实体的信息和提供的OCR文档结果，提取和校正重要信息
-## 约束
-输出需符合以下限制：
-1. 无法提取到正确匹配值时，answer应为"DK"
-2. 结果以JSON格式回复
-3. OCR结果不一定准，可能需要自动修复错别字
-## 示例输出
+        system_prompt = """
 {
-    "question": "提取世界上最高的山的名字",
-    "answer": "珠穆朗玛峰"
+    "Role": "你是一个OCR文档结果提取信息专家",
+    "Skills": [
+        "擅长从有瑕疵的OCR文档中提取信息",
+        "能够自动识别修复OCR识别中的错别字",
+        "善于优化信息提取的准确性",
+    ],
+    "Goal": "根据输入的待提取实体的信息和提供的OCR文档结果,提取和校正重要信息",
+    "Instruct": [
+        "1. 无法提取到正确匹配值时,answer值应为'DK'",
+        "2. 结果以JSON格式回复",
+        "3. OCR结果不一定准,可能需要自动修复错别字",
+    ],
+    "Output-Example": {"question": "提取世界上最高的山的名字", "answer": "珠穆朗玛峰"},
 }
 """
     prompt = (
@@ -56,8 +55,8 @@ def get_entity_result(client, user_prompt, Basic_info="", system_prompt=None):
     response = client.chat.completions.create(
         model=os.getenv("MODEL"),
         messages=messages,
-        response_format={"type": "json_object"},
-        temperature=0.2,
+        # response_format={"type": "json_object"},
+        temperature=0.5,
     )
     end_time = time.time()
     elapsed_time = end_time - start_time

@@ -22,7 +22,7 @@ response = requests.post(
             "https://www.mfa.gov.cn/zwbd_673032/jghd_673046/202410/W020241008522924065946.jpg",
         ],
         "rule": {
-            "entity_name": "10位数条形码号码",
+            "entity_name": "条形码下方10位数字号码",
             "entity_format": "2100000010",
             "entity_regex_pattern": "[1-2][0-9]{9}",
         },
@@ -34,7 +34,7 @@ elapsed_time = end_time - start_time
 logger.info(f"耗时: {elapsed_time:.2f}秒")
 
 """
-export no_proxy="localhost,112.48.199.202,127.0.0.1"
+export no_proxy="localhost,36.213.66.106,127.0.0.1"
 python test/litserve/client/vision_model_client.py
 Status: 200
 Response:

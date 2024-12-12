@@ -9,8 +9,9 @@ import os
 from dotenv import load_dotenv
 import logging
 import sys
-import requests
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from openai import OpenAI
+from termcolor import colored
+
 
 load_dotenv()
 log_level = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -28,59 +29,7 @@ sys.path.insert(
     ),
 )
 from z_utils.rotate2fix_pic import detect_text_orientation
-
-
-def download_image(image_url, save_dir):
-    """Download an image from a URL and save it locally."""
-    os.makedirs(save_dir, exist_ok=True)
-    local_image_path = os.path.join(save_dir, os.path.basename(image_url))
-
-    response = requests.get(image_url, stream=True)
-    if response.status_code == 200:
-        with open(local_image_path, "wb") as out_file:
-            out_file.write(response.content)
-        return local_image_path
-    else:
-        raise ValueError(f"Failed to download image from {image_url}")
-
-
-def get_local_images(images_path):
-    save_dir = os.path.join(os.getenv("upload_file_save_path"), "images")
-    local_images_path = set()  # 使用集合来避免重复
-    rotate_path = os.path.join(os.getenv("upload_file_save_path"), "rotate_pics")
-
-    # 多线程下载和处理图片
-    with ThreadPoolExecutor(max_workers=10) as executor:
-        # 提交下载任务，非本地文件才下载
-        future_to_image = {
-            executor.submit(download_image, image, save_dir): image
-            for image in images_path
-            if not os.path.isfile(image)
-        }
-
-        # 处理所有任务，无论是下载还是文字方向检测
-        for future in as_completed(future_to_image):
-            image = future_to_image[future]
-            try:
-                # 下载后进行文字方向检测
-                downloaded_image = future.result()
-                result_image = detect_text_orientation(downloaded_image, rotate_path)
-                local_images_path.add(result_image)  # 使用集合的add方法
-            except Exception as e:
-                print(f"Error processing image {image}: {e}")
-        logger.debug(f"local_images_path1:{list(local_images_path)}")
-
-        # 对本地文件进行文字方向检测
-        for image in images_path:
-            if os.path.isfile(image):
-                try:
-                    result_image = detect_text_orientation(image, rotate_path)
-                    local_images_path.add(result_image)  # 使用集合的add方法
-                except Exception as e:
-                    print(f"Error processing image {image}: {e}")
-        logger.debug(f"local_images_path2:{list(local_images_path)}")
-
-    return list(local_images_path)  # 返回列表格式
+from test.litserve.api.quick_ocr_api_server import extract_entity, get_local_images
 
 
 # https://huggingface.co/OpenGVLab/InternVL2_5-8B
@@ -230,6 +179,7 @@ class InternVL2_5API(ls.LitAPI):
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.path, trust_remote_code=True, use_fast=False
         )
+        self.llm = OpenAI(api_key=os.getenv("API_KEY"), base_url=os.getenv("BASE_URL"))
 
     def decode_request(self, request):
         images_path = request["images_path"]
@@ -272,7 +222,11 @@ class InternVL2_5API(ls.LitAPI):
                 history=None,
                 return_history=True,
             )
-            return {"message": "Processing complete", "information": response}
+            logger.info(colored(f"vision model:{response}", "green"))
+            ans = extract_entity(self.llm, rule, response)
+            logger.info(colored(f"llm:{ans}", "green"))
+
+            return {"result": ans["result"], "entity_name": ans["entity_name"]}
         except Exception as e:
             logger.error(f"error:{e} \ninputs:{inputs}")
         finally:
@@ -284,7 +238,7 @@ class InternVL2_5API(ls.LitAPI):
 
 if __name__ == "__main__":
     # python test/litserve/api/internVL2_5_server.py
-    # export no_proxy="localhost,127.0.0.1"
+    # export no_proxy="localhost,36.213.66.106,127.0.0.1"
     api = InternVL2_5API()
-    server = ls.LitServer(api, accelerator="gpu", devices=1)
+    server = ls.LitServer(api, accelerator="gpu", devices=1, track_requests=True)
     server.run(port=int(os.getenv("MOLMO_PORT")))

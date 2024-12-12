@@ -179,27 +179,29 @@ class QuickOcrAPI(ls.LitAPI):
             text_line = create_textline_from_data(line)
             text_lines.append(text_line)
         markdown0 = polygon_to_markdown(text_lines)
-        markdown1 = markdown0.splitlines()[: int(os.getenv("import_head_lines"))]
+        # markdown1 = markdown0.splitlines()[: int(os.getenv("import_head_lines"))]
+        markdown1 = markdown0.splitlines()
         rapid_ocr_markdown = "\n".join([text for text in markdown1 if len(text) > 0])
-        logger.info(f"rapid_ocr_markdown:{rapid_ocr_markdown}")
+        logger.info(f"rapid_ocr_markdown:\n{rapid_ocr_markdown}")
 
-        ip = "127.0.0.1"
-        response = requests.post(
-            f"http://{ip}:{os.getenv('SURYA_PORT')}/predict",
-            json={
-                "images_path": [
-                    os.path.join(os.getcwd(), local_image),
-                ],
-            },
-        )
-        import json
+        # ip = "127.0.0.1"
+        # response = requests.post(
+        #     f"http://{ip}:{os.getenv('SURYA_PORT')}/predict",
+        #     json={
+        #         "images_path": [
+        #             os.path.join(os.getcwd(), local_image),
+        #         ],
+        #     },
+        # )
+        # import json
 
-        surya_ocr_result = json.loads(response.text)["output"][
-            os.path.join(os.getcwd(), local_image)
-        ]
-        logger.info(f"surya_ocr_result:{surya_ocr_result}")
+        # surya_ocr_result = json.loads(response.text)["output"][
+        #     os.path.join(os.getcwd(), local_image)
+        # ]
+        # logger.info(f"surya_ocr_result:{surya_ocr_result}")
 
-        single_result["ocr_result"] = rapid_ocr_markdown + surya_ocr_result
+        # single_result["ocr_result"] = rapid_ocr_markdown + surya_ocr_result
+        single_result["ocr_result"] = rapid_ocr_markdown
 
         try:
             save_dir = os.path.join(os.getenv("upload_file_save_path"), "images")
@@ -208,6 +210,7 @@ class QuickOcrAPI(ls.LitAPI):
             )
             upload_image = os.path.join(save_dir, single_result["file_name"])
             rotate_image = os.path.join(rotate_path, single_result["file_name"])
+            logger.info(f"starting to rm files...")
             os.remove(upload_image)
             os.remove(rotate_image)
         except Exception as e:
@@ -290,7 +293,7 @@ class QuickOcrAPI(ls.LitAPI):
 
 if __name__ == "__main__":
     # python test/litserve/api/quick_ocr_api_server.py
-    # export no_proxy="localhost,112.48.199.202,127.0.0.1"
+    # export no_proxy="localhost,36.213.66.106,127.0.0.1"
     # nohup python test/litserve/api/quick_ocr_api_server.py > no_git_oic/quick_ocr_api_server.log &
     api = QuickOcrAPI()
     server = ls.LitServer(api, accelerator="gpu", devices=[1])

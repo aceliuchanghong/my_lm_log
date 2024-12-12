@@ -28,11 +28,12 @@ from surya.model.recognition.model import load_model as load_rec_model
 from surya.model.recognition.processor import load_processor as load_rec_processor
 from surya.detection import batch_text_detection
 from surya.layout import batch_layout_detection
-from surya.ordering import batch_ordering
-from surya.model.ordering.processor import load_processor as load_order_processor
-from surya.model.ordering.model import load_model as load_order_model
-from tabled.extract import extract_tables
-from tabled.fileinput import load_pdfs_images
+
+# from surya.ordering import batch_ordering
+# from surya.model.ordering.processor import load_processor as load_order_processor
+# from surya.model.ordering.model import load_model as load_order_model
+# from tabled.extract import extract_tables
+# from tabled.fileinput import load_pdfs_images
 from surya.model.table_rec.model import load_model as load_table_rec_model
 from surya.model.table_rec.processor import load_processor as load_table_rec_processor
 from surya.settings import settings
@@ -136,54 +137,54 @@ def run_surya_batch_layout_detection(
     return layout_predictions
 
 
-def run_surya_order_detection(IMAGE_PATH, order_model, order_processor):
-    """
-    Reading order box顺序
-    """
-    start_time = time.time()
+# def run_surya_order_detection(IMAGE_PATH, order_model, order_processor):
+#     """
+#     Reading order box顺序
+#     """
+#     start_time = time.time()
 
-    image = Image.open(IMAGE_PATH)
-    # bboxes should be a list of lists with layout bboxes for the image in [x1,y1,x2,y2] format
-    # You can get this from the layout model, see above for usage
-    bboxes = [[1588, 133, 1742, 182]]
+#     image = Image.open(IMAGE_PATH)
+#     # bboxes should be a list of lists with layout bboxes for the image in [x1,y1,x2,y2] format
+#     # You can get this from the layout model, see above for usage
+#     bboxes = [[1588, 133, 1742, 182]]
 
-    order_predictions = batch_ordering([image], [bboxes], order_model, order_processor)
+#     order_predictions = batch_ordering([image], [bboxes], order_model, order_processor)
 
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    logger.info(f"surya_order_detection耗时: {elapsed_time:.2f}秒")
-    return order_predictions
+#     end_time = time.time()
+#     elapsed_time = end_time - start_time
+#     logger.info(f"surya_order_detection耗时: {elapsed_time:.2f}秒")
+#     return order_predictions
 
 
-def run_surya_table_detection(
-    PDF_PATH,
-    det_model,
-    det_processor,
-    layout_model,
-    layout_processor,
-    table_rec_model,
-    table_rec_processor,
-    rec_model,
-    rec_processor,
-):
-    """
-    table rec
-    """
+# def run_surya_table_detection(
+#     PDF_PATH,
+#     det_model,
+#     det_processor,
+#     layout_model,
+#     layout_processor,
+#     table_rec_model,
+#     table_rec_processor,
+#     rec_model,
+#     rec_processor,
+# ):
+#     """
+#     table rec
+#     """
 
-    new_det_model = det_model, det_processor, layout_model, layout_processor
-    new_rec_models = table_rec_model, table_rec_processor, rec_model, rec_processor
+#     new_det_model = det_model, det_processor, layout_model, layout_processor
+#     new_rec_models = table_rec_model, table_rec_processor, rec_model, rec_processor
 
-    start_time = time.time()
+#     start_time = time.time()
 
-    images, highres_images, names, text_lines = load_pdfs_images(PDF_PATH)
-    table_detection = extract_tables(
-        images, highres_images, text_lines, new_det_model, new_rec_models
-    )
+#     images, highres_images, names, text_lines = load_pdfs_images(PDF_PATH)
+#     table_detection = extract_tables(
+#         images, highres_images, text_lines, new_det_model, new_rec_models
+#     )
 
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    logger.info(f"surya_table_detection耗时: {elapsed_time:.2f}秒")
-    return table_detection
+#     end_time = time.time()
+#     elapsed_time = end_time - start_time
+#     logger.info(f"surya_table_detection耗时: {elapsed_time:.2f}秒")
+#     return table_detection
 
 
 if __name__ == "__main__":
@@ -208,8 +209,8 @@ if __name__ == "__main__":
     layout_model = load_det_model(layout_model_path)
     layout_processor = load_det_processor(layout_model_path)
 
-    order_model = load_order_processor(order_model_path)
-    order_processor = load_order_model(order_model_path)
+    # order_model = load_order_processor(order_model_path)
+    # order_processor = load_order_model(order_model_path)
 
     table_rec_model = load_table_rec_model(table_rec_model_path)
     table_rec_processor = load_table_rec_processor()
