@@ -92,7 +92,7 @@ class MolmoOcrLitAPI(ls.LitAPI):
 
 if __name__ == "__main__":
     # python test/litserve/api/vision_model_ocr_server.py
-    # export no_proxy="localhost,112.48.199.202,127.0.0.1"
+    # export no_proxy="localhost,36.213.66.106,127.0.0.1"
     api = MolmoOcrLitAPI()
     server = ls.LitServer(api, accelerator="gpu", devices=1)
     server.run(port=int(os.getenv("MOLMO_PORT")))

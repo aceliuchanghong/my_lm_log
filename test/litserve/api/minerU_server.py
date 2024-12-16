@@ -16,6 +16,7 @@ import os
 from dotenv import load_dotenv
 import logging
 import sys
+from termcolor import colored
 
 sys.path.insert(
     0,
@@ -35,20 +36,30 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 """
 只适配3.10,md,且kit1.0模型没适配
-pip install -U litserve python-multipart filetype
+pip install -U litserve python-multipart filetype openai rapidocr-onnxruntime rapid-table rapid-orientation termcolor
 pip install -U magic-pdf[full] --extra-index-url https://wheels.myhloli.com
 {
     "bucket_info":{
         "bucket-name-1":["ak", "sk", "endpoint"],
         "bucket-name-2":["ak", "sk", "endpoint"]
     },
-    "models-dir":"/mnt/data/llch/PDF-Extract-Kit/models",
+    "models-dir":"/mnt/data/llch/MinerU/models",
+    "layoutreader-model-dir":"/mnt/data/llch/MinerU/models/layoutreader",
     "device-mode":"cuda",
+    "layout-config": {
+        "model": "layoutlmv3"
+    },
+    "formula-config": {
+        "mfd_model": "yolo_v8_mfd",
+        "mfr_model": "unimernet_small",
+        "enable": true
+    },
     "table-config": {
-        "model": "TableMaster",
-        "is_table_recog_enable": false,
+        "model": "rapid_table",
+        "enable": false,
         "max_time": 400
-    }
+    },
+    "config_version": "1.0.0"
 }
 """
 
@@ -116,7 +127,7 @@ class MinerUAPI(ls.LitAPI):
                 model_path=os.getenv("rapidocr_table_engine_model_path")
             )
             self.client = OpenAI(
-                api_key=os.getenv("API_KEY"), base_url=os.getenv("BASE_URL")
+                api_key=os.getenv("API_KEY"), base_url=os.getenv("OLLAMA_CHAT_BASE_URL")
             )
 
     def decode_request(self, request):
@@ -174,6 +185,7 @@ class MinerUAPI(ls.LitAPI):
                         temperature=0.2,
                     )
                     table_code = response.choices[0].message.content
+                    logger.info(colored(f"HTML_PARSER_MODEL:{table_code}", "green"))
                 table_results["images/" + os.path.basename(image)] = table_code
             print(f"表格识别完成table_results:{table_results}")
             # 替换md
@@ -198,7 +210,7 @@ class MinerUAPI(ls.LitAPI):
 
 if __name__ == "__main__":
     # python test/litserve/api/minerU_server.py
-    # export no_proxy="localhost,112.48.199.202,127.0.0.1"
+    # export no_proxy="localhost,127.0.0.1"
     # nohup python test/litserve/api/minerU_server.py > no_git_oic/minerU_server.log &
     server = ls.LitServer(MinerUAPI(), accelerator="gpu", devices=[3])
     server.run(port=int(os.getenv("MINERU_SERVER_PORT")))

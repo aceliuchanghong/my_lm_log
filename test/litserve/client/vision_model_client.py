@@ -12,8 +12,9 @@ start_time = time.time()
 
 ip = "127.0.0.1"
 response = requests.post(
-    f"http://{ip}:8110/predict",
+    f"http://{ip}:8110/v1/chat/completions",
     json={
+        "stream": False,
         "images_path": [
             "no_git_oic/采购合同2.pdf_show_0.jpg",
             "no_git_oic/eb20901aea55ff2510a24f645bbc27dc.jpg",

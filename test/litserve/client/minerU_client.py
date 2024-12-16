@@ -52,7 +52,7 @@ def do_parse(
 
 
 if __name__ == "__main__":
-    # export no_proxy="localhost,112.48.199.202,127.0.0.1"
+    # export no_proxy="localhost,127.0.0.1"
     # python test/litserve/client/minerU_client.py
     files = ["no_git_oic/页面提取自-NPD2317设计开发记录.pdf"]
     n_jobs = np.clip(len(files), 1, 4)
