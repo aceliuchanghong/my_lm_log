@@ -213,7 +213,7 @@ def create_app():
 
 if __name__ == "__main__":
     # python test/usua/minerU_gradio_server.py
-    # export no_proxy="localhost,112.48.199.202,127.0.0.1"
+    # export no_proxy="localhost,127.0.0.1"
     # nohup python test/usua/minerU_gradio_server.py > no_git_oic/minerU_gradio_server.log &
     file_default_path = os.path.join(
         os.getenv("upload_file_save_path"), "pdf_convert_path"
