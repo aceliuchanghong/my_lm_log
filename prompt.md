@@ -42,6 +42,17 @@ export LD_LIBRARY_PATH=/mnt/data/anaconda/envs/vllm/lib/python3.10/site-packages
 vim /etc/systemd/system/ollama.service
 Environment="OLLAMA_MODELS=/mnt/data/ollama_models"
 Environment="OLLAMA_HOST=0.0.0.0"
+
+# 微软推荐系统框架
+https://github.com/recommenders-team/recommenders
+Recommenders：微软推荐系统框架(https://mp.weixin.qq.com/s/xUE_Knc2TVgU7g8azOI2ag)
+
+# 开发网站
+layui+pocketbase(https://mp.weixin.qq.com/s/N6ml3fdz6S94Mu8CDOD_3Q)
+
+# 个人博客
+Hugo
+使用 Vercel 搭建 Hugo 博客==>在 Vercel 首页创建一个新的 Hugo 项目==>在本地克隆仓库==>安装 Hugo 环境进行本地调试==>将更改推送到 GitHub 仓库==>Vercel 会自动检测到 GitHub 仓库的变更，并更新你的在线博客
 ```
 
 

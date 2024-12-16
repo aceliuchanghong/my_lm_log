@@ -170,4 +170,6 @@ moffee live .\0_数学基础\AI-数学-必学\对数.md
 - [别人的从基础到入门渐进文章](https://github.com/aceliuchanghong/others-AI-Articles)
 - [别人的教学视频-很全面-多学习](https://www.youtube.com/watch?v=2dH_qjc9mFg&list=PLKnIA16_RmvYuZauWaPlRTC54KxSNLtNn)
 - [kaggle这么好用的网站也不能忘了](https://www.kaggle.com/datasets/salader/dogs-vs-cats)
+- [huggingface-Transformers教程](https://huggingface.co/docs/transformers/index)
+- [smol-course现代AI教程](https://github.com/aceliuchanghong/smol-course)
 - 
