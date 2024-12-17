@@ -25,9 +25,9 @@ class LightRAGLitAPI(LitAPI):
     def decode_request(self, request):
         logger.info(colored(f"request:{request}", "green"))
         xx = [el.dict() for el in request.messages]
-        logger.info(colored(f"{xx}", "green"))
-        logger.info(colored(f"xx:{xx[0]["content"]}", "green"))
-        return xx[0]["content"] + "mmm"
+        logger.info(colored(f"xx1:{xx}", "green"))
+        logger.info(colored(f"xx2:{xx[0]["content"]}", "green"))
+        return json.dumps(xx[0]["content"]) + "mmm"
 
     def predict(self, x):
         yield self.model(x) + " 00"

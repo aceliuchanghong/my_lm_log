@@ -3,6 +3,7 @@ import time
 import os
 from dotenv import load_dotenv
 import logging
+import json
 
 load_dotenv()
 log_level = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -11,25 +12,41 @@ logger = logging.getLogger(__name__)
 start_time = time.time()
 
 ip = "127.0.0.1"
+rule = {
+    "entity_name": "条形码下方10位数字号码",
+    "entity_format": "2100000010",
+    "entity_regex_pattern": "[1-2][0-9]{9}",
+}
+rule_as_json = json.dumps(rule)
+headers = {"Authorization": "Bearer torch-yzgjhdxfxfyzdjhljsjed5h"}
 response = requests.post(
     f"http://{ip}:8110/v1/chat/completions",
     json={
-        "stream": False,
-        "images_path": [
-            "no_git_oic/采购合同2.pdf_show_0.jpg",
-            "no_git_oic/eb20901aea55ff2510a24f645bbc27dc.jpg",
-            # "./no_git_oic/企业微信截图_17288805401553.png",
-            # "./no_git_oic/企业微信截图_17288805261441.png",
-            "https://www.mfa.gov.cn/zwbd_673032/jghd_673046/202410/W020241008522924065946.jpg",
+        "messages": [
+            # {"role": "user", "content": "条形码下方10位数字号码"},
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": rule_as_json},
+                    # {"type": "text", "text": "条形码下方10位数字号码"},
+                    {
+                        "type": "image_url",
+                        "image_url": {"url": "no_git_oic/采购合同2.pdf_show_0.jpg"},
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": "https://www.mfa.gov.cn/zwbd_673032/jghd_673046/202410/W020241008522924065946.jpg"
+                        },
+                    },
+                ],
+            },
         ],
-        "rule": {
-            "entity_name": "条形码下方10位数字号码",
-            "entity_format": "2100000010",
-            "entity_regex_pattern": "[1-2][0-9]{9}",
-        },
     },
+    headers=headers,
 )
-print(f"Status: {response.status_code}\nResponse:\n {response.text}")
+# print(f"{response.json()}")
+print(f"{response.json()['choices'][0]['message']['content']}")
 end_time = time.time()
 elapsed_time = end_time - start_time
 logger.info(f"耗时: {elapsed_time:.2f}秒")
@@ -37,7 +54,5 @@ logger.info(f"耗时: {elapsed_time:.2f}秒")
 """
 export no_proxy="localhost,36.213.66.106,127.0.0.1"
 python test/litserve/client/vision_model_client.py
-Status: 200
-Response:
- {"result":"2200000003","entity_name":"10位数条形码号码"}
+{'result': '2100000010', 'entity_name': '条形码下方10位数字号码'}
 """

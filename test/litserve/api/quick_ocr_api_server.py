@@ -13,7 +13,12 @@ import re
 import concurrent.futures
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import sys
-
+import base64
+from PIL import Image
+import io
+from hashlib import md5
+import random
+from termcolor import colored
 
 sys.path.insert(
     0,
@@ -117,6 +122,26 @@ def download_image(image_url, save_dir):
         raise ValueError(f"Failed to download image from {image_url}")
 
 
+def compute_mdhash_id(content, prefix: str = ""):
+    return prefix + md5(content.encode()).hexdigest()
+
+
+def base64_to_image(base64_string, save_dir):
+    # 去掉前缀，例如 "image/jpeg;base64,"
+    base64_data = base64_string.split(",")[-1]
+    image_data = base64.b64decode(base64_data)
+    image = Image.open(io.BytesIO(image_data))
+
+    random_number = random.randint(1, 10000)
+    name = compute_mdhash_id(base64_data[:100], prefix="pic_")
+    image_name = name + str(random_number) + ".jpg"
+
+    image_path = os.path.join(save_dir, image_name)
+    logger.info(colored(f"base64 image_path:{image_path}", "green"))
+    image.save(image_path)
+    return image_path
+
+
 def get_local_images(images_path):
     save_dir = os.path.join(os.getenv("upload_file_save_path"), "images")
     local_images_path = set()  # 使用集合来避免重复
@@ -124,12 +149,18 @@ def get_local_images(images_path):
 
     # 多线程下载和处理图片
     with ThreadPoolExecutor(max_workers=10) as executor:
-        # 提交下载任务，非本地文件才下载
-        future_to_image = {
-            executor.submit(download_image, image, save_dir): image
-            for image in images_path
-            if not os.path.isfile(image)
-        }
+        future_to_image = {}
+        for image in images_path:
+            if image.startswith("http"):
+                future_to_image[executor.submit(download_image, image, save_dir)] = (
+                    image
+                )
+            elif image.startswith("data:image/"):
+                future_to_image[executor.submit(base64_to_image, image, save_dir)] = (
+                    image
+                )
+            elif os.path.isfile(image):
+                local_images_path.add(image)
 
         # 处理所有任务，无论是下载还是文字方向检测
         for future in as_completed(future_to_image):

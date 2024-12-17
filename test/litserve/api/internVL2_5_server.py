@@ -11,7 +11,9 @@ import logging
 import sys
 from openai import OpenAI
 from termcolor import colored
-from litserve.specs.openai import ChatMessage
+from fastapi import Depends, HTTPException
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+import json
 
 load_dotenv()
 log_level = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -28,7 +30,6 @@ sys.path.insert(
         os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../../")
     ),
 )
-from z_utils.rotate2fix_pic import detect_text_orientation
 from test.litserve.api.quick_ocr_api_server import extract_entity, get_local_images
 
 
@@ -182,54 +183,74 @@ class InternVL2_5API(ls.LitAPI):
         self.llm = OpenAI(api_key=os.getenv("API_KEY"), base_url=os.getenv("BASE_URL"))
 
     def decode_request(self, request):
-        logger.info(colored(f"request:{request}", "red"))
-        images_path = request["images_path"]
-        rule = request["rule"]
+        logger.info(colored(f"request recieved suc", "green"))
+        # logger.info(colored(f"request:{request}", "green"))
+        openai_msg = [el.dict() for el in request.messages]
+        images_path = []
+        rule = {}
+        prompt = ""
+        user_prompt = ""
+        # 遍历 openai_msg
+        for msg in openai_msg:
+            if isinstance(msg["content"], str):
+                prompt += msg["content"]
+                continue
+            try:
+                for content in msg["content"]:
+                    if content["type"] == "image_url":
+                        images_path.append(content["image_url"]["url"])
+                    elif content["type"] == "text":
+                        try:
+                            # 尝试将文本内容转换为字典
+                            text_dict = json.loads(content["text"])
+                            rule.update(text_dict)
+                        except json.JSONDecodeError:
+                            # 如果转换失败，将文本内容存储为 prompt
+                            prompt += content["text"]
+            except Exception as e:
+                logger.info(colored(f"no pics here", "green"))
         local_images_path = get_local_images(images_path)
-        # openai 格式
-        openai_prompt = ""
-        openai_images_path = []
         try:
-            x = request["messages"]
-            if isinstance(x["content"], list):
-                openai_prompt = x["content"][0]["text"]
-                openai_image_url = x["content"][1]["image_url"]
-                openai_images_path = get_local_images(openai_image_url)
+            user_prompt = (
+                "提取"
+                + rule["entity_name"]
+                + (
+                    ",它的可能结果案例:" + rule["entity_format"]
+                    if len(rule["entity_format"]) > 1
+                    else ""
+                )
+                + (
+                    ",它的可能结果正则:" + rule["entity_regex_pattern"]
+                    if len(rule["entity_regex_pattern"]) > 1
+                    else ""
+                )
+            )
         except Exception as e:
             pass
-        user_prompt = (
-            "提取"
-            + rule["entity_name"]
-            + (
-                ",它的可能结果案例:" + rule["entity_format"]
-                if len(rule["entity_format"]) > 1
-                else ""
-            )
-            + (
-                ",它的可能结果正则:" + rule["entity_regex_pattern"]
-                if len(rule["entity_regex_pattern"]) > 1
-                else ""
-            )
-        )
         logger.info(
-            f"params:\n{local_images_path},{user_prompt},{rule},{openai_prompt},{openai_images_path}"
+            colored(
+                f"\nlocal_images_path:\n{local_images_path}\nuser_prompt:\n{user_prompt}\nrule:\n{rule}\nprompt:\n{prompt}",
+                "green",
+            )
         )
-        return local_images_path, user_prompt, rule, openai_prompt, openai_images_path
+        return local_images_path, user_prompt, rule, prompt
 
     def predict(self, inputs):
         try:
-            local_images_path, user_prompt, rule, openai_prompt, openai_images_path = (
-                inputs
-            )
+            local_images_path, user_prompt, rule, prompt = inputs
+            if len(prompt) > 0:
+                user_prompt = prompt
             generation_config = dict(max_new_tokens=1024, do_sample=True)
-            if len(openai_images_path) == 0:
-                pixel_values_list = [
-                    load_image(image_path, max_num=12).to(torch.bfloat16).cuda()
-                    for image_path in local_images_path  # 使用 local_images_path 提供的路径列表
-                ]
-                pixel_values = torch.cat(pixel_values_list, dim=0)
+            pixel_values_list = [
+                load_image(image_path, max_num=12).to(torch.bfloat16).cuda()
+                for image_path in local_images_path  # 使用 local_images_path 提供的路径列表
+            ]
+            logger.info(colored(f"prompt:{user_prompt}", "green"))
 
+            if len(local_images_path) > 0:
                 question = f"<image>\n{user_prompt}"
+                logger.info(colored(f"vision prompt:{question}", "green"))
+                pixel_values = torch.cat(pixel_values_list, dim=0)
                 response, history = self.model.chat(
                     self.tokenizer,
                     pixel_values,
@@ -238,44 +259,42 @@ class InternVL2_5API(ls.LitAPI):
                     history=None,
                     return_history=True,
                 )
-                logger.info(colored(f"vision model:{response}", "green"))
+                logger.info(
+                    colored(f"vision model result:{response}\nrule:{rule}", "green")
+                )
+            else:
+                response = self.llm.chat.completions.create(
+                    model=os.getenv("MODEL"),
+                    messages=[{"role": "user", "content": user_prompt}],
+                    temperature=0.5,
+                )
+            if len(prompt) == 0:
                 ans = extract_entity(self.llm, rule, response)
-                logger.info(colored(f"llm:{ans}", "green"))
+                logger.info(colored(f"llm result:{ans}", "green"))
 
-                old_response = {
+                response = {
                     "result": ans["result"],
                     "entity_name": ans["entity_name"],
                 }
-                yield {"role": "assistant", "content": old_response}
-            else:
-                pixel_values = (
-                    load_image(openai_images_path[0], max_num=12)
-                    .to(torch.bfloat16)
-                    .cuda()
-                )
-                question = f"<image>\n{openai_prompt}"
-                response, history = self.model.chat(
-                    self.tokenizer,
-                    pixel_values,
-                    question,
-                    generation_config,
-                    history=None,
-                    return_history=True,
-                )
-                logger.info(colored(f"openai_prompt:{question}", "green"))
-                yield {"role": "assistant", "content": response}
+            logger.info(colored(f"final response:{response}", "green"))
+            yield str(response)
         except Exception as e:
             logger.error(f"error:{e} \ninputs:{inputs}")
         finally:
             self.clean_memory(self.device)
 
-    def encode_response(self, output):
-        yield ChatMessage(role="assistant", content=output)
+    def authorize(self, auth: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
+        if (
+            auth.scheme != "Bearer"
+            or auth.credentials != "torch-yzgjhdxfxfyzdjhljsjed5h"
+        ):
+            raise HTTPException(status_code=401, detail="Authorization Failed")
 
 
 if __name__ == "__main__":
-    # python test/litserve/api/internVL2_5_server.py
     # export no_proxy="localhost,36.213.66.106,127.0.0.1"
+    # python test/litserve/api/internVL2_5_server.py
+    # nohup python test/litserve/api/internVL2_5_server.py > no_git_oic/internVL2_5_server.log &
     api = InternVL2_5API()
     # spec=ls.OpenAISpec()
     server = ls.LitServer(

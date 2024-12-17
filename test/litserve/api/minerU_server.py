@@ -209,6 +209,8 @@ class MinerUAPI(ls.LitAPI):
 
 
 if __name__ == "__main__":
+    # source activate MinerU
+    # cd /mnt/data/llch/my_lm_log/
     # python test/litserve/api/minerU_server.py
     # export no_proxy="localhost,127.0.0.1"
     # nohup python test/litserve/api/minerU_server.py > no_git_oic/minerU_server.log &
