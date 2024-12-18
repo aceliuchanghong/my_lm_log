@@ -49,6 +49,7 @@ class LightRAGLitAPI(LitAPI):
 
 if __name__ == "__main__":
     # python test/litserve/api/openai_server_test.py
+    # openai格式文档:https://help.aliyun.com/zh/model-studio/developer-reference/openai-file-interface?spm=a2c4g.11186623.help-menu-2400256.d_3_9_2.2fec516eDwBPT2
     api = LightRAGLitAPI()
     server = LitServer(api, spec=ls.OpenAISpec())
     server.run(port=int(os.getenv("LIGHTRAG_PORT")))

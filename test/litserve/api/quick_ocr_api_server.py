@@ -59,12 +59,12 @@ def extract_entity(llm, rule, all_text, retriever=None):
         "提取"
         + rule["entity_name"]
         + (
-            ",它的可能结果案例:" + rule["entity_format"]
+            ',其中output-example:"' + rule["entity_format"] + '"'
             if len(rule["entity_format"]) > 1
             else ""
         )
         + (
-            ",它的可能结果正则:" + rule["entity_regex_pattern"]
+            ',output可能的regex_pattern为:"' + rule["entity_regex_pattern"] + '"'
             if len(rule["entity_regex_pattern"]) > 1
             else ""
         )

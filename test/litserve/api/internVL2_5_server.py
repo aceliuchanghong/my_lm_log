@@ -187,6 +187,7 @@ class InternVL2_5API(ls.LitAPI):
         # logger.info(colored(f"request:{request}", "green"))
         openai_msg = [el.dict() for el in request.messages]
         images_path = []
+        local_images_path = []
         rule = {}
         prompt = ""
         user_prompt = ""
@@ -209,18 +210,22 @@ class InternVL2_5API(ls.LitAPI):
                             prompt += content["text"]
             except Exception as e:
                 logger.info(colored(f"no pics here", "green"))
-        local_images_path = get_local_images(images_path)
+        if len(images_path) > 0:
+            local_images_path = get_local_images(images_path)
+            logger.info(colored(f"pics recieved suc", "green"))
         try:
             user_prompt = (
                 "提取"
                 + rule["entity_name"]
                 + (
-                    ",它的可能结果案例:" + rule["entity_format"]
+                    ',其中output-example:"' + rule["entity_format"] + '"'
                     if len(rule["entity_format"]) > 1
                     else ""
                 )
                 + (
-                    ",它的可能结果正则:" + rule["entity_regex_pattern"]
+                    ',output可能的regex_pattern为:"'
+                    + rule["entity_regex_pattern"]
+                    + '"'
                     if len(rule["entity_regex_pattern"]) > 1
                     else ""
                 )
@@ -237,16 +242,17 @@ class InternVL2_5API(ls.LitAPI):
 
     def predict(self, inputs):
         try:
+            # 图片链接,提取关键信息的prompt,规则,还原markdown等prompt信息
             local_images_path, user_prompt, rule, prompt = inputs
             if len(prompt) > 0:
                 user_prompt = prompt
+                logger.info(colored(f"prompt:{user_prompt}", "green"))
             generation_config = dict(max_new_tokens=1024, do_sample=True)
             pixel_values_list = [
                 load_image(image_path, max_num=12).to(torch.bfloat16).cuda()
                 for image_path in local_images_path  # 使用 local_images_path 提供的路径列表
             ]
-            logger.info(colored(f"prompt:{user_prompt}", "green"))
-
+            # 如果有接收到图片,那就去视觉提取
             if len(local_images_path) > 0:
                 question = f"<image>\n{user_prompt}"
                 logger.info(colored(f"vision prompt:{question}", "green"))
@@ -259,15 +265,16 @@ class InternVL2_5API(ls.LitAPI):
                     history=None,
                     return_history=True,
                 )
-                logger.info(
-                    colored(f"vision model result:{response}\nrule:{rule}", "green")
-                )
+                logger.info(colored(f"vision model result:{response}", "green"))
             else:
-                response = self.llm.chat.completions.create(
+                response_llm = self.llm.chat.completions.create(
                     model=os.getenv("MODEL"),
                     messages=[{"role": "user", "content": user_prompt}],
                     temperature=0.5,
                 )
+                response = response_llm.choices[0].message.content
+                # logger.info(colored(f"response_qwen:{response_llm}", "green"))
+            # 如果只有规则的user_prompt, 还原markdown等prompt信息没用
             if len(prompt) == 0:
                 ans = extract_entity(self.llm, rule, response)
                 logger.info(colored(f"llm result:{ans}", "green"))
@@ -292,7 +299,7 @@ class InternVL2_5API(ls.LitAPI):
 
 
 if __name__ == "__main__":
-    # export no_proxy="localhost,36.213.66.106,127.0.0.1"
+    # export no_proxy="localhost,36.213.66.106,127.0.0.1,1.12.251.149"
     # python test/litserve/api/internVL2_5_server.py
     # nohup python test/litserve/api/internVL2_5_server.py > no_git_oic/internVL2_5_server.log &
     api = InternVL2_5API()

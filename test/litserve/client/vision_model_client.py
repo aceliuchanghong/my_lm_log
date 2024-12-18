@@ -23,22 +23,22 @@ response = requests.post(
     f"http://{ip}:8110/v1/chat/completions",
     json={
         "messages": [
-            # {"role": "user", "content": "条形码下方10位数字号码"},
+            # {"role": "user", "content": "还原markdown格式"},
             {
                 "role": "user",
                 "content": [
                     {"type": "text", "text": rule_as_json},
-                    # {"type": "text", "text": "条形码下方10位数字号码"},
+                    # {"type": "text", "text": "还原markdown格式."},
                     {
                         "type": "image_url",
                         "image_url": {"url": "no_git_oic/采购合同2.pdf_show_0.jpg"},
                     },
-                    {
-                        "type": "image_url",
-                        "image_url": {
-                            "url": "https://www.mfa.gov.cn/zwbd_673032/jghd_673046/202410/W020241008522924065946.jpg"
-                        },
-                    },
+                    # {
+                    #     "type": "image_url",
+                    #     "image_url": {
+                    #         "url": "https://www.mfa.gov.cn/zwbd_673032/jghd_673046/202410/W020241008522924065946.jpg"
+                    #     },
+                    # },
                 ],
             },
         ],
