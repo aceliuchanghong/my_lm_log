@@ -30,5 +30,5 @@ nohup python -m vllm.entrypoints.openai.api_server \
     --kv-cache-dtype auto \
     --gpu_memory_utilization 0.98 \
     --task generate \
-    > 1205_vllm.log 2>&1 &
+    > 1218_vllm.log 2>&1 &
 """

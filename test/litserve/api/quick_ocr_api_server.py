@@ -324,7 +324,7 @@ class QuickOcrAPI(ls.LitAPI):
 
 if __name__ == "__main__":
     # python test/litserve/api/quick_ocr_api_server.py
-    # export no_proxy="localhost,36.213.66.106,127.0.0.1"
+    # export no_proxy="localhost,36.213.66.106,127.0.0.1,1.12.251.149"
     # nohup python test/litserve/api/quick_ocr_api_server.py > no_git_oic/quick_ocr_api_server.log &
     api = QuickOcrAPI()
     server = ls.LitServer(api, accelerator="gpu", devices=[1])

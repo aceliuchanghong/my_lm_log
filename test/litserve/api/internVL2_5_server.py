@@ -254,6 +254,7 @@ class InternVL2_5API(ls.LitAPI):
             ]
             # 如果有接收到图片,那就去视觉提取
             if len(local_images_path) > 0:
+                logger.info(colored(f"step1 vision start", "green"))
                 question = f"<image>\n{user_prompt}"
                 logger.info(colored(f"vision prompt:{question}", "green"))
                 pixel_values = torch.cat(pixel_values_list, dim=0)
@@ -267,6 +268,7 @@ class InternVL2_5API(ls.LitAPI):
                 )
                 logger.info(colored(f"vision model result:{response}", "green"))
             else:
+                logger.info(colored(f"step1 qwen start", "green"))
                 response_llm = self.llm.chat.completions.create(
                     model=os.getenv("MODEL"),
                     messages=[{"role": "user", "content": user_prompt}],
@@ -276,6 +278,7 @@ class InternVL2_5API(ls.LitAPI):
                 # logger.info(colored(f"response_qwen:{response_llm}", "green"))
             # 如果只有规则的user_prompt, 还原markdown等prompt信息没用
             if len(prompt) == 0:
+                logger.info(colored(f"step2 qwen extract start", "green"))
                 ans = extract_entity(self.llm, rule, response)
                 logger.info(colored(f"llm result:{ans}", "green"))
 
