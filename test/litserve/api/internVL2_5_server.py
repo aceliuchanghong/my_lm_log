@@ -306,7 +306,6 @@ if __name__ == "__main__":
     # python test/litserve/api/internVL2_5_server.py
     # nohup python test/litserve/api/internVL2_5_server.py > no_git_oic/internVL2_5_server.log &
     api = InternVL2_5API()
-    # spec=ls.OpenAISpec()
     server = ls.LitServer(
         api, accelerator="gpu", devices=1, track_requests=True, spec=ls.OpenAISpec()
     )
