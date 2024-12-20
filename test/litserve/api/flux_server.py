@@ -14,12 +14,15 @@ import logging
 from termcolor import colored
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+import time
+import sys
+import base64
+import json
 
 """
 source activate base
 from modelscope import snapshot_download
 model_dir = snapshot_download('black-forest-labs/FLUX.1-schnell',cache_dir="/mnt/data/llch/Flux_Models")
-
 model_dir = snapshot_download('AI-ModelScope/clip-vit-large-patch14',cache_dir="/mnt/data/llch/clip-vit")
 """
 load_dotenv()
@@ -30,23 +33,31 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 logger = logging.getLogger(__name__)
+sys.path.insert(
+    0,
+    os.path.abspath(
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../../")
+    ),
+)
 
 
 class FluxLitAPI(ls.LitAPI):
-    @staticmethod
-    def clean_memory(device):
-        import gc
+    # @staticmethod
+    # def clean_memory(device):
+    #     import gc
 
-        if torch.cuda.is_available():
-            with torch.cuda.device(device):
-                torch.cuda.empty_cache()
-                torch.cuda.ipc_collect()
-        gc.collect()
+    #     if torch.cuda.is_available():
+    #         with torch.cuda.device(device):
+    #             torch.cuda.empty_cache()
+    #             torch.cuda.ipc_collect()
+    #     gc.collect()
 
     def setup(self, device):
         # Load the model
         torch_dtype = torch.bfloat16
-        FLUX_1_schnell_model_path = "/mnt/data/llch/Flux_Models"
+        FLUX_1_schnell_model_path = (
+            "/mnt/data/llch/Flux_Models/black-forest-labs/FLUX___1-schnell"
+        )
         clip_vit_large_patch14_model_path = (
             "/mnt/data/llch/clip-vit/AI-ModelScope/clip-vit-large-patch14"
         )
@@ -101,16 +112,26 @@ class FluxLitAPI(ls.LitAPI):
 
     def decode_request(self, request):
         # Extract prompt from request
-        prompt = request["prompt"]
-        width = request["width"]
-        height = request["height"]
-        num_inference_steps = request["num_inference_steps"]
-        guidance_scale = request["guidance_scale"]
-        return prompt, width, height, num_inference_steps, guidance_scale
+        model = request.get("prompt", "dall-e-3")
+        prompt = request.get(
+            "prompt",
+            "an old black robot sitting in a chair painting a picture on an easel of a futuristic cityscape, pop art",
+        )
+        size = request.get("size", "512x512")
+        width, height = map(int, size.split("x"))
+        n = request.get("n", 1)
+        num_inference_steps = request.get("num_inference_steps", 4)
+        guidance_scale = request.get("guidance_scale", 3.5)
+        return model, prompt, width, height, n, num_inference_steps, guidance_scale
 
     def predict(self, params_receieved):
-        prompt, width, height, num_inference_steps, guidance_scale = params_receieved
+        # 默认值
+        model, prompt, width, height, n, num_inference_steps, guidance_scale = (
+            params_receieved
+        )
         logger.info(colored(f"params_receieved:{params_receieved}", "green"))
+
+        start_time = time.time()
         image = self.pipe(
             prompt=prompt,
             width=width,
@@ -119,15 +140,20 @@ class FluxLitAPI(ls.LitAPI):
             generator=torch.Generator().manual_seed(int(time.time())),
             guidance_scale=guidance_scale,
         ).images[0]
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        logger.info(f"图片生成耗时: {elapsed_time:.2f}秒")
 
         return image
 
     def encode_response(self, image):
         buffered = BytesIO()
         image.save(buffered, format="PNG")
-        return Response(
-            content=buffered.getvalue(), headers={"Content-Type": "image/png"}
-        )
+        img_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
+        # 构建 data URI
+        data_uri = f"data:image/png;base64,{img_base64}"
+        response_data = {"created": int(time.time()), "data": [{"url": data_uri}]}
+        return json.dumps(response_data)
 
     def authorize(self, auth: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
         if (
@@ -145,6 +171,6 @@ if __name__ == "__main__":
     """
     api = FluxLitAPI()
     server = ls.LitServer(
-        api, accelerator="gpu", devices=1, track_requests=True, spec=ls.OpenAISpec()
+        api, accelerator="gpu", devices=1, api_path="/v1/images/generations"
     )
     server.run(port=int(os.getenv("FLUX_PORT")))

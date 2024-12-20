@@ -125,7 +125,7 @@ my_lm_log/
 
 ```shell
 # create
-conda create -n ml python=3.11 -y
+conda create -n ml python=3.10 -y
 conda activate ml
 python -m venv env
 pip install -r requirements.txt
