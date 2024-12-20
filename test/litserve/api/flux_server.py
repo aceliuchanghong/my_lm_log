@@ -1,5 +1,4 @@
 from io import BytesIO
-from fastapi import Response
 import torch
 import time
 import litserve as ls
@@ -42,47 +41,50 @@ sys.path.insert(
 
 
 class FluxLitAPI(ls.LitAPI):
-    # @staticmethod
-    # def clean_memory(device):
-    #     import gc
-
-    #     if torch.cuda.is_available():
-    #         with torch.cuda.device(device):
-    #             torch.cuda.empty_cache()
-    #             torch.cuda.ipc_collect()
-    #     gc.collect()
 
     def setup(self, device):
         # Load the model
-        torch_dtype = torch.bfloat16
+        torch_dtype = torch.float16
         FLUX_1_schnell_model_path = (
             "/mnt/data/llch/Flux_Models/black-forest-labs/FLUX___1-schnell"
         )
         clip_vit_large_patch14_model_path = (
             "/mnt/data/llch/clip-vit/AI-ModelScope/clip-vit-large-patch14"
         )
-        scheduler = FlowMatchEulerDiscreteScheduler.from_pretrained(
-            FLUX_1_schnell_model_path, subfolder="scheduler"
+        self.scheduler = FlowMatchEulerDiscreteScheduler.from_pretrained(
+            FLUX_1_schnell_model_path,
+            subfolder="scheduler",
+            revision="refs/pr/1",
         )
-        text_encoder = CLIPTextModel.from_pretrained(
+        self.text_encoder = CLIPTextModel.from_pretrained(
             clip_vit_large_patch14_model_path, torch_dtype=torch_dtype
         )
-        tokenizer = CLIPTokenizer.from_pretrained(
+        self.tokenizer = CLIPTokenizer.from_pretrained(
             clip_vit_large_patch14_model_path, torch_dtype=torch_dtype
         )
-        text_encoder_2 = T5EncoderModel.from_pretrained(
+        self.text_encoder_2 = T5EncoderModel.from_pretrained(
             FLUX_1_schnell_model_path,
             subfolder="text_encoder_2",
             torch_dtype=torch_dtype,
+            revision="refs/pr/1",
         )
-        tokenizer_2 = T5TokenizerFast.from_pretrained(
-            FLUX_1_schnell_model_path, subfolder="tokenizer_2", torch_dtype=torch_dtype
+        self.tokenizer_2 = T5TokenizerFast.from_pretrained(
+            FLUX_1_schnell_model_path,
+            subfolder="tokenizer_2",
+            torch_dtype=torch_dtype,
+            revision="refs/pr/1",
         )
-        vae = AutoencoderKL.from_pretrained(
-            FLUX_1_schnell_model_path, subfolder="vae", torch_dtype=torch_dtype
+        self.vae = AutoencoderKL.from_pretrained(
+            FLUX_1_schnell_model_path,
+            subfolder="vae",
+            torch_dtype=torch_dtype,
+            revision="refs/pr/1",
         )
-        transformer = FluxTransformer2DModel.from_pretrained(
-            FLUX_1_schnell_model_path, subfolder="transformer", torch_dtype=torch_dtype
+        self.transformer = FluxTransformer2DModel.from_pretrained(
+            FLUX_1_schnell_model_path,
+            subfolder="transformer",
+            torch_dtype=torch_dtype,
+            revision="refs/pr/1",
         )
 
         """
@@ -92,27 +94,27 @@ class FluxLitAPI(ls.LitAPI):
         quantize: 用于将模型的权重量化到指定的类型
         qfloat8: 一种8位浮点数的量化类型
         """
-        quantize(transformer, weights=qfloat8)
-        freeze(transformer)
-        quantize(text_encoder_2, weights=qfloat8)
-        freeze(text_encoder_2)
+        quantize(self.transformer, weights=qfloat8)
+        freeze(self.transformer)
+        quantize(self.text_encoder_2, weights=qfloat8)
+        freeze(self.text_encoder_2)
 
         self.pipe = FluxPipeline(
-            scheduler=scheduler,
-            text_encoder=text_encoder,
-            tokenizer=tokenizer,
+            scheduler=self.scheduler,
+            text_encoder=self.text_encoder,
+            tokenizer=self.tokenizer,
             text_encoder_2=None,
-            tokenizer_2=tokenizer_2,
-            vae=vae,
+            tokenizer_2=self.tokenizer_2,
+            vae=self.vae,
             transformer=None,
         )
-        self.pipe.text_encoder_2 = text_encoder_2
-        self.pipe.transformer = transformer
+        self.pipe.text_encoder_2 = self.text_encoder_2
+        self.pipe.transformer = self.transformer
         self.pipe.enable_model_cpu_offload()
 
     def decode_request(self, request):
         # Extract prompt from request
-        model = request.get("prompt", "dall-e-3")
+        model = request.get("model", "dall-e-3")
         prompt = request.get(
             "prompt",
             "an old black robot sitting in a chair painting a picture on an easel of a futuristic cityscape, pop art",
@@ -150,7 +152,6 @@ class FluxLitAPI(ls.LitAPI):
         buffered = BytesIO()
         image.save(buffered, format="PNG")
         img_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
-        # 构建 data URI
         data_uri = f"data:image/png;base64,{img_base64}"
         response_data = {"created": int(time.time()), "data": [{"url": data_uri}]}
         return json.dumps(response_data)
@@ -165,7 +166,7 @@ class FluxLitAPI(ls.LitAPI):
 
 if __name__ == "__main__":
     """
-    export no_proxy="localhost,36.213.66.106,127.0.0.1,1.12.251.149"
+    export no_proxy="localhost,112.48.199.202,127.0.0.1,112.48.199.7"
     python test/litserve/api/flux_server.py
     nohup python test/litserve/api/flux_server.py > no_git_oic/flux_server.log &
     """

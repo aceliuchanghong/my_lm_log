@@ -137,7 +137,7 @@ def base64_to_image(base64_string, save_dir):
     image_name = name + str(random_number) + ".jpg"
 
     image_path = os.path.join(save_dir, image_name)
-    logger.info(colored(f"base64 image_path:{image_path}", "green"))
+    logger.info(colored(f"base64 image_path:{image_path}\n", "green"))
     image.save(image_path)
     return image_path
 

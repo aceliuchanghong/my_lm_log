@@ -3,7 +3,13 @@ numpy
 litserve
 scikit-learn
 matplotlib
-openai
 torch
 gradio
 ipykernel
+langchain-ollama
+openai
+langchain
+rapid_table
+rapidocr-onnxruntime
+surya-ocr
+rapid-orientation
