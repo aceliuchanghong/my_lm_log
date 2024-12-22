@@ -3,3 +3,4 @@ video-tutotial:https://www.youtube.com/watch?v=0K4J_PTgysc&list=PLKnIA16_RmvYuZa
 kg-book-from:
 https://www.kaggle.com/code/abdmental01/cat-vs-dog-transfer-learning-0-99
 https://www.kaggle.com/code/lesliechristie/dog-vs-cat-resnet
+百度云:dogs-vs-cats.zip

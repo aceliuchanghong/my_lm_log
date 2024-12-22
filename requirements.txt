@@ -13,3 +13,5 @@ rapid_table
 rapidocr-onnxruntime
 surya-ocr
 rapid-orientation
+gradio_pdf
+pymupdf

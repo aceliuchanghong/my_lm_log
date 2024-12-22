@@ -158,6 +158,12 @@ moffee live .\0_数学基础\AI-数学-必学\对数.md
 |----------------------|-----------------------------|--------------------------------|
 | z_utils/audio_trans.py | test/litserve/api/fish_speech1.4_server.py | test/litserve/api/whisper_large_v3_turbo_server.py |
 
+### Some-UI
+
+![Flux-UI](z_using_files/img/flux/UI.png)
+![Funasr-UI](z_using_files/img/flux/funasr-UI.png)
+![MinerU-UI](z_using_files/img/flux/minerU-UI.png)
+
 ### Reference
 
 - [概率论与数理统计-浙江大学-第五版](buy-book-oneself)
