@@ -208,3 +208,4 @@ x_site_building/site/*
 MaskGCT/
 node_modules/
 .gradio/
+.idea/

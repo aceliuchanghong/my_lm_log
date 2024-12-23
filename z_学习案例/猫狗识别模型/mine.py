@@ -28,6 +28,7 @@ from pathlib import *
 from torchvision import models
 
 
+# python z_学习案例/猫狗识别模型/mine.py
 def imageshow(img, title=None):
     img = img.numpy().transpose(
         (1, 2, 0)
@@ -37,6 +38,3 @@ def imageshow(img, title=None):
         plt.title(title)
     # Refresh the figure(刷新画面)
     plt.pause(1e-3)
-
-
-imageshow(grid, title="Dogs vs Cats")
