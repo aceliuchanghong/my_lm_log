@@ -22,4 +22,4 @@ kw_prompt_temp = PROMPTS["keywords_extraction"]
 query = "型号为GH-09的零件的相关性质信息"
 kw_prompt = kw_prompt_temp.format(query=query)
 print(f"{kw_prompt}")
-# python test/lightrag/00.py
+# python test/lightrag/test_lightRAG_03.py

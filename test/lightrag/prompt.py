@@ -13,23 +13,27 @@ PROMPTS[
     "entity_extraction"
 ] = """
 {{
-  "Goal": "给定一个可能与某主题相关的文本文档和一个实体类型列表,从文本中识别出所有这些类型的实体以及它们之间的关系。",
+  "Goal": "给定一个可能与某主题相关的文本文档和一个实体类型列表,从文本中识别出所有这些类型的实体以及它们之间的关系",
+  "Instruction": [
+          "1. 全面总结输出,不要遗漏",
+          "2. 不要输出多余的文字",
+      ],
   "Steps": [
     {{
       "Step": 1,
       "Description": "识别所有实体。对于每个识别出的实体,提取以下信息:",
       "Details": [
         {{
-          "entity_name": "实体名称,使用与输入文本相同的语言。如果是英文,则首字母大写。",
+          "entity_name": "实体名称,使用与输入文本相同的语言。如果是英文,则首字母大写",
           "entity_type": "以下类型之一:[{entity_types}]",
           "entity_description": "实体属性和活动的全面描述"
         }}
       ],
-      "Format": "将每个实体格式化为 ("entity"{tuple_delimiter}<entity_name>{tuple_delimiter}<entity_type>{tuple_delimiter}<entity_description>)"
+      "Output-Format": "("entity"{tuple_delimiter}"<entity_name>"{tuple_delimiter}"<entity_type>"{tuple_delimiter}"<entity_description>")"
     }},
     {{
       "Step": 2,
-      "Description": "根据步骤1中识别的实体中,识别所有明显相关的(source_entity, target_entity)对。",
+      "Description": "根据步骤1中识别的实体中,识别所有明显相关的(source_entity, target_entity)对",
       "Details": [
         {{
           "source_entity": "步骤1中识别的 source_entity 的名称",
@@ -39,29 +43,29 @@ PROMPTS[
           "relationship_keywords": "一个或多个高层次的关键词,总结关系的总体性质,重点关注概念或主题,而不是具体细节"
         }}
       ],
-      "Format": "将每个关系格式化为 ("relationship"{tuple_delimiter}<source_entity>{tuple_delimiter}<target_entity>{tuple_delimiter}<relationship_description>{tuple_delimiter}<relationship_keywords>{tuple_delimiter}<relationship_strength>)"
+      "Output-Format": "("relationship"{tuple_delimiter}"<source_entity>"{tuple_delimiter}"<target_entity>"{tuple_delimiter}"<relationship_description>"{tuple_delimiter}"<relationship_keywords>"{tuple_delimiter}"<relationship_strength>")"
     }},
     {{
       "Step": 3,
-      "Description": "识别总结整个文本主要概念、主题或话题的高层次关键词。这些应该捕捉文档中存在的总体思想。",
-      "Format": "将内容级别的关键词格式化为 ("content_keywords"{tuple_delimiter}<high_level_keywords>)"
+      "Description": "识别总结整个文本主要概念、主题或话题的高层次关键词。这些应该捕捉文档中存在的总体思想",
+      "Output-Format": "("content_keywords"{tuple_delimiter}"<high_level_keywords>")"
     }},
     {{
       "Step": 4,
-      "Description": "返回输出作为步骤1和步骤2中识别的所有实体和关系的列表。使用 **{record_delimiter}** 作为列表分隔符。",
-      "Format": "将输出格式化为 ("entity"{tuple_delimiter}<entity_name>{tuple_delimiter}<entity_type>{tuple_delimiter}<entity_description>){record_delimiter}("relationship"{tuple_delimiter}<source_entity>{tuple_delimiter}<target_entity>{tuple_delimiter}<relationship_description>{tuple_delimiter}<relationship_keywords>{tuple_delimiter}<relationship_strength>)"
+      "Description": "返回输出作为步骤1和步骤2中识别的所有实体和关系的列表。使用 **{record_delimiter}** 作为列表分隔符",
+      "Output-Format": "("entity"{tuple_delimiter}"<entity_name>"{tuple_delimiter}"<entity_type>"{tuple_delimiter}"<entity_description>"){record_delimiter}("relationship"{tuple_delimiter}"<source_entity>"{tuple_delimiter}"<target_entity>"{tuple_delimiter}"<relationship_description>"{tuple_delimiter}"<relationship_keywords>"{tuple_delimiter}"<relationship_strength>")"
     }},
     {{
       "Step": 5,
-      "Description": "完成后,输出 {completion_delimiter}"
+      "Description": "完成后,输出:{completion_delimiter}"
     }}
   ],
   "Examples": [
     {{
       "Example": 1,
       "Entity_types": ["person", "technology", "mission", "organization", "location"],
-      "Text": "while Alex clenched his jaw, the buzz of frustration dull against the backdrop of Taylor's authoritarian certainty. It was this competitive undercurrent that kept him alert, the sense that his and Jordan's shared commitment to discovery was an unspoken rebellion against Cruz's narrowing vision of control and order.",
-      "Output": [
+      "Input-Text": "while Alex clenched his jaw, the buzz of frustration dull against the backdrop of Taylor's authoritarian certainty. It was this competitive undercurrent that kept him alert, the sense that his and Jordan's shared commitment to discovery was an unspoken rebellion against Cruz's narrowing vision of control and order.",
+      "Output-Format": [
         ("entity"{tuple_delimiter}"Alex"{tuple_delimiter}"person"{tuple_delimiter}"Alex is a character who experiences frustration and is observant of the dynamics among other characters."){record_delimiter},
         ("entity"{tuple_delimiter}"Taylor"{tuple_delimiter}"person"{tuple_delimiter}"Taylor is portrayed with authoritarian certainty and shows a moment of reverence towards a device, indicating a change in perspective."){record_delimiter},
         ("entity"{tuple_delimiter}"Jordan"{tuple_delimiter}"person"{tuple_delimiter}"Jordan shares a commitment to discovery and has a significant interaction with Taylor regarding a device."){record_delimiter},
@@ -77,22 +81,9 @@ PROMPTS[
     }},
     {{
       "Example": 2,
-      "Entity_types": ["person", "technology", "mission", "organization", "location"],
-      "Text": "They were no longer mere operatives; they had become guardians of a threshold, keepers of a message from a realm beyond stars and stripes. This elevation in their mission could not be shackled by regulations and established protocols—it demanded a new perspective, a new resolve.",
-      "Output": [
-        ("entity"{tuple_delimiter}"Washington"{tuple_delimiter}"location"{tuple_delimiter}"Washington is a location where communications are being received, indicating its importance in the decision-making process."){record_delimiter},
-        ("entity"{tuple_delimiter}"Operation: Dulce"{tuple_delimiter}"mission"{tuple_delimiter}"Operation: Dulce is described as a mission that has evolved to interact and prepare, indicating a significant shift in objectives and activities."){record_delimiter},
-        ("entity"{tuple_delimiter}"The team"{tuple_delimiter}"organization"{tuple_delimiter}"The team is portrayed as a group of individuals who have transitioned from passive observers to active participants in a mission, showing a dynamic change in their role."){record_delimiter},
-        ("relationship"{tuple_delimiter}"The team"{tuple_delimiter}"Washington"{tuple_delimiter}"The team receives communications from Washington, which influences their decision-making process."{tuple_delimiter}"decision-making, external influence"{tuple_delimiter}7){record_delimiter},
-        ("relationship"{tuple_delimiter}"The team"{tuple_delimiter}"Operation: Dulce"{tuple_delimiter}"The team is directly involved in Operation: Dulce, executing its evolved objectives and activities."{tuple_delimiter}"mission evolution, active participation"{tuple_delimiter}9){completion_delimiter},
-        ("content_keywords"{tuple_delimiter}"mission evolution, decision-making, active participation, cosmic significance"){completion_delimiter},
-      ]
-    }},
-    {{
-      "Example": 3,
       "Entity_types": ["person", "role", "technology", "organization", "event", "location", "concept"],
-      "Text": "their voice slicing through the buzz of activity. "Control may be an illusion when facing an intelligence that literally writes its own rules," they stated stoically, casting a watchful eye over the flurry of data.",
-      "Output": [
+      "Input-Text": "their voice slicing through the buzz of activity. "Control may be an illusion when facing an intelligence that literally writes its own rules," they stated stoically, casting a watchful eye over the flurry of data.",
+      "Output-Format": [
         ("entity"{tuple_delimiter}"Sam Rivera"{tuple_delimiter}"person"{tuple_delimiter}"Sam Rivera is a member of a team working on communicating with an unknown intelligence, showing a mix of awe and anxiety."){record_delimiter},
         ("entity"{tuple_delimiter}"Alex"{tuple_delimiter}"person"{tuple_delimiter}"Alex is the leader of a team attempting first contact with an unknown intelligence, acknowledging the significance of their task."){record_delimiter},
         ("entity"{tuple_delimiter}"Control"{tuple_delimiter}"concept"{tuple_delimiter}"Control refers to the ability to manage or govern, which is challenged by an intelligence that writes its own rules."){record_delimiter},

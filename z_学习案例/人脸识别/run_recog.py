@@ -5,7 +5,19 @@ from facenet_pytorch import MTCNN, InceptionResnetV1
 from PIL import Image
 import pandas as pd
 import argparse
+import os
+from dotenv import load_dotenv
+import logging
 from termcolor import colored
+
+load_dotenv()
+log_level = os.getenv("LOG_LEVEL", "INFO").upper()
+logging.basicConfig(
+    level=getattr(logging, log_level),
+    format="%(asctime)s-%(levelname)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger(__name__)
 
 
 def load_and_embed_images(image_folder, device, mtcnn, resnet):
@@ -24,22 +36,20 @@ def load_and_embed_images(image_folder, device, mtcnn, resnet):
     loader = DataLoader(dataset, collate_fn=lambda x: x[0], num_workers=0)
 
     aligned = []
-    names = []
     for x, y in loader:
         x_aligned, prob = mtcnn(x, return_prob=True)
         if x_aligned is not None:
-            print("检测到的人脸及其概率: {:8f}".format(prob))
+            # print("检测到的人脸及其概率: {:8f}".format(prob))
             aligned.append(x_aligned)
-            names.append(dataset.idx_to_class[y])
 
     # 图像嵌入
     aligned = torch.stack(aligned).to(device)
     embeddings = resnet(aligned).detach().cpu()
 
-    return embeddings, names
+    return embeddings
 
 
-def calculate_distance(new_image_path, embeddings, names, device, mtcnn, resnet):
+def calculate_distance(new_image_path, embeddings, device, mtcnn, resnet):
     """
     计算新图片与已有图片的距离。
 
@@ -61,10 +71,10 @@ def calculate_distance(new_image_path, embeddings, names, device, mtcnn, resnet)
     # 使用 MTCNN 检测人脸
     x_aligned, prob = mtcnn(img, return_prob=True)
     if x_aligned is None:
-        print(f"未检测到图片 {new_image_path} 中的人脸。")
+        logger.info(colored(f"未检测到图片 {new_image_path} 中的人脸", "red"))
         return None
 
-    print(f"检测到的人脸及其概率: {prob:8f}")
+    # print(f"检测到的人脸及其概率: {prob:8f}")
 
     # 新图片的嵌入
     new_aligned = x_aligned.unsqueeze(0).to(device)  # 添加批次维度
@@ -72,7 +82,7 @@ def calculate_distance(new_image_path, embeddings, names, device, mtcnn, resnet)
 
     # 计算新图片与已有图片的距离
     dists = [(new_embedding - e).norm().item() for e in embeddings]
-    distance_df = pd.DataFrame([dists], columns=names, index=["New Image"])
+    distance_df = pd.DataFrame([dists], index=["New Image"])
 
     return distance_df
 
@@ -119,24 +129,16 @@ def main(
         .to(device)
     )
 
-    embeddings, names = load_and_embed_images(image_folder, device, mtcnn, resnet)
-    print(colored(f"names:{names}", "green"))
-    distance_df = calculate_distance(
-        new_image_path, embeddings, names, device, mtcnn, resnet
-    )
+    embeddings = load_and_embed_images(image_folder, device, mtcnn, resnet)
+    distance_df = calculate_distance(new_image_path, embeddings, device, mtcnn, resnet)
 
     if distance_df is not None:
-        print(distance_df)
+        logger.info(colored(f"\n{distance_df}", "green"))
     else:
         print("未检测到新图片中的人脸。")
 
 
 if __name__ == "__main__":
-    """
-    python z_学习案例/人脸识别/run_recog.py z_using_files/img/p_face z_using_files/img/p_face/name5/image_5.png
-    --model_choose_num 0
-    """
-
     """
     源库修改
     def __init__(self, pretrained=None, classify=False, num_classes=None, dropout_prob=0.6, device=None, tmp_classes=8631):
@@ -184,5 +186,9 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
+    """
+    python z_学习案例/人脸识别/run_recog.py z_using_files/img/p_face z_using_files/img/p_face/name5/image_5.png
+    --model_choose_num 0
+    """
 
     main(args.image_folder, args.new_image_path, args.device, args.model_choose_num)

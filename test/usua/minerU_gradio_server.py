@@ -225,4 +225,6 @@ if __name__ == "__main__":
         root_path="/Pdf2MdTool",
         server_port=int(os.getenv("MINERU_FRONT_END_PORT")),
         share=False,
+        auth=[("torch", "mmm"), ("llch", "qqq")],
+        auth_message="输入账户密码登录(torch/mmm)",
     )

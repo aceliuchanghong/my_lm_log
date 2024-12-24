@@ -179,4 +179,5 @@ moffee live .\0_数学基础\AI-数学-必学\对数.md
 - [huggingface-Transformers教程](https://huggingface.co/docs/transformers/index)
 - [smol-course现代AI教程](https://github.com/aceliuchanghong/smol-course)
 - [书生训练营-看着还不错](https://github.com/InternLM/Tutorial)
+- [tiny-llm-zh-教程](https://github.com/aceliuchanghong/tiny-llm-zh)
 - 
