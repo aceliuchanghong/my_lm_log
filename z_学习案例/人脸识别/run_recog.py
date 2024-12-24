@@ -143,6 +143,7 @@ if __name__ == "__main__":
     源库修改
     def __init__(self, pretrained=None, classify=False, num_classes=None, dropout_prob=0.6, device=None, tmp_classes=8631):
 
+    from os.path import isfile
     def load_weights(mdl, name):
         if name == "vggface2":
             path = "https://github.com/timesler/facenet-pytorch/releases/download/v2.2.9/20180402-114759-vggface2.pt"

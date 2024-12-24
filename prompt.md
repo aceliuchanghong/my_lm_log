@@ -30,7 +30,7 @@ If you want me to, I will
 ```
 
 
-## 杂项
+### 杂项
 ```
 # 报错解决
 from torch._C import * # noqa: F403 ImportError: /mnt/data/llch/my_lm_log/env/lib/python3.12/site-packages/torch/lib/../../nvidia/cusparse/lib/libcusparse.so.12: undefined symbol: __nvJitLinkAddData_12_1, version libnvJitLink.so.12
