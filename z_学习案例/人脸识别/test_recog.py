@@ -8,7 +8,6 @@ import os
 from dotenv import load_dotenv
 import logging
 from termcolor import colored
-from PIL import Image
 
 load_dotenv()
 log_level = os.getenv("LOG_LEVEL", "INFO").upper()

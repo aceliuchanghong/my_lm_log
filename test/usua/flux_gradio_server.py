@@ -42,7 +42,7 @@ css = """
     }
     """
 
-default_prompt = "a shepherd boy pointing towards a distant village, with blooming apricot trees, in a serene countryside setting."
+default_prompt = "A shepherd boy riding on the back of an ox and pointing towards a distant village, with blooming apricot trees, in a serene countryside setting. Traditional chinese ink style."
 sd_system_prompt = """{
     "Role": "你是一位Stable Diffusion提示词专家",
     "Skills": [
@@ -53,15 +53,17 @@ sd_system_prompt = """{
     ],
     "Goal": "接收用户提供的中文诗句或描述，提取其中的实体，增加详细描述，并将其转化为地道的英文提示词。",
     "Instruct": [
-        "1. 接收用户提供中文诗句或者中文描述",
-        "2. 提取用户给出的描述的实体",
-        "3. 对于每一个实体增加细节描述（例如：青花瓷碗-->青彩色的碗,碗上绘制有蓝色倾斜的树木...）",
-        "4. 将其描述根据原文意思联系在一起",
-        "5. 转化为英文提示词",
+        "1. 提取用户给出的描述的实体",
+        "2. 对每一个实体增加细节描述（例如：青花瓷碗-->青彩色的碗,碗上绘制有蓝色倾斜的树木...）",
+        "3. 根据原文意思将每个实体描述联系在一起",
+        "4. 转化为英文提示词",
+        "5. 如果输入是诗句,需要输出追加 `Traditional chinese ink style`",
     ],
-    "Output-Format": "给出地道的英文提示词",
-    "Input-Example": "窗含西岭千秋雪",
-    "Output-Example": "a painting from a window overlooking distant mountain ranges, with peaks covered in white snow.",
+    "Output-Format": "English-String",
+    "Input-Example1": "窗含西岭千秋雪",
+    "Output-Example1": "A painting from a window overlooking distant mountain ranges, with peaks covered in white snow. Traditional chinese ink style.",
+    "Input-Example2": "一个戴着破旧帽子、穿着厚毛衣的渔夫，肩上挂着渔网，脸上布满海风的痕迹；黎明时分的热闹港口。",
+    "Output-Example2": "A fisherman wearing a worn cap and a thick sweater, net slung over his shoulder, face weathered by the sea; a lively harbor at dawn.",
 }
 """
 
@@ -78,14 +80,14 @@ def get_example():
 
 def get_example2():
     case = [
+        ["2025,中国元素,元旦节气氛,线条构成,科技感,火炬融入"],
+        ["小桥流水人家"],
+        ["古道西风瘦马"],
         ["东临碣石,以观沧海"],
-        ["清风徐来，水波不兴。举酒属客，诵明月之诗，歌窈窕之章"],
+        ["清风徐来，水波不兴。举酒属客"],
         ["但见悲鸟号古木，雄飞雌从绕林间"],
-        ["床前明月光，疑是地上霜。举头望明月，低头思故乡"],
-        ["晴川历历汉阳树，芳草萋萋鹦鹉洲"],
+        ["床前明月光"],
         ["乱石穿空，惊涛拍岸，卷起千堆雪"],
-        ["少小离家老大回，乡音无改鬓毛衰。儿童相见不相识，笑问客从何处来"],
-        ["簌簌衣巾落枣花，村南村北响缲车"],
         ["花褪残红青杏小，燕子飞时，绿水人家绕"],
         ["一个现代感的logo,有数学元素,主要是张扬运动会上面运动健儿的风采"],
     ]
@@ -179,10 +181,14 @@ def create_app():
                         "点击发送提示词至左侧图片生成框", scale=0, variant="stop"
                     )
                 gr.Examples(
+                    label="中文示例",
                     examples=get_example2(),
                     fn=trans,
                     inputs=[prompt_generator],
                     outputs=[prompt_english],
+                )
+                gr.Markdown(
+                    "- [FLUX提高生成精度教程](https://myaiforce.com.cn/flux-prompting-and-anti-blur-lora/)"
                 )
 
         # 触发生成图片的事件

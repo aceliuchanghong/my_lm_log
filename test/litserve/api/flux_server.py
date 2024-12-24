@@ -123,7 +123,7 @@ class FluxLitAPI(ls.LitAPI):
         width, height = map(int, size.split("x"))
         n = request.get("n", 1)
         num_inference_steps = request.get("num_inference_steps", 4)
-        guidance_scale = request.get("guidance_scale", 3.5)
+        guidance_scale = request.get("guidance_scale", 7.0)
         return model, prompt, width, height, n, num_inference_steps, guidance_scale
 
     def predict(self, params_receieved):

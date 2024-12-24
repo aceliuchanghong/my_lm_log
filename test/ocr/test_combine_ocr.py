@@ -2,13 +2,14 @@ import os
 from dotenv import load_dotenv
 import logging
 from PIL import Image
-from surya.model.detection.model import (
-    load_model as load_det_model,
-    load_processor as load_det_processor,
-)
-from surya.model.recognition.model import load_model as load_rec_model
-from surya.model.recognition.processor import load_processor as load_rec_processor
-from rapidocr_onnxruntime import RapidOCR
+
+# from surya.model.detection.model import (
+#     load_model as load_det_model,
+#     load_processor as load_det_processor,
+# )
+# from surya.model.recognition.model import load_model as load_rec_model
+# from surya.model.recognition.processor import load_processor as load_rec_processor
+# from rapidocr_onnxruntime import RapidOCR
 import sys
 
 sys.path.insert(
@@ -16,7 +17,7 @@ sys.path.insert(
     os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../")),
 )
 
-from test.ocr.test_surya import polygon_to_markdown, run_surya_ocr
+# from test.ocr.test_surya import polygon_to_markdown, run_surya_ocr
 
 
 load_dotenv()

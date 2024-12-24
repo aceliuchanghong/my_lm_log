@@ -19,24 +19,25 @@ import os
 from dotenv import load_dotenv
 import logging
 from PIL import Image
-from surya.ocr import run_ocr
-from surya.model.detection.model import (
-    load_model as load_det_model,
-    load_processor as load_det_processor,
-)
-from surya.model.recognition.model import load_model as load_rec_model
-from surya.model.recognition.processor import load_processor as load_rec_processor
-from surya.detection import batch_text_detection
-from surya.layout import batch_layout_detection
+
+# from surya.ocr import run_ocr
+# from surya.model.detection.model import (
+#     load_model as load_det_model,
+#     load_processor as load_det_processor,
+# )
+# from surya.model.recognition.model import load_model as load_rec_model
+# from surya.model.recognition.processor import load_processor as load_rec_processor
+# from surya.detection import batch_text_detection
+# from surya.layout import batch_layout_detection
 
 # from surya.ordering import batch_ordering
 # from surya.model.ordering.processor import load_processor as load_order_processor
 # from surya.model.ordering.model import load_model as load_order_model
 # from tabled.extract import extract_tables
 # from tabled.fileinput import load_pdfs_images
-from surya.model.table_rec.model import load_model as load_table_rec_model
-from surya.model.table_rec.processor import load_processor as load_table_rec_processor
-from surya.settings import settings
+# from surya.model.table_rec.model import load_model as load_table_rec_model
+# from surya.model.table_rec.processor import load_processor as load_table_rec_processor
+# from surya.settings import settings
 
 load_dotenv()
 log_level = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -69,72 +70,72 @@ def polygon_to_markdown(text_lines):
     return markdown_text.strip()
 
 
-def run_surya_ocr(IMAGE_PATH, det_model, det_processor, rec_model, rec_processor):
-    """
-    ocr 结果
-    """
-    start_time = time.time()
-    image = Image.open(IMAGE_PATH)
-    langs = ["zh", "en"]
-    predictions = run_ocr(
-        [image], [langs], det_model, det_processor, rec_model, rec_processor
-    )
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    logger.info(f"surya_ocr耗时: {elapsed_time:.2f}秒")
+# def run_surya_ocr(IMAGE_PATH, det_model, det_processor, rec_model, rec_processor):
+#     """
+#     ocr 结果
+#     """
+#     start_time = time.time()
+#     image = Image.open(IMAGE_PATH)
+#     langs = ["zh", "en"]
+#     predictions = run_ocr(
+#         [image], [langs], det_model, det_processor, rec_model, rec_processor
+#     )
+#     end_time = time.time()
+#     elapsed_time = end_time - start_time
+#     logger.info(f"surya_ocr耗时: {elapsed_time:.2f}秒")
 
-    for text_line in predictions[0].text_lines:
-        logger.debug(f"text_line:{text_line}")
-        logger.debug(f"text:{text_line.text}")
-        logger.debug(f"polygon:{text_line.polygon}")
-        logger.debug(f"bbox:{text_line.bbox}")
+#     for text_line in predictions[0].text_lines:
+#         logger.debug(f"text_line:{text_line}")
+#         logger.debug(f"text:{text_line.text}")
+#         logger.debug(f"polygon:{text_line.polygon}")
+#         logger.debug(f"bbox:{text_line.bbox}")
 
-    markdown_predictions0 = polygon_to_markdown(predictions[0].text_lines)
-    markdown_predictions1 = markdown_predictions0.splitlines()
-    markdown_predictions = "\n".join(
-        [text for text in markdown_predictions1 if len(text) > 0]
-    )
-    logger.debug(f"markdown:\n{markdown_predictions}")
-    return markdown_predictions
-
-
-def run_surya_batch_text_detection(IMAGE_PATH, det_model, det_processor):
-    """
-    Text line detection 文本行检测
-    给出一个json,其中包含检测到的bbox
-    """
-
-    start_time = time.time()
-
-    image = Image.open(IMAGE_PATH)
-    text_detection = batch_text_detection([image], det_model, det_processor)
-
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    logger.info(f"surya_text_detection耗时: {elapsed_time:.2f}秒")
-    return text_detection
+#     markdown_predictions0 = polygon_to_markdown(predictions[0].text_lines)
+#     markdown_predictions1 = markdown_predictions0.splitlines()
+#     markdown_predictions = "\n".join(
+#         [text for text in markdown_predictions1 if len(text) > 0]
+#     )
+#     logger.debug(f"markdown:\n{markdown_predictions}")
+#     return markdown_predictions
 
 
-def run_surya_batch_layout_detection(
-    IMAGE_PATH, layout_model, layout_processor, det_model, det_processor
-):
-    """
-    Layout analysis 版面分析
-    布局检测
-    """
-    start_time = time.time()
+# def run_surya_batch_text_detection(IMAGE_PATH, det_model, det_processor):
+#     """
+#     Text line detection 文本行检测
+#     给出一个json,其中包含检测到的bbox
+#     """
 
-    image = Image.open(IMAGE_PATH)
+#     start_time = time.time()
 
-    line_predictions = batch_text_detection([image], det_model, det_processor)
-    layout_predictions = batch_layout_detection(
-        [image], layout_model, layout_processor, line_predictions
-    )
+#     image = Image.open(IMAGE_PATH)
+#     text_detection = batch_text_detection([image], det_model, det_processor)
 
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    logger.info(f"surya_layout_detection耗时: {elapsed_time:.2f}秒")
-    return layout_predictions
+#     end_time = time.time()
+#     elapsed_time = end_time - start_time
+#     logger.info(f"surya_text_detection耗时: {elapsed_time:.2f}秒")
+#     return text_detection
+
+
+# def run_surya_batch_layout_detection(
+#     IMAGE_PATH, layout_model, layout_processor, det_model, det_processor
+# ):
+#     """
+#     Layout analysis 版面分析
+#     布局检测
+#     """
+#     start_time = time.time()
+
+#     image = Image.open(IMAGE_PATH)
+
+#     line_predictions = batch_text_detection([image], det_model, det_processor)
+#     layout_predictions = batch_layout_detection(
+#         [image], layout_model, layout_processor, line_predictions
+#     )
+
+#     end_time = time.time()
+#     elapsed_time = end_time - start_time
+#     logger.info(f"surya_layout_detection耗时: {elapsed_time:.2f}秒")
+#     return layout_predictions
 
 
 # def run_surya_order_detection(IMAGE_PATH, order_model, order_processor):

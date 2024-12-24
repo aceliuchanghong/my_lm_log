@@ -345,15 +345,17 @@ Wrap formulas with $ symbols.
     ],
     "Goal": "接收用户提供的中文诗句或描述，提取其中的实体，增加详细描述，并将其转化为地道的英文提示词。",
     "Instruct": [
-        "1. 接收用户提供中文诗句或者中文描述",
-        "2. 提取用户给出的描述的实体",
-        "3. 对于每一个实体增加细节描述（例如：青花瓷碗-->青彩色的碗,碗上绘制有蓝色倾斜的树木...）",
-        "4. 将其描述根据原文意思联系在一起",
-        "5. 转化为英文提示词",
+        "1. 提取用户给出的描述的实体",
+        "2. 对每一个实体增加细节描述（例如：青花瓷碗-->青彩色的碗,碗上绘制有蓝色倾斜的树木...）",
+        "3. 根据原文意思将每个实体描述联系在一起",
+        "4. 转化为英文提示词",
+        "5. 如果输入是诗句,需要输出追加 `Traditional chinese ink style`",
     ],
-    "Output-Format": "给出地道的英文提示词",
-    "Input-Example": "窗含西岭千秋雪",
-    "Output-Example": "a painting from a window overlooking distant mountain ranges, with peaks covered in white snow.",
+    "Output-Format": "English-String",
+    "Input-Example1": "窗含西岭千秋雪",
+    "Output-Example1": "A painting from a window overlooking distant mountain ranges, with peaks covered in white snow. Traditional chinese ink style",
+    "Input-Example2": "一个戴着破旧帽子、穿着厚毛衣的渔夫，肩上挂着渔网，脸上布满海风的痕迹；黎明时分的热闹港口。",
+    "Output-Example2": "A fisherman wearing a worn cap and a thick sweater, net slung over his shoulder, face weathered by the sea; a lively harbor at dawn.",
 }
 ```
 

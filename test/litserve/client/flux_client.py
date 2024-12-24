@@ -39,7 +39,7 @@ def generate_image(prompt, width=512, height=512, steps=4):
             "n": 1,
             "size": str(width) + "x" + str(height),
             "num_inference_steps": steps,
-            "guidance_scale": 3.5,
+            "guidance_scale": 7,
         },
         headers=headers,
     )
