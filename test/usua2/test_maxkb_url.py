@@ -29,12 +29,26 @@ messages = [
 ]
 
 start_time = time.time()
+
 response = client.chat.completions.create(
     model=model,
     messages=messages,
     temperature=0.5,
 )
-logger.info(colored(f"llm ans:\n{response.choices[0].message.content}", "green"))
+logger.info(
+    colored(f"非流式测试llm ans:\n{response.choices[0].message.content}", "green")
+)
+
+stream_response = client.chat.completions.create(
+    model=model,
+    messages=messages,
+    temperature=0.5,
+    stream=True,
+)
+for chunk in stream_response:
+    print(chunk.model_dump_json())
+
+
 end_time = time.time()
 elapsed_time = end_time - start_time
 logger.info(f"耗时: {elapsed_time:.2f}秒")

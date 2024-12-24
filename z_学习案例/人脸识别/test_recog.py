@@ -19,15 +19,12 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
 # python z_学习案例/人脸识别/test_recog.py
 workers = 0 if os.name == "nt" else 4
 logger.info(colored(f"workers:{workers}", "green"))
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda:3" if torch.cuda.is_available() else "cpu")
 logger.info(colored(f"在 {device} 设备上运行", "green"))
-
-
-def collate_fn(x):
-    return x[0]
 
 
 mtcnn = MTCNN(
@@ -39,12 +36,29 @@ mtcnn = MTCNN(
     post_process=True,
     device=device,
 )
-resnet = InceptionResnetV1(pretrained="vggface2").eval().to(device)
+model_detail = {
+    "no_git_oic/20180408-102900-casia-webface.pt": 10575,
+    "no_git_oic/20180402-114759-vggface2.pt": 8631,
+}
+model_name = [
+    "no_git_oic/20180408-102900-casia-webface.pt",
+    "no_git_oic/20180402-114759-vggface2.pt",
+]
+choose_num = 1
+resnet = (
+    InceptionResnetV1(
+        pretrained=model_name[choose_num],
+        tmp_classes=model_detail[model_name[choose_num]],
+    )
+    .eval()
+    .to(device)
+)
+# resnet = InceptionResnetV1(pretrained="vggface2").eval().to(device)
 
 # MTCNN人脸检测
 dataset = datasets.ImageFolder("z_using_files/img/p_face")
 dataset.idx_to_class = {i: c for c, i in dataset.class_to_idx.items()}
-loader = DataLoader(dataset, collate_fn=collate_fn, num_workers=workers)
+loader = DataLoader(dataset, collate_fn=lambda x: x[0], num_workers=workers)
 aligned = []
 names = []
 for x, y in loader:
@@ -60,12 +74,3 @@ embeddings = resnet(aligned).detach().cpu()
 dists = [[(e1 - e2).norm().item() for e2 in embeddings] for e1 in embeddings]
 new_pd = pd.DataFrame(dists, columns=names, index=names)
 logger.info(colored(f"new_pd:\n{new_pd}", "green"))
-
-# 处理图像
-img = Image.open("z_using_files/img/p_face/name5/image_5.png")
-img_cropped = mtcnn(img, save_path="no_git_oic/pics/00.png")
-img_embedding = resnet(img_cropped.unsqueeze(0))
-resnet.classify = True
-img_probs = resnet(img_cropped.unsqueeze(0))
-logger.info(colored(f"img_probs shape{img_probs.shape}", "green"))
-logger.info(colored(f"img_probs:{img_probs}", "green"))
