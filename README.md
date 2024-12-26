@@ -143,6 +143,8 @@ pip3 install torch torchvision torchaudio --index-url https://download.pytorch.o
 # ollama
 Environment="OLLAMA_MODELS=/mnt/data/ollama_models"
 Environment="OLLAMA_HOST=0.0.0.0"
+# 图标
+★☆
 ```
 
 ### Others
