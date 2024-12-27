@@ -29,26 +29,28 @@ def extract_info(message: str) -> dict:
 
 
 def rule_judge(info: dict) -> int:
-    user_info = {"0000001": 1, "1552728": 3, "1551728": 3}
-    level = user_info.get(info["userid"], 5)
+    user_info = {"0000001": 1, "0000002": 2, "0000003": 3}
+    level = user_info.get(info["userid"], 4)
     return level
 
 
 def get_prompt(info: dict) -> str:
-    """提示词提取"""
     return info["prompt"]
 
 
-class InsufficientPermissionsError(Exception):
-    pass
+# str--json解析  ==> z_utils/get_json.py
 
 
-def raise_InsufficientPermissionsError():
-    raise InsufficientPermissionsError("当前权限不够")
+def get_is_nsfw(info: dict) -> str:
+    return info["is_nsfw"]
+
+
+def get_is_real_time(info: dict) -> str:
+    return info["is_real_time"]
 
 
 # 示例用法
-messages = ["雷晓辉+1550728<|>今天上海天气如何?", "刘昌洪+1551728<|>你是谁?"]
+messages = ["雷xx+1550728<|>今天上海天气如何?", "刘XX+1551728<|>你是谁?"]
 
 for message in messages:
     info = extract_info(message)
@@ -66,8 +68,8 @@ python test/usua2/xunfei_rec_info_extract.py
 分隔符=<|>
 用户发送的聊天信息=prompt
 example1:
-雷晓辉+1552728<|>今天上海天气如何?
+雷xx+1552728<|>今天上海天气如何?
 example2:
-刘昌洪+1551728<|>你是谁?
+刘XX+1551728<|>你是谁?
 ```
 """

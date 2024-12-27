@@ -1,7 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 import argparse
-import json
 from termcolor import colored
 import sys
 import os
@@ -99,7 +98,7 @@ def main():
         content += result["abstract"] + "\n" + result["content"]
     logger.info(colored(f"{args.query}...", "green"))
     response = ai_tools.llm.chat.completions.create(
-        model=os.getenv("MODEL"),
+        model=os.getenv("MODEL", "gpt-3.5-turbo"),
         messages=[
             {
                 "role": "user",

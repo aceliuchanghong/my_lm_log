@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import annotations
-
 import json
 import re
 from typing import Any, Callable, List
@@ -117,7 +115,7 @@ _json_markdown_re = re.compile(r"```(json)?(.*)", re.DOTALL)
 
 
 def parse_json_markdown(
-        json_string: str, *, parser: Callable[[str], Any] = parse_partial_json
+    json_string: str, *, parser: Callable[[str], Any] = parse_partial_json
 ) -> dict:
     """Parse a JSON string from a Markdown string.
 
@@ -146,7 +144,7 @@ _json_strip_chars = " \n\r\t`"
 
 
 def _parse_json(
-        json_str: str, *, parser: Callable[[str], Any] = parse_partial_json
+    json_str: str, *, parser: Callable[[str], Any] = parse_partial_json
 ) -> dict:
     # Strip whitespace,newlines,backtick from the start and end
     json_str = json_str.strip(_json_strip_chars)
@@ -158,7 +156,9 @@ def _parse_json(
     return parser(json_str)
 
 
-def parse_and_check_json_markdown(text: str, expected_keys: List[str]) -> dict:
+def parse_and_check_json_markdown(
+    text: str, expected_keys: List[str] = ["is_real_time", "is_nsfw"]
+) -> dict:
     """
     Parse a JSON string from a Markdown string and check that it
     contains the expected keys.
@@ -187,8 +187,8 @@ def parse_and_check_json_markdown(text: str, expected_keys: List[str]) -> dict:
     return json_obj
 
 
-if __name__ == '__main__':
-    text = '''```json\n{"name":"张三", "age": 27, "爱好": ["羽毛球'''
+if __name__ == "__main__":
+    text = """```json\n{"name":"张三", "age": 27, "爱好": ["羽毛球"""
     text2 = """
     {
   "question": "合同里面SOB或者SOA编号是？格式是SOB20...",
@@ -201,4 +201,8 @@ if __name__ == '__main__':
       "answer": "SOB202102-14875"
     }``` 以上就是结果
         """
-    print(parse_json_markdown(text3))
+    xx = parse_json_markdown(text)
+    print(type(xx))
+    print(xx)
+    yy = parse_and_check_json_markdown(text3, ["question", "answer"])
+    print(f"yy:{yy}")
