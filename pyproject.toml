@@ -1,0 +1,9 @@
+[project]
+name = "my-lm-log"
+version = "0.1.0"
+description = "my machine learning log"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "openai>=1.58.1",
+]

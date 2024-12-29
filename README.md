@@ -145,6 +145,11 @@ Environment="OLLAMA_MODELS=/mnt/data/ollama_models"
 Environment="OLLAMA_HOST=0.0.0.0"
 # 图标
 ★☆
+# uv-powershell
+$env:Path = "C:\Users\lawrence\.local\bin;$env:Path"
+uv venv -p 3.12.0  (指定环境保存目录 uv venv /path/to/venv)
+uv pip install flask
+export UV_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple (setx UV_INDEX_URL "https://pypi.tuna.tsinghua.edu.cn/simple")
 ```
 
 ### Others

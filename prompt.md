@@ -85,6 +85,23 @@ Hugo
 可以通过一个示例，告诉GPT你想要
 
 Instruction
+
+
+{
+    "Role": "",
+    "Skills": "",
+    "Goal": "",
+    "Instruction": [
+        "1. xx",
+        "2. yy",
+    ],
+    "Constrains": "",
+    "Format": "",
+    "Input-Example1": "",
+    "Output-Example1": "",
+    "Input-Example2": "",
+    "Output-Example2": "",
+}
 ```
 
 - zh
