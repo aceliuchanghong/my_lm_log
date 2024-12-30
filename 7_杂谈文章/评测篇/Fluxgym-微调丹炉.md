@@ -4,11 +4,11 @@
 
 | 特性 | Fluxgym | 其他框架 |
 |------|---------|----------|
-| VRAM需求 | 12GB/16GB/20GB | 通常需要24GB+ |
-| 易用性 | 简单Web UI | 命令行操作 |
-| 功能完整性 | 支持Kohya全部功能 | 功能可能受限 |
-| 模型支持 | 自定义扩展 | 固定模型 |
-| 样本生成 | 自动生成训练样本 | 手动生成 |
+| VRAM需求 | 12GB/16GB/20GB | 通常需要22GB+ |
+| 易用性 | 简单Web-UI | 命令行操作 |
+| 自动打标 | Florence-2自动打标 | 无 |
+| 上传lora->hf | 填入hf-Token即可 | 无 |
+
 
 #### 评价
 ```
@@ -16,18 +16,18 @@
 
 2. 基于Kohya脚本开发，功能完整且可扩展，同时提供了简洁的Web UI，降低了使用难度
 
-3. 支持自动样本生成功能，可以直观观察训练过程中的模型变化，便于调试
+3. 运行需要自己修改一下代码(模型地址,模型名称,host,端口,安装比较难)
 
-4. 模型支持灵活，可以通过修改models.yaml文件添加自定义基础模型
+4. 并且训练的时候页面不能刷新,很烦
 
-5. 提供Docker部署方式，简化了环境配置流程
+5. 现阶段最合适的flux的训练框架,其他坑更多...
 ```
 
-![界面截图](../../z_using_files/img/judge/fluxgym_ui.png)
-![训练流程](../../z_using_files/img/judge/fluxgym_flow.gif)
+![界面截图](../../z_using_files/img/judge/fluxgym_1.png)
+
+支持微调的模型
+
+![训练流程](../../z_using_files/img/judge/fluxgym_2.png)
 
 ### 项目地址:
 - [GitHub](https://github.com/cocktailpeanut/fluxgym)
-
-### 使用文档:
-- [官方README](https://github.com/cocktailpeanut/fluxgym#readme)
