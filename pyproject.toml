@@ -5,6 +5,7 @@ description = "my machine learning log"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "accelerate>=1.2.1",
     "diffusers>=0.32.1",
     "einops>=0.8.0",
     "gradio>=5.9.1",
