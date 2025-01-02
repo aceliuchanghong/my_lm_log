@@ -39,9 +39,26 @@ https://github.com/pytorch/pytorch/issues/111469
 export LD_LIBRARY_PATH=/mnt/data/anaconda/envs/vllm/lib/python3.10/site-packages/nvidia/nvjitlink/lib:$LD_LIBRARY_PATH
 
 # ollama
+export no_proxy="localhost,127.0.0.1"
 vim /etc/systemd/system/ollama.service
 Environment="OLLAMA_MODELS=/mnt/data/ollama_models"
 Environment="OLLAMA_HOST=0.0.0.0"
+# 要预加载模型并将其保留在内存中
+curl http://localhost:11434/api/generate -d '{"model": "llama2", "keep_alive": -1}'
+# 要卸载模型并释放内存
+curl http://localhost:11434/api/generate -d '{"model": "llama2", "keep_alive": 0}'
+curl http://localhost:11434/api/embed -d '{
+  "model": "bge-m3",
+  "input": "Why is the sky blue?"
+}'
+curl http://localhost:11434/api/embeddings -d '{
+  "model": "bge-m3",
+  "prompt": "Why is the sky blue?",
+}'
+curl http://localhost:11434/api/embeddings -d '{
+  "model": "bge-m3",
+  "keep_alive": -1
+}'
 
 # 微软推荐系统框架
 https://github.com/recommenders-team/recommenders
