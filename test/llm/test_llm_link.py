@@ -4,6 +4,7 @@ import os
 import logging
 from openai import OpenAI
 import sys
+from termcolor import colored
 
 sys.path.insert(
     0,
@@ -43,14 +44,16 @@ def get_entity_result(client, user_prompt, Basic_info="", system_prompt=None):
 }
 """
     prompt = (
-        ("## 基本信息:\n" + Basic_info if len(Basic_info) > 10 else "")
-        + "\n## 要求:\n"
+        ("## Ground-truth:\n" + Basic_info + "\n" if len(Basic_info) > 1 else "")
+        + "## Instruction:\n"
         + user_prompt
     )
     messages = [
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": prompt},
     ]
+
+    logger.debug(colored(f"messages:{messages}", "green"))
     start_time = time.time()
     response = client.chat.completions.create(
         model=os.getenv("MODEL"),

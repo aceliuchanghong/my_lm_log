@@ -59,12 +59,12 @@ def extract_entity(llm, rule, all_text, retriever=None):
         "提取"
         + rule["entity_name"]
         + (
-            ',其中output-example:"' + rule["entity_format"] + '"'
+            ',answer-value-example:"' + rule["entity_format"] + '"'
             if len(rule["entity_format"]) > 1
             else ""
         )
         + (
-            ',output可能的regex_pattern为:"' + rule["entity_regex_pattern"] + '"'
+            ',answer-value-regex-pattern为:"' + rule["entity_regex_pattern"] + '"'
             if len(rule["entity_regex_pattern"]) > 1
             else ""
         )
@@ -161,6 +161,8 @@ def get_local_images(images_path):
                 )
             elif os.path.isfile(image):
                 local_images_path.add(image)
+            else:
+                local_images_path.add("get_local_images:wrong format")
 
         # 处理所有任务，无论是下载还是文字方向检测
         for future in as_completed(future_to_image):
@@ -302,6 +304,7 @@ class QuickOcrAPI(ls.LitAPI):
 
         # 定义多线程处理单个规则的函数
         def process_single_rule(rule):
+            logger.debug(colored(f"all_text:{all_text}", "green"))
             return extract_entity(self.llm, rule, all_text, retriever)
 
         # 使用 ThreadPoolExecutor 并行执行规则处理
@@ -324,7 +327,7 @@ class QuickOcrAPI(ls.LitAPI):
 
 if __name__ == "__main__":
     # python test/litserve/api/quick_ocr_api_server.py
-    # export no_proxy="localhost,36.213.66.106,127.0.0.1,1.12.251.149"
+    # export no_proxy="localhost,10.6.6.113,127.0.0.1,1.12.251.149"
     # nohup python test/litserve/api/quick_ocr_api_server.py > no_git_oic/quick_ocr_api_server.log &
     api = QuickOcrAPI()
     server = ls.LitServer(api, accelerator="gpu", devices=[1])
