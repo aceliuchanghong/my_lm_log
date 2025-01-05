@@ -833,3 +833,11 @@ question：
     "Output-Example2": {"is_real_time": "yes", "is_nsfw": "no"},
 }
 ```
+
+- 文章转化
+```
+帮我转化为markdown格式的讲解文章
+1.自动补充完善
+2.纠正错误
+3.markdown格式,方便复制
+```

@@ -8,6 +8,7 @@ import sys
 import requests
 import time
 import json
+from termcolor import colored
 
 load_dotenv()
 log_level = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -42,6 +43,7 @@ from z_utils.sql_sentence import (
 
 def extract_entities(image_list, rule_name):
     rule_list = get_rule_list(rule_name)
+    logger.debug(colored(f"rule_list:{rule_list}", "green"))
     start_time = time.time()
     response = requests.post(
         f"http://{ip}:8109/predict",
@@ -51,10 +53,12 @@ def extract_entities(image_list, rule_name):
             "rule": rule_list,
         },
     )
+    result = response.text
     end_time = time.time()
     elapsed_time = end_time - start_time
     logger.info(f"耗时: {elapsed_time:.2f}秒")
-    data = json.loads(response.text)
+    data = json.loads(result)
+    logger.debug(colored(f"data:{data}", "green"))
     ocr_result_list = []
     for ocr_contents in data[0]:
         ocr_result_list.append(ocr_contents["ocr_result"])
@@ -109,6 +113,7 @@ def extract_entity(
 
     for entity in entities:
         entity["sure"] = False
+        entity["rule_name"] = rule
     logger.debug(f"entities:\n{entities}")
     text_all = "".join(ans for ans in ocr_result_list)
     return entities, gr.update(value=text_all, visible=True)

@@ -4,6 +4,7 @@ from pdf2image import convert_from_path
 from dotenv import load_dotenv
 from tqdm import tqdm
 import logging
+from termcolor import colored
 
 load_dotenv()
 log_level = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -13,6 +14,8 @@ logger = logging.getLogger(__name__)
 sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../"))
 )
+from z_utils.check_db import excute_sqlite_sql
+from z_utils.sql_sentence import select_rule_sql
 
 
 def process_pdf(pdf_file_path):
@@ -43,4 +46,13 @@ def process_file(file_original):
 
 
 def get_rule_list(rule_name):
-    pass
+    entity_tuple_list = excute_sqlite_sql(select_rule_sql, (rule_name,), False)
+    tasks = []
+    for i, entity in enumerate(entity_tuple_list):
+        task = {
+            "entity_name": entity[0],
+            "entity_format": entity[1],
+            "entity_regex_pattern": entity[2],
+        }
+        tasks.append(task)
+    return tasks

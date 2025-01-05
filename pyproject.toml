@@ -12,6 +12,7 @@ dependencies = [
     "gradio-pdf>=0.0.21",
     "langchain>=0.3.13",
     "langchain-ollama>=0.2.2",
+    "lightning>=2.5.0.post0",
     "litserve>=0.2.5",
     "matplotlib>=3.10.0",
     "openai>=1.58.1",
