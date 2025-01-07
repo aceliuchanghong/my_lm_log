@@ -24,11 +24,11 @@ table_engine = RapidTable(model_path="./test/ocr/ch_ppstructure_mobile_v2_SLANet
 # ocr_engine = RapidOCR(det_model_path='./test/ocr/ch_PP-OCRv4_det_server_infer.onnx',rec_model_path='./test/ocr/ch_PP-OCRv4_rec_server_infer.onnx')
 ocr_engine = RapidOCR()
 
-convert_html_to_md = True
+convert_html_to_md = False
 
 # img_path = "no_git_oic/page_1.png"
 # img_path = "no_git_oic/采购合同4.pdf_show_0.jpg"
-img_path = "z_using_files/pics/std_table.png"
+img_path = "z_using_files/pics/test_pb.png"
 
 ocr_result, _ = ocr_engine(img_path)
 table_html_str, table_cell_bboxes, elapse = table_engine(img_path, ocr_result)

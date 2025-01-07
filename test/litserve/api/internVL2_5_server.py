@@ -309,4 +309,4 @@ if __name__ == "__main__":
     server = ls.LitServer(
         api, accelerator="gpu", devices=1, track_requests=True, spec=ls.OpenAISpec()
     )
-    server.run(port=int(os.getenv("MOLMO_PORT")))
+    server.run(port=int(os.getenv("MOLMO_PORT", 8110)))

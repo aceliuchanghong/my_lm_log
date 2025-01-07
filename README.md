@@ -185,4 +185,5 @@ moffee live .\0_数学基础\AI-数学-必学\对数.md
 - [书生训练营-看着还不错](https://github.com/InternLM/Tutorial)
 - [tiny-llm-zh-教程](https://github.com/aceliuchanghong/tiny-llm-zh)
 - [llm_from_scratch](https://github.com/aceliuchanghong/LLMs-from-scratch)
+- [面试问题-教学](https://github.com/aceliuchanghong/LLMForEverybody)
 - 

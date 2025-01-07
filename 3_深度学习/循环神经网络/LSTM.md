@@ -1,6 +1,8 @@
 ## LSTM（Long Short-Term Memory）
 是一种用于处理和预测时间序列数据的**循环神经网络（RNN）**的变种。它主要解决了RNN在处理长序列时的**长期依赖问题**，即随着序列长度的增加，传统RNN难以保留早期信息，从而影响模型的表现。
 
+https://mp.weixin.qq.com/s/s9oe6Nor2s6a6rQBXTU7lQ
+
 ### 1. 核心概念
 LSTM的核心在于它引入了**遗忘门（Forget Gate）**、**输入门（Input Gate）**和**输出门（Output Gate）**，这些门控机制允许LSTM选择性地记住或者忘记过去的信息。
 

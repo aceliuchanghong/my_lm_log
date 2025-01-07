@@ -19,6 +19,7 @@ import os
 from dotenv import load_dotenv
 import logging
 from PIL import Image
+from termcolor import colored
 
 # from surya.ocr import run_ocr
 # from surya.model.detection.model import (
@@ -55,6 +56,7 @@ def polygon_to_markdown(text_lines):
     sorted_lines = sorted(text_lines, key=lambda line: line.bbox[1])
 
     for line in sorted_lines:
+        logger.debug(colored(f"text_lines:{text_lines}", "green"))
         # 获取当前文本框的 y 坐标
         current_y = line.bbox[1]
 

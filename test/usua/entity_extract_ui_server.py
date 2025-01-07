@@ -654,11 +654,12 @@ def create_app():
 
 if __name__ == "__main__":
     """
-    export no_proxy="localhost,10.6.6.113,127.0.0.1"
+    export no_proxy="localhost,10.6.6.199,127.0.0.1"
     python test/usua/entity_extract_ui_server.py
     nohup python test/usua/entity_extract_ui_server.py> no_git_oic/entity_extract_ui_server.log &
+    apt-get install poppler-utils
     """
-    ip = "127.0.0.1"
+    ip = "10.6.6.199"
     file_default_path = os.path.join(
         os.getenv("upload_file_save_path", "./upload_files"), "entity_extract"
     )

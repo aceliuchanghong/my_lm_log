@@ -29,7 +29,20 @@ def extract_info(message: str) -> dict:
 
 
 def rule_judge(info: dict) -> int:
-    user_info = {"0000001": 1, "0000002": 2, "0000003": 3}
+    """
+    1 董事
+    2 总监
+    3 经理
+    4 普通员工
+    5 游客
+    """
+    user_info = {
+        "0000001": 1,
+        "0000002": 2,
+        "0000003": 3,
+        "o01935": 1,
+        "30122111111111111": 5,
+    }
     level = user_info.get(info["userid"], 4)
     return level
 

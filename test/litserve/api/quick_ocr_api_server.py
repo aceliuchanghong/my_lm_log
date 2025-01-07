@@ -72,13 +72,15 @@ def extract_entity(llm, rule, all_text, retriever=None):
 
     # 从文本中提取信息
     basic_info = all_text
-    if len(all_text) > int(os.getenv("long_ocr_result")):
+    if len(all_text) > int(os.getenv("long_ocr_result", 2000)):
         basic_info = "".join(
             [i.page_content for i in retriever.invoke(user_prompt)[:2]]
         )
         logger.info(f"emb结果:{basic_info}")
     ans = get_entity_result(
-        llm, user_prompt, basic_info[: min(int(os.getenv("long_ocr_result")), 1800)]
+        llm,
+        user_prompt,
+        basic_info[: min(int(os.getenv("long_ocr_result", 2000)), 1800)],
     )
     logger.info(f"LLM回答结果:{ans}")
 
@@ -143,9 +145,13 @@ def base64_to_image(base64_string, save_dir):
 
 
 def get_local_images(images_path):
-    save_dir = os.path.join(os.getenv("upload_file_save_path"), "images")
+    save_dir = os.path.join(
+        os.getenv("upload_file_save_path", "./upload_files"), "images"
+    )
     local_images_path = set()  # 使用集合来避免重复
-    rotate_path = os.path.join(os.getenv("upload_file_save_path"), "rotate_pics")
+    rotate_path = os.path.join(
+        os.getenv("upload_file_save_path", "./upload_files"), "rotate_pics"
+    )
 
     # 多线程下载和处理图片
     with ThreadPoolExecutor(max_workers=10) as executor:
@@ -186,7 +192,13 @@ def get_local_images(images_path):
                     print(f"Error processing image {image}: {e}")
         logger.debug(f"local_images_path2:{list(local_images_path)}")
 
-    return list(local_images_path)  # 返回列表格式
+    # 本地文件删除
+    local_images_list = list(local_images_path)
+    for image in images_path:
+        if os.path.isfile(image):
+            local_images_list.remove(image)
+
+    return local_images_list
 
 
 class QuickOcrAPI(ls.LitAPI):
@@ -237,9 +249,11 @@ class QuickOcrAPI(ls.LitAPI):
         single_result["ocr_result"] = rapid_ocr_markdown
 
         try:
-            save_dir = os.path.join(os.getenv("upload_file_save_path"), "images")
+            save_dir = os.path.join(
+                os.getenv("upload_file_save_path", "./upload_files"), "images"
+            )
             rotate_path = os.path.join(
-                os.getenv("upload_file_save_path"), "rotate_pics"
+                os.getenv("upload_file_save_path", "./upload_files"), "rotate_pics"
             )
             upload_image = os.path.join(save_dir, single_result["file_name"])
             rotate_image = os.path.join(rotate_path, single_result["file_name"])
@@ -258,7 +272,7 @@ class QuickOcrAPI(ls.LitAPI):
         self.ocr_engine = RapidOCR()
         self.llm = OpenAI(api_key=os.getenv("API_KEY"), base_url=os.getenv("BASE_URL"))
         self.embeddings = OllamaEmbeddings(
-            model=os.getenv("EMB_MODEL"), base_url=os.getenv("EMB_BASE_URL")
+            model=os.getenv("EMB_MODEL", "bge-m3"), base_url=os.getenv("EMB_BASE_URL")
         )
 
     def decode_request(self, request):
@@ -294,7 +308,7 @@ class QuickOcrAPI(ls.LitAPI):
         entity_list = []
 
         retriever = None
-        if len(all_text) > int(os.getenv("long_ocr_result")):
+        if len(all_text) > int(os.getenv("long_ocr_result", 2000)):
             text_doc = chunk_by_LCEL(all_text)
             vectorstore = InMemoryVectorStore.from_texts(
                 text_doc,
@@ -331,4 +345,4 @@ if __name__ == "__main__":
     # nohup python test/litserve/api/quick_ocr_api_server.py > no_git_oic/quick_ocr_api_server.log &
     api = QuickOcrAPI()
     server = ls.LitServer(api, accelerator="gpu", devices=[1])
-    server.run(port=int(os.getenv("quick_ocr_port")))
+    server.run(port=int(os.getenv("quick_ocr_port", 8109)))
