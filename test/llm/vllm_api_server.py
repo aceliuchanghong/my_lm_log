@@ -12,7 +12,35 @@ model_dir = snapshot_download(
 # --host --port --api-key
 # python -m vllm.entrypoints.openai.api_server --model /mnt/data/qwen2.5-72-instruct/Qwen2.5-72B-Instruct  --served-model-name Qwen2.5 --max-model-len=32768
 # vllm serve Qwen/Qwen2.5-72B-Instruct --tensor-parallel-size 4
+"""
+export no_proxy="localhost,10.6.6.113,127.0.0.1,1.12.251.149"
 
+curl http://10.6.6.113:11433/v1/chat/completions \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer torch-elskenrgvoiserngviopsejrmoief" \
+    -d '{
+        "model": "Qwen2.5",
+        "messages": [
+            {
+                "role": "user",
+                "content": "Hello!"
+            }
+        ]
+    }'
+
+curl http://127.0.0.1:11433/v1/chat/completions \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer torch-elskenrgvoiserngviopsejrmoief" \
+    -d '{
+        "model": "Qwen2.5",
+        "messages": [
+            {
+                "role": "user",
+                "content": "Hello!"
+            }
+        ]
+    }'
+"""
 new_path = "qwen2.5-72-instruct/Qwen/Qwen2___5-72B-Instruct/"
 port = 11433
 host = "0.0.0.0"

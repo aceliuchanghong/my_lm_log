@@ -218,14 +218,12 @@ class InternVL2_5API(ls.LitAPI):
                 "提取"
                 + rule["entity_name"]
                 + (
-                    ',其中output-example:"' + rule["entity_format"] + '"'
+                    ',answer-value-example:"' + rule["entity_format"] + '"'
                     if len(rule["entity_format"]) > 1
                     else ""
                 )
                 + (
-                    ',output可能的regex_pattern为:"'
-                    + rule["entity_regex_pattern"]
-                    + '"'
+                    ',answer-value-regex-pattern:"' + rule["entity_regex_pattern"] + '"'
                     if len(rule["entity_regex_pattern"]) > 1
                     else ""
                 )
@@ -258,7 +256,7 @@ class InternVL2_5API(ls.LitAPI):
                 question = f"<image>\n{user_prompt}"
                 logger.info(colored(f"vision prompt:{question}", "green"))
                 pixel_values = torch.cat(pixel_values_list, dim=0)
-                response, history = self.model.chat(
+                response, _ = self.model.chat(
                     self.tokenizer,
                     pixel_values,
                     question,
@@ -270,7 +268,7 @@ class InternVL2_5API(ls.LitAPI):
             else:
                 logger.info(colored(f"step1 qwen start", "green"))
                 response_llm = self.llm.chat.completions.create(
-                    model=os.getenv("MODEL"),
+                    model=os.getenv("MODEL", "Qwen2.5"),
                     messages=[{"role": "user", "content": user_prompt}],
                     temperature=0.5,
                 )
@@ -302,9 +300,13 @@ class InternVL2_5API(ls.LitAPI):
 
 
 if __name__ == "__main__":
-    # export no_proxy="localhost,36.213.66.106,127.0.0.1,1.12.251.149"
-    # python test/litserve/api/internVL2_5_server.py
-    # nohup python test/litserve/api/internVL2_5_server.py > no_git_oic/internVL2_5_server.log &
+    """
+    export no_proxy="localhost,10.6.6.113,127.0.0.1,1.12.251.149"
+    python test/litserve/api/internVL2_5_server.py
+    nohup python test/litserve/api/internVL2_5_server.py > no_git_oic/internVL2_5_server.log &
+
+    RuntimeError: One or more workers failed to start. Shutting down LitServe==>缺失依赖
+    """
     api = InternVL2_5API()
     server = ls.LitServer(
         api, accelerator="gpu", devices=1, track_requests=True, spec=ls.OpenAISpec()

@@ -133,7 +133,7 @@ pip install -r requirements.txt
 Set-ExecutionPolicy Bypass -Scope Process -Force
 .venv\Scripts\activate
 # linux
-source env/bin/activate
+source .venv/bin/activate
 # jupyter
 jupyter notebook --port=8888 --allow-root --ip='*'
 # 端口进程查询关闭

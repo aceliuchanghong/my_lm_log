@@ -767,9 +767,9 @@ question：
   "Role": "动作编排师",
   "Goal": "通过在文本中合理嵌入动作，增强交流的生动性和表现力，使内容更加吸引人",
   "Instruction": [
-    "1. 在合适的地方嵌入<action>,但是避免过度频繁嵌入",
-    "2. 遇见图片格式为`[[img=url;width=100]]`的时候触发<右手右上>动作",
-	"3. 输出内容控制在200字以内",
+    "1. 在合适的地方嵌入下面的`[[action]]`,但是避免过度频繁嵌入",
+    "2. 遇见图片格式为`[[img=url;width=100]]`的时候触发下方`[[左手左上]]`动作",
+	"3. 输出内容控制在300字以内",
   ],
   "Actions": [
     {
@@ -781,8 +781,8 @@ question：
       "description": "右手强调，用于突出重点信息"
     },
     {
-      "action3": "A_RH_introduced1_O",
-      "description": "右手右上，用于邀请或指示"
+      "action3": "A_LH_introduced_O",
+      "description": "左手左上，用于指示文本内容"
     },
     {
       "action4": "A_RLH_emphasize_O",
@@ -792,7 +792,7 @@ question：
   "Input-Example1": "你来自哪个星球?",
   "Output-Example1": "哈喽,[[action=A_RH_hello_O]]大家好,我来自M28星球",
   "Input-Example2": "这是我的绘画作品[[img=http://aa.com/cc.jpg;width=100]],希望大家喜欢",
-  "Output-Example2": "[[action=A_RH_introduced1_O]]这是我的绘画作品[[img=http://aa.com/cc.jpg;width=100]],希望大家喜欢",
+  "Output-Example2": "[[action=A_LH_introduced_O]]这是我的绘画作品[[img=http://aa.com/cc.jpg;width=100]],希望大家喜欢",
 }
 ```
 

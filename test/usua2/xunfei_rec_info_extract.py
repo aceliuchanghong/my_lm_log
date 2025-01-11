@@ -62,6 +62,11 @@ def get_is_real_time(info: dict) -> str:
     return info["is_real_time"]
 
 
+def get_user_name(info: dict) -> str:
+    """提取用户姓名"""
+    return info["username"]
+
+
 # 示例用法
 messages = ["雷xx+1550728<|>今天上海天气如何?", "刘XX+1551728<|>你是谁?"]
 

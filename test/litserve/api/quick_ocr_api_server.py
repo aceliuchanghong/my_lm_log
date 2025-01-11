@@ -129,19 +129,45 @@ def compute_mdhash_id(content, prefix: str = ""):
 
 
 def base64_to_image(base64_string, save_dir):
-    # 去掉前缀，例如 "image/jpeg;base64,"
-    base64_data = base64_string.split(",")[-1]
-    image_data = base64.b64decode(base64_data)
-    image = Image.open(io.BytesIO(image_data))
+    try:
+        # 去掉前缀，例如 "data:image/jpeg;base64,"
+        base64_data = base64_string.split(",")[-1]
+        image_data = base64.b64decode(base64_data)
+        image = Image.open(io.BytesIO(image_data))
 
-    random_number = random.randint(1, 10000)
-    name = compute_mdhash_id(base64_data[:100], prefix="pic_")
-    image_name = name + str(random_number) + ".jpg"
+        # 获取图像格式（如果 Base64 前缀中包含格式信息）
+        if base64_string.startswith("data:image/"):
+            image_format = base64_string.split(";")[0].split("/")[
+                -1
+            ]  # 提取格式，如 "jpeg", "png"
+        else:
+            logger.error(colored(f"base64 image 格式有误", "red"))
+            return None
+        # 如果无法检测到格式，默认使用 PNG
+        if not image_format:
+            image_format = "png"
+        # 处理图像模式
+        if image.mode == "RGBA":
+            # 如果格式是 JPEG，则转换为 RGB（JPEG 不支持透明通道）
+            if image_format == "jpeg":
+                image = image.convert("RGB")
+        elif image.mode not in ["RGB", "L"]:
+            # 其他模式（如 P、LA 等）转换为 RGB
+            image = image.convert("RGB")
 
-    image_path = os.path.join(save_dir, image_name)
-    logger.info(colored(f"base64 image_path:{image_path}\n", "green"))
-    image.save(image_path)
-    return image_path
+        # 生成随机文件名
+        random_number = random.randint(1, 10000)
+        name = compute_mdhash_id(base64_data[:100], prefix="pic_")
+        image_name = f"{name}{random_number}.{image_format}"  # 根据格式生成文件名
+
+        # 保存图像
+        image_path = os.path.join(save_dir, image_name)
+        logger.info(f"base64 image_path: {image_path}")
+        image.save(image_path, format=image_format.upper())  # 明确指定保存格式
+        return image_path
+    except Exception as e:
+        logger.error(colored(f"Error decoding base64 image: {e}", "red"))
+        return None
 
 
 def get_local_images(images_path):
@@ -152,6 +178,8 @@ def get_local_images(images_path):
     rotate_path = os.path.join(
         os.getenv("upload_file_save_path", "./upload_files"), "rotate_pics"
     )
+    os.makedirs(save_dir, exist_ok=True)
+    os.makedirs(rotate_path, exist_ok=True)
 
     # 多线程下载和处理图片
     with ThreadPoolExecutor(max_workers=10) as executor:
@@ -168,6 +196,7 @@ def get_local_images(images_path):
             elif os.path.isfile(image):
                 local_images_path.add(image)
             else:
+                logger.error(colored(f"image wrong:{image}", "red"))
                 local_images_path.add("get_local_images:wrong format")
 
         # 处理所有任务，无论是下载还是文字方向检测
@@ -179,7 +208,7 @@ def get_local_images(images_path):
                 result_image = detect_text_orientation(downloaded_image, rotate_path)
                 local_images_path.add(result_image)  # 使用集合的add方法
             except Exception as e:
-                print(f"Error processing image {image}: {e}")
+                print(f"Error processing download image: {e}")
         logger.debug(f"local_images_path1:{list(local_images_path)}")
 
         # 对本地文件进行文字方向检测
@@ -189,7 +218,7 @@ def get_local_images(images_path):
                     result_image = detect_text_orientation(image, rotate_path)
                     local_images_path.add(result_image)  # 使用集合的add方法
                 except Exception as e:
-                    print(f"Error processing image {image}: {e}")
+                    print(f"Error processing local image {image}: {e}")
         logger.debug(f"local_images_path2:{list(local_images_path)}")
 
     # 本地文件删除

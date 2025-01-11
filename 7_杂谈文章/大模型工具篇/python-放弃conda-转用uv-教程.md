@@ -12,13 +12,17 @@ UV是由Rust开发的Python包管理工具，旨在替代conda等工具。它的
 ![alt text](../../z_using_files/img/judge/uv.png)
 
 ## 常用命令
-uv init
+
 uv venv (创建虚拟环境:uv venv -p 3.12.0, uv venv myenv)
+source .venv/bin/activate
 export UV_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple (win:set UV_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple)
 uv add pakage (安装依赖)
+uv pip install . 
 uv pip install -r requirements.txt (通过文件安装依赖,对于pyproject.toml=>uv pip install .)
 uv run xx.py (执行Python脚本)
+uv init (初始化一个新的 Python 项目)
 uv self update (更新UV自身)
+export UV_HTTP_TIMEOUT=60
 
 ## 性能对比
 
