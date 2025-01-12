@@ -1,0 +1,2 @@
+position_encoding_lookup_table = torch.zeros(context_length, d_model)
+position_encoding_lookup_table, position_encoding_lookup_table.shape
