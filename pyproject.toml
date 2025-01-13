@@ -10,6 +10,7 @@ dependencies = [
     "einops>=0.8.0",
     "gradio>=5.9.1",
     "gradio-pdf>=0.0.21",
+    "lancedb>=0.17.0",
     "langchain>=0.3.13",
     "langchain-ollama>=0.2.2",
     "lightning>=2.5.0.post0",

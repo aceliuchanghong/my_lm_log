@@ -92,6 +92,7 @@ convert_pixtral_checkpoint(
     vit_type="pixtral-12b-vit",
 )
 
+source activate cosmos
 (其路径:/usr/local/cuda/include/cudnn.h,先执行:export CPATH=/usr/local/cuda/include:$CPATH )
 pip install transformer_engine[pytorch] attrs opencv-python einops pynvml
 
