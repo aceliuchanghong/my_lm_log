@@ -67,6 +67,15 @@ def get_user_name(info: dict) -> str:
     return info["username"]
 
 
+def get_user_other(info: dict) -> str:
+    """提取用户姓名+问题"""
+    prompt = info["prompt"]
+    if "我" in prompt and "我们" not in prompt:
+        return f"{info['username']}:{prompt}"
+    else:
+        return prompt
+
+
 # 示例用法
 messages = ["雷xx+1550728<|>今天上海天气如何?", "刘XX+1551728<|>你是谁?"]
 

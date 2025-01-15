@@ -29,6 +29,7 @@ dependencies = [
     "torchaudio>=2.5.1",
     "torchvision>=0.20.1",
     "transformers>=4.47.1",
+    "zhconv>=1.4.3",
 ]
 [tool.setuptools]
 py-modules = []

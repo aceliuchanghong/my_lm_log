@@ -10,6 +10,7 @@ import requests
 import json
 import zipfile
 import base64
+from termcolor import colored
 
 load_dotenv()
 log_level = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -42,16 +43,22 @@ def to_pdf(file_path):
             with open(tmp_file_path, "wb") as tmp_pdf_file:
                 tmp_pdf_file.write(pdf_bytes)
 
+            logger.info(colored(f"pic->pdf:tmp_file_path:{tmp_file_path}", "green"))
+
             return tmp_file_path
 
 
-def to_pdf2(file_path):
-    with pymupdf.open(file_path) as f:
-        if f.is_pdf:
-            pdf_bytes = f.tobytes()
-        else:
-            pdf_bytes = f.convert_to_pdf()
-        return pdf_bytes
+def to_pdf_byte(file_path):
+    try:
+        with pymupdf.open(file_path) as f:
+            if f.is_pdf:
+                pdf_bytes = f.tobytes()
+            else:
+                pdf_bytes = f.convert_to_pdf()
+            return pdf_bytes
+    except Exception as e:
+        logger.error(colored(f"file to bytes wrong:{file_path}", "green"))
+        return None
 
 
 def image_to_base64(image_path):
@@ -103,6 +110,7 @@ def to_markdown(upload_file, html_md_table="html"):
     parse_method = "auto"
     debug_able = False
     kwargs = {}
+    logger.info(colored(f"upload_file:{upload_file}", "green"))
 
     if html_md_table != "html":
         convert_html_to_md = True
@@ -114,14 +122,24 @@ def to_markdown(upload_file, html_md_table="html"):
         response = requests.post(
             f"http://127.0.0.1:8116/predict",
             data={"kwargs": json.dumps(kwargs)},
-            files={"file": to_pdf2(upload_file)},
+            files={"file": to_pdf_byte(upload_file)},
         )
+        logger.info(colored(f"response:{response}", "green"))
         if response.status_code == 200:
             output = response.json()
             output_dir = output["output_dir"]
+            logger.info(colored(f"output_dir:{output_dir}", "green"))
+
+            upload_file_save_path = os.getenv("upload_file_save_path", "./upload_files")
+            os.makedirs(upload_file_save_path, exist_ok=True)
+
             all_file_path = os.path.join(
-                os.getenv("upload_file_save_path"), "md_file", output_dir, parse_method
+                upload_file_save_path,
+                "md_file",
+                output_dir,
+                parse_method,
             )
+            os.makedirs(all_file_path, exist_ok=True)
             # 获取md内容
             with open(
                 os.path.join(
@@ -137,7 +155,7 @@ def to_markdown(upload_file, html_md_table="html"):
 
             # 压缩文件夹
             file_zip_path = os.path.join(
-                os.getenv("upload_file_save_path"), "pdf_zip_path"
+                os.getenv("upload_file_save_path", "./upload_files"), "pdf_zip_path"
             )
             os.makedirs(file_zip_path, exist_ok=True)
             archive_zip_path = os.path.join(
@@ -162,33 +180,32 @@ def create_app():
     with gr.Blocks(title="pdf-md✨✨") as demo:
         with gr.Row():
             gr.Image(
-                label="🤖Torch-pdf-converter",
-                value="z_using_files/pics/pdf2md_2.png",
+                label="Torch-pdf-converter",
+                value="z_using_files/pics/pdf2md_4.png",
                 height=260,
             )
         with gr.Row():
             with gr.Column(variant="panel", scale=5):
                 file = gr.File(
-                    label="🌐上传pdf或者图片",
+                    label="上传pdf或者图片",
                     file_types=[".pdf", ".png", ".jpeg", "jpg"],
                 )
-                file.GRADIO_CACHE = file_default_path
                 with gr.Row():
                     html_md_table = gr.Radio(
                         ["html", "markdown"],
-                        label="🔧输出表格格式选择",
+                        label="输出表格格式选择",
                         value="html",
                         interactive=True,
                     )
                 with gr.Row():
-                    convert_button = gr.Button("🚀开始转化")
-                    clear_button = gr.ClearButton(value="💬清除历史")
-                pdf_show = PDF(label="📙PDF 预览", interactive=True, height=600)
+                    convert_button = gr.Button("开始转化")
+                    clear_button = gr.ClearButton(value="清除历史")
+                pdf_show = PDF(label="PDF 预览", interactive=True, height=600)
             with gr.Column(variant="panel", scale=5):
-                output_file = gr.File(label="💼结果压缩包下载", interactive=False)
+                output_file = gr.File(label="结果压缩包下载", interactive=False)
                 gr.Markdown("---")
                 with gr.Tabs():
-                    with gr.Tab("🔍Markdown 渲染"):
+                    with gr.Tab("Markdown 渲染"):
                         md = gr.Markdown(
                             label="Markdown rendering",
                             height=650,
@@ -196,9 +213,9 @@ def create_app():
                             latex_delimiters=latex_delimiters,
                             line_breaks=True,
                         )
-                    with gr.Tab("🔍Markdown 原文"):
+                    with gr.Tab("Markdown 原文"):
                         md_text = gr.TextArea(lines=30, show_copy_button=True)
-        file.upload(fn=to_pdf, inputs=file, outputs=pdf_show)
+        file.change(fn=to_pdf, inputs=file, outputs=pdf_show)
         convert_button.click(
             fn=to_markdown,
             inputs=[
@@ -215,16 +232,12 @@ if __name__ == "__main__":
     # python test/usua/minerU_gradio_server.py
     # export no_proxy="localhost,127.0.0.1"
     # nohup python test/usua/minerU_gradio_server.py > no_git_oic/minerU_gradio_server.log &
-    file_default_path = os.path.join(
-        os.getenv("upload_file_save_path"), "pdf_convert_path"
-    )
-    os.makedirs(file_default_path, exist_ok=True)
     app = create_app()
     app.launch(
         server_name="0.0.0.0",
         root_path="/Pdf2MdTool",
-        server_port=int(os.getenv("MINERU_FRONT_END_PORT")),
+        server_port=int(os.getenv("MINERU_FRONT_END_PORT", 16842)),
         share=False,
-        auth=[("torch", "mmm"), ("llch", "qqq")],
-        auth_message="输入账户密码登录(torch/mmm)",
+        # auth=[("torch", "torch-pdf-markdown"), ("llch", "txdy")],
+        # auth_message="输入账户密码登录(torch/torch-pdf-markdown)",
     )

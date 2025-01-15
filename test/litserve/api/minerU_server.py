@@ -97,7 +97,10 @@ def parse_minerU_middle_json(middle_json_file_path):
 
 class MinerUAPI(ls.LitAPI):
     def __init__(
-        self, output_dir=os.path.join(os.getenv("upload_file_save_path"), "md_file")
+        self,
+        output_dir=os.path.join(
+            os.getenv("upload_file_save_path", "./upload_files"), "md_file"
+        ),
     ):
         self.output_dir = output_dir
 
@@ -124,7 +127,10 @@ class MinerUAPI(ls.LitAPI):
             print(f"MinerU Model initialization complete!")
             self.ocr_engine = RapidOCR()
             self.table_engine = RapidTable(
-                model_path=os.getenv("rapidocr_table_engine_model_path")
+                model_path=os.getenv(
+                    "rapidocr_table_engine_model_path",
+                    "./test/ocr/ch_ppstructure_mobile_v2_SLANet.onnx",
+                )
             )
             self.client = OpenAI(
                 api_key=os.getenv("API_KEY"), base_url=os.getenv("OLLAMA_CHAT_BASE_URL")
@@ -145,7 +151,7 @@ class MinerUAPI(ls.LitAPI):
             do_parse(self.output_dir, pdf_name, inputs[0], [], **inputs[1])
 
             files_path = os.path.join(
-                os.getenv("upload_file_save_path"),
+                os.getenv("upload_file_save_path", "./upload_files"),
                 "md_file",
                 pdf_name,
                 inputs[1]["parse_method"],
@@ -180,7 +186,7 @@ class MinerUAPI(ls.LitAPI):
                 convert_html_to_md = convert_html_to_md_param
                 if convert_html_to_md:
                     response = self.client.chat.completions.create(
-                        model=os.getenv("HTML_PARSER_MODEL"),
+                        model=os.getenv("HTML_PARSER_MODEL", "reader-lm:1.5b-fp16"),
                         messages=[{"role": "user", "content": table_code}],
                         temperature=0.2,
                     )
@@ -215,4 +221,4 @@ if __name__ == "__main__":
     # export no_proxy="localhost,127.0.0.1"
     # nohup python test/litserve/api/minerU_server.py > no_git_oic/minerU_server.log &
     server = ls.LitServer(MinerUAPI(), accelerator="gpu", devices=[3])
-    server.run(port=int(os.getenv("MINERU_SERVER_PORT")))
+    server.run(port=int(os.getenv("MINERU_SERVER_PORT", 8116)))

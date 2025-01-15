@@ -114,7 +114,7 @@ def trans(chinese_prompt):
     ]
     try:
         response = client.chat.completions.create(
-            model=os.getenv("SMALL_MODEL"),
+            model=os.getenv("SMALL_MODEL", "qwen2.5:7b-instruct-fp16"),
             messages=messages,
             temperature=0.5,
         )
@@ -217,4 +217,6 @@ if __name__ == "__main__":
     nohup python test/usua/flux_gradio_server.py > no_git_oic/flux_gradio_server.log &
     """
     app = create_app()
-    app.launch(server_name="0.0.0.0", server_port=int(os.getenv("FLUX_FRONT_END_PORT")))
+    app.launch(
+        server_name="0.0.0.0", server_port=int(os.getenv("FLUX_FRONT_END_PORT", 16844))
+    )
